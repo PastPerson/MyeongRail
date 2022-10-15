@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="140dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:id="@+id/drawerView"
+        android:background="#5559b4">
+
+    <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="로그인"
+                android:textSize="40dp"
+                android:textColor="#ffffff"
+                android:layout_marginTop="60dp"
+                android:textAlignment="center">
+    </TextView>
+    <TextView
+        android:id="@+id/nav_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="550dp"
+        android:onClick="OnClick"
+        android:text="로그아웃"
+        android:textColor="#ffffff"
+        android:textSize="15dp"></TextView>
+
+
+</LinearLayout>
