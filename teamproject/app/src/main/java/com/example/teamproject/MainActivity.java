@@ -47,10 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageView image_view; //이미지뷰
     private DrawerLayout drawerLayout;
     private View drawerView;
+    private TextView login_btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        login_btn= (TextView) findViewById(R.id.menu_login);
         matrix = new Matrix();
         savedMatrix=new Matrix();
         EditText search = findViewById(R.id.search_main);
@@ -61,15 +63,16 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerView = (View) findViewById(R.id.drawerView);
         drawerLayout.setDrawerListener(listener);
-
-        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_SEARCH) {
-                    startActivity(new Intent(MainActivity.this, search_activity_first.class));
-                    return true;
-                }
-                return false;
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, search_activity_first.class));
+            }
+        });
+        login_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,login_main.class));
             }
         });
         menu_button.setOnClickListener(new View.OnClickListener() {

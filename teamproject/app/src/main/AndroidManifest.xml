@@ -11,8 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Teamproject"
-
         tools:targetApi="31">
+        <activity
+            android:name=".login_main"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".search_activity_first"
             android:exported="false">
@@ -26,6 +32,7 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -33,7 +40,8 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
