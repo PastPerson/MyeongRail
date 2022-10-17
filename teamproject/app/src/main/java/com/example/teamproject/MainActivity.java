@@ -26,8 +26,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         SINGLE, //한손가락
         MULTI //두손가락
     }
+    
+    private FirebaseAuth firebase_auth;
+    
     private TOUCH_MODE touchMode;
     private Matrix matrix;      //기존 매트릭스
     private Matrix savedMatrix; //작업 후 이미지에 매핑할 매트릭스
@@ -47,12 +51,16 @@ public class MainActivity extends AppCompatActivity {
     private ImageView image_view; //이미지뷰
     private DrawerLayout drawerLayout;
     private View drawerView;
-    private TextView login_btn;
+    private TextView login_btn, logout_btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        firebase_auth = FirebaseAuth.getInstance();
+
         login_btn= (TextView) findViewById(R.id.menu_login);
+        logout_btn = findViewById(R.id.nav_logout);
         matrix = new Matrix();
         savedMatrix=new Matrix();
         EditText search = findViewById(R.id.search_main);
@@ -73,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this,login_main.class));
+            }
+        });
+        logout_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebase_auth.signOut();
+                Toast.makeText(MainActivity.this, "로그아웃됨", Toast.LENGTH_SHORT).show();
             }
         });
         menu_button.setOnClickListener(new View.OnClickListener() {
