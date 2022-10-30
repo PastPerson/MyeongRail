@@ -30,14 +30,14 @@ public class login_main extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_main);
 
-        firebase_auth = FirebaseAuth.getInstance();
-        database_reference = FirebaseDatabase.getInstance().getReference("login");
+        firebase_auth = FirebaseAuth.getInstance(); //파이어베이스 인스터스값
+        database_reference = FirebaseDatabase.getInstance().getReference("login");//
 
         id = findViewById(R.id.user_id);
         pw = findViewById(R.id.user_pwd);
 
         Button btn_login = findViewById(R.id.login);
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        btn_login.setOnClickListener(new View.OnClickListener() {//로그인 버튼을 눌렀을때 이벤트
             @Override
             public void onClick(View v) {
                 String str_id = id.getText().toString();
@@ -49,6 +49,7 @@ public class login_main extends AppCompatActivity {
                         if(task.isSuccessful()){
                             // 로그인 성공!!
                             Intent intent = new Intent(login_main.this, MainActivity.class);
+                            intent.putExtra("ID",str_id);
                             startActivity(intent);
                             finish();
                         } else{
