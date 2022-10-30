@@ -39,7 +39,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
-
 public class MainActivity extends AppCompatActivity {
 
     enum TOUCH_MODE {
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             profile_box.setVisibility(View.VISIBLE);
             Intent getintent=getIntent();
             final String[] profile_name = new String[1];
-            mFirebaseDatabase.child("UserAccount").child(mFirebase_user.getUid()).child("username").addValueEventListener(new ValueEventListener() {
+            mFirebaseDatabase.child("UserAccount").child(mFirebase_user.getUid()).child("emailId").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String value= dataSnapshot.getValue(String.class);
@@ -114,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             logout_btn.setVisibility(View.GONE);
             profile_box.setVisibility(View.GONE);
         }
-
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,13 +141,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 drawerLayout.openDrawer(dr_view);
-                Dijkstraaa d = new Dijkstraaa(MainActivity.this);
-                d.check(0, 1);
-                int k = d.getKm();
-                int t = d.getAtime();
-                int c = d.getCharge();
-                String s = k + " km";
-                System.out.println(s +" "+ t + "초 " + c + "원");
             }
         });
     }
