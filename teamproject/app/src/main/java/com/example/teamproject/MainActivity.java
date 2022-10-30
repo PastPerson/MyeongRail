@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             profile_box.setVisibility(View.VISIBLE);
             Intent getintent=getIntent();
             final String[] profile_name = new String[1];
-            mFirebaseDatabase.child("UserAccount").child(mFirebase_user.getUid()).child("username").addValueEventListener(new ValueEventListener() {
+            mFirebaseDatabase.child("UserAccount").child(mFirebase_user.getUid()).child("emailId").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String value= dataSnapshot.getValue(String.class);
