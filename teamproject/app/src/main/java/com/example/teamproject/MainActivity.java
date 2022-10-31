@@ -39,7 +39,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
-
 public class MainActivity extends AppCompatActivity {
 
     enum TOUCH_MODE {
@@ -115,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
             profile_box.setVisibility(View.GONE);
         }
 
-
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -143,13 +141,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 drawerLayout.openDrawer(dr_view);
-                Dijkstraaa d = new Dijkstraaa(MainActivity.this);
-                d.check(0, 1);
-                int k = d.getKm();
-                int t = d.getAtime();
-                int c = d.getCharge();
-                String s = k + " km";
-                System.out.println(s +" "+ t + "초 " + c + "원");
             }
         });
     }
