@@ -31,11 +31,10 @@ public class login_main extends AppCompatActivity {
         setContentView(R.layout.activity_login_main);
 
         firebase_auth = FirebaseAuth.getInstance(); //파이어베이스 인스터스값
-<<<<<<< Updated upstream
         database_reference = FirebaseDatabase.getInstance().getReference("login");//
-=======
+
         database_reference = FirebaseDatabase.getInstance().getReference("login");
->>>>>>> Stashed changes
+
 
         id = findViewById(R.id.user_id);
         pw = findViewById(R.id.user_pwd);
@@ -51,14 +50,12 @@ public class login_main extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-<<<<<<< Updated upstream
                             // 로그인 성공!!
                             Intent intent = new Intent(login_main.this, MainActivity.class);
                             intent.putExtra("ID",str_id);
                             startActivity(intent);
                             finish();
                         } else{
-=======
                             if(firebase_auth.getCurrentUser().isEmailVerified()) {//이메일 인증을 진행한 계정만 로그인이 가능함
                                 // 로그인 성공!!
                                 Intent intent = new Intent(login_main.this, MainActivity.class);
@@ -68,9 +65,6 @@ public class login_main extends AppCompatActivity {
                             }else{//계정은 존재하나 이메일 인증이 되지 않은 경우
                                 Toast.makeText(login_main.this, "이메일 인증을 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
                             }
-                        }else{
->>>>>>> Stashed changes
-                            Toast.makeText(login_main.this, "로그인 실패..", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

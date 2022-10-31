@@ -38,7 +38,7 @@ public class search_activity_first extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if(i== EditorInfo.IME_ACTION_SEARCH){
-                    startActivity(new Intent(search_activity_first.this,subway_result.class));
+                    startActivity(new Intent(search_activity_first.this,MainActivity.class));
                     return true;
                 }
                 return false;
