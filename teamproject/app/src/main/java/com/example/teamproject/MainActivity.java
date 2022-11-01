@@ -4,6 +4,7 @@ package com.example.teamproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.Activity;
@@ -25,8 +26,17 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 
@@ -37,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         SINGLE, //한손가락
         MULTI //두손가락
     }
+    
+    private FirebaseAuth firebase_auth;
+    
     private TOUCH_MODE touchMode;
     private Matrix matrix;      //기존 매트릭스
     private Matrix savedMatrix; //작업 후 이미지에 매핑할 매트릭스
@@ -45,24 +58,64 @@ public class MainActivity extends AppCompatActivity {
     private float oldDistance;  //터치 시 두손가락 사이의 거리
     private double oldDegree = 0; // 두손가락의 각도
     private ImageView image_view; //이미지뷰
-    private DrawerLayout drawerLayout;
-    private View drawerView;
-    private TextView login_btn;
+    private DrawerLayout drawerLayout; //메인 드로어
+    private View dr_view; // 로그인 전 드로어뷰
+    private TextView login_btn, logout_btn;
+    private TextView profile_id;
+    private ConstraintLayout profile_box;
+    private String E_id;
+    private FirebaseUser mFirebase_user;// 데이터베이스 유저
+    private DatabaseReference mFirebaseDatabase;//데이터 베이스 레퍼런스
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebase_auth = FirebaseAuth.getInstance();
+        mFirebase_user= firebase_auth.getCurrentUser();//
+        mFirebaseDatabase=FirebaseDatabase.getInstance().getReference("login");//데이터베이스의 path
+        profile_box=(ConstraintLayout) findViewById(R.id.profile);
         login_btn= (TextView) findViewById(R.id.menu_login);
+        logout_btn = findViewById(R.id.nav_logout);
         matrix = new Matrix();
         savedMatrix=new Matrix();
         EditText search = findViewById(R.id.search_main);
         Button menu_button=findViewById(R.id.menu_button);
+        profile_id=findViewById(R.id.profile_id);
         image_view= findViewById(R.id.image_view);
         image_view.setOnTouchListener(onTouch);
         image_view.setScaleType(ImageView.ScaleType.MATRIX);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerView = (View) findViewById(R.id.drawerView);
-        drawerLayout.setDrawerListener(listener);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);//메인 레이아웃
+        drawerLayout.setDrawerListener(listener);//메인 레이아웃
+        dr_view = (View) findViewById(R.id.drawerView);//로그인 전 사이드 레이아웃
+        profile_id=(TextView)findViewById(R.id.profile_id);
+
+        if(firebase_auth.getInstance().getCurrentUser() != null){
+            login_btn.setVisibility(View.GONE);
+            logout_btn.setVisibility(View.VISIBLE);
+            profile_box.setVisibility(View.VISIBLE);
+            Intent getintent=getIntent();
+            final String[] profile_name = new String[1];
+            mFirebaseDatabase.child("UserAccount").child(mFirebase_user.getUid()).child("username").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String value= dataSnapshot.getValue(String.class);
+                    profile_id.setText(value);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        }
+        else {
+            login_btn.setVisibility(View.VISIBLE);
+            logout_btn.setVisibility(View.GONE);
+            profile_box.setVisibility(View.GONE);
+        }
+
+
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,11 +128,28 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this,login_main.class));
             }
         });
+        logout_btn.setOnClickListener(new View.OnClickListener() {//로그아웃
+            @Override
+            public void onClick(View v) {
+                firebase_auth.signOut();
+                logout_btn.setVisibility(View.GONE);
+                login_btn.setVisibility(View.VISIBLE);
+                profile_box.setVisibility(View.GONE);
+                profile_id.setText("");
+                Toast.makeText(MainActivity.this, "로그아웃됨", Toast.LENGTH_SHORT).show();
+            }
+        });
         menu_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawerLayout.openDrawer(drawerView);
-
+                drawerLayout.openDrawer(dr_view);
+                Dijkstraaa d = new Dijkstraaa(MainActivity.this);
+                d.check(0, 1);
+                int k = d.getKm();
+                int t = d.getAtime();
+                int c = d.getCharge();
+                String s = k + " km";
+                System.out.println(s +" "+ t + "초 " + c + "원");
             }
         });
     }
