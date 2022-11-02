@@ -2,10 +2,12 @@ package com.example.teamproject;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 
 
 public class Dijkstraaa {
     Context context;
+    ArrayList<Integer> station_index = new ArrayList<>();
 
     public int getSum_t() {
         return sum_t;
@@ -108,6 +110,7 @@ public class Dijkstraaa {
     public Dijkstraaa(Context context){
         this.context = context;
         DataInput data = new DataInput(); // 지하철 역에 대한 정보를 제공하는 클래스 객체
+        this.station_index = data.getIndexOfStation();
         this.time = data.getTime(); // 역간 이동 시 소모 시간 정보가 들어있는 배열을 받아온다.
         this.dist = data.getDist(); // 역간 이동 시 이동 거리 정보가 들어있는 배열을 받아온다.
         this.cost = data.getCost(); // 역간 이동 시 소모 비용 정보가 들어있는 배열을 받아온다.
@@ -121,8 +124,8 @@ public class Dijkstraaa {
 				  							  s = 시작노드 입력값
 				  							  e = 끝 노드 입력값
 				  							  min = 최소값을 찾기 위함*/
-        int s = start;
-        int e = finish;
+        int s = station_index.indexOf(start); // 역이름에 맞는 인덱스 반환
+        int e = station_index.indexOf(finish);// 역이름에 맞는 인덱스 반환
         int[] v = new int[111]; //이동하는 최단 거리 확인
         int[] distance = new int[111];//지나간 노드 확인
         int[] distance1 = new int[111];//지나간 노드 확인
@@ -162,8 +165,6 @@ public class Dijkstraaa {
                 }
             }
         }
-
-
 
         km = distance[e];
         setKm(km);

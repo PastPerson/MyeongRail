@@ -1,6 +1,7 @@
 package com.example.teamproject;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DataInput {
@@ -279,7 +280,7 @@ public class DataInput {
         return list;
     }
 
-    public int getIndexOfStation(int s){
-        return station_index.indexOf(s); // 101을 매개변수로 받으면 0을 반환, 역에 맞는 인덱스를 반환해준다.
+    public ArrayList<Integer> getIndexOfStation(){
+        return station_index; // 기차 역이 순서대로 들어있는 ArrayList반환
     }
 }
