@@ -283,4 +283,11 @@ public class DataInput {
     public ArrayList<Integer> getIndexOfStation(){
         return station_index; // 기차 역이 순서대로 들어있는 ArrayList반환
     }
+    public int[] getStationList(){
+        int[] list = new int[111];
+        for(int i = 0; i < 111; i++){
+            list[i] = station_index.get(i);
+        }
+        return list;
+    }
 }
