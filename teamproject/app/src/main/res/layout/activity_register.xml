@@ -22,25 +22,16 @@
     <LinearLayout
 
         android:id="@+id/linearLayout"
-<<<<<<< Updated upstream
-        android:layout_width="262dp"
-        android:layout_height="130dp"
-        android:orientation="vertical"
-        android:background="@drawable/border_background"
-=======
         android:layout_width="272dp"
         android:layout_height="200dp"
         android:background="@drawable/border_background"
         android:orientation="vertical"
->>>>>>> Stashed changes
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.415">
-<<<<<<< Updated upstream
-=======
 
         <EditText
             android:id="@+id/user_name"
@@ -56,20 +47,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
->>>>>>> Stashed changes
         <EditText
             android:id="@+id/user_id"
             android:layout_width="match_parent"
             android:layout_height="65dp"
-<<<<<<< Updated upstream
-            android:layout_marginTop="12dp"
-            android:hint="이메일을 입력하세요"
-            android:layout_margin="0dp"
-=======
             android:layout_margin="0dp"
             android:layout_marginTop="12dp"
             android:hint="이메일을 입력하세요"
->>>>>>> Stashed changes
             android:imeOptions="actionSearch"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
@@ -82,15 +66,9 @@
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_marginBottom="352dp"
-<<<<<<< Updated upstream
-            android:hint="비밀번호를 입력하세요"
-            android:inputType="textPassword"
-            android:imeOptions="actionSearch"
-=======
             android:hint="비밀번호 8자리 이상 입력하세요"
             android:imeOptions="actionSearch"
             android:inputType="textPassword"
->>>>>>> Stashed changes
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"

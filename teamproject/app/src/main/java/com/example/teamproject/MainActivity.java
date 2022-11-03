@@ -39,11 +39,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-<<<<<<< Updated upstream
-=======
 
 import java.io.File;
->>>>>>> Stashed changes
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,11 +50,7 @@ public class MainActivity extends AppCompatActivity {
         SINGLE, //한손가락
         MULTI //두손가락
     }
-<<<<<<< Updated upstream
-    
-=======
     Bitmap bitmap;
->>>>>>> Stashed changes
     private FirebaseAuth firebase_auth;
     
     private TOUCH_MODE touchMode;
@@ -76,15 +69,12 @@ public class MainActivity extends AppCompatActivity {
     private String E_id;
     private FirebaseUser mFirebase_user;// 데이터베이스 유저
     private DatabaseReference mFirebaseDatabase;//데이터 베이스 레퍼런스
-<<<<<<< Updated upstream
-=======
     private BitmapFactory.Options getBitmapSize(File imageFile){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds=true;
         BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
         return options;
     }
->>>>>>> Stashed changes
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,11 +97,8 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(listener);//메인 레이아웃
         dr_view = (View) findViewById(R.id.drawerView);//로그인 전 사이드 레이아웃
         profile_id=(TextView)findViewById(R.id.profile_id);
-<<<<<<< Updated upstream
-=======
         image_view.setImageBitmap(bitmap);
 
->>>>>>> Stashed changes
 
         if(firebase_auth.getInstance().getCurrentUser() != null){
             login_btn.setVisibility(View.GONE);
@@ -119,11 +106,7 @@ public class MainActivity extends AppCompatActivity {
             profile_box.setVisibility(View.VISIBLE);
             Intent getintent=getIntent();
             final String[] profile_name = new String[1];
-<<<<<<< Updated upstream
-            mFirebaseDatabase.child("UserAccount").child(mFirebase_user.getUid()).child("emailId").addValueEventListener(new ValueEventListener() {
-=======
             mFirebaseDatabase.child("UserAccount").child(mFirebase_user.getUid()).child("username").addValueEventListener(new ValueEventListener() {
->>>>>>> Stashed changes
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String value= dataSnapshot.getValue(String.class);
@@ -143,10 +126,7 @@ public class MainActivity extends AppCompatActivity {
             profile_box.setVisibility(View.GONE);
         }
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,8 +154,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 drawerLayout.openDrawer(dr_view);
-<<<<<<< Updated upstream
-=======
                 Dijkstraaa d = new Dijkstraaa(MainActivity.this);
                 d.check(0, 1);
                 int k = d.getKm();
@@ -183,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 int c = d.getCharge();
                 String s = k + " km";
                 System.out.println(s +" "+ t + "초 " + c + "원");
->>>>>>> Stashed changes
             }
         });
     }

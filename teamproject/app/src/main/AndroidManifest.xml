@@ -13,8 +13,6 @@
         android:theme="@style/Theme.Teamproject"
         tools:targetApi="31">
         <activity
-<<<<<<< Updated upstream
-=======
             android:name=".subway_result"
             android:exported="false">
             <meta-data
@@ -29,7 +27,6 @@
                 android:value="" />
         </activity>
         <activity
->>>>>>> Stashed changes
             android:name=".RegisterActivity"
             android:exported="false">
             <meta-data
