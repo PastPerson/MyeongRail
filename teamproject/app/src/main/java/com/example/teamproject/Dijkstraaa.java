@@ -689,13 +689,13 @@ public class Dijkstraaa {
         trans_station(path, path_cnt, s, e);
     }
 
-    void check2(int start, int finish){
+    void check2(String start, String finish){
         int i, j, k = 0, min,min2,min3; /* i, j, k = for문을 위해 생성
 				  							  s = 시작노드 입력값
 				  							  e = 끝 노드 입력값
 				  							  min = 최소값을 찾기 위함*/
-        int s = start;
-        int e = finish;
+        int s = station_index.indexOf(start);
+        int e = station_index.indexOf(finish);
         int[] v = new int[111]; //이동하는 최단 거리 확인
         int[] distance = new int[111];//지나간 노드 확인
         int[] distance1 = new int[111];//지나간 노드 확인
@@ -757,13 +757,13 @@ public class Dijkstraaa {
 
         trans_station(path, path_cnt, s, e);
     }
-    void check3(int start, int finish) {
+    void check3(String start, String finish) {
         int i, j, k = 0, min, min2, min3; /* i, j, k = for문을 위해 생성
 				  							  s = 시작노드 입력값
 				  							  e = 끝 노드 입력값
 				  							  min = 최소값을 찾기 위함*/
-        int s = start;
-        int e = finish;
+        int s = station_index.indexOf(start);
+        int e = station_index.indexOf(finish);
         int[] v = new int[111]; //이동하는 최단 거리 확인
         int[] distance = new int[111];//지나간 노드 확인
         int[] distance1 = new int[111];//지나간 노드 확인
