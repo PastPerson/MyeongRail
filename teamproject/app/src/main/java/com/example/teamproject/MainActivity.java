@@ -154,13 +154,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 drawerLayout.openDrawer(dr_view);
-                Dijkstraaa d = new Dijkstraaa(MainActivity.this);
-                d.check(0, 1);
-                int k = d.getKm();
-                int t = d.getAtime();
-                int c = d.getCharge();
-                String s = k + " km";
-                System.out.println(s +" "+ t + "초 " + c + "원");
             }
         });
     }
