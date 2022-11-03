@@ -4,7 +4,9 @@
         <item name ="windowActionBar">false</item>
         <item name ="windowNoTitle">true</item>
     </style>
+    <style name="TitleTheme" parent="Theme.AppCompat">
 
+    </style>
     <style name="SplashTheme" parent="android:Theme.Light.NoTitleBar">
         <item name="android:windowBackground">@drawable/loading</item>
     </style>

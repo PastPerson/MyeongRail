@@ -13,6 +13,20 @@
         android:theme="@style/Theme.Teamproject"
         tools:targetApi="31">
         <activity
+            android:name=".subway_result"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Email_Authentication"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".RegisterActivity"
             android:exported="false">
             <meta-data
