@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Dijkstraaa {
     Context context;
-    ArrayList<Integer> station_index = new ArrayList<>();
+    ArrayList<String> station_index = new ArrayList<>();
 
     public int getSum_t() {
         return sum_t;
@@ -119,7 +119,7 @@ public class Dijkstraaa {
 
 
 
-    void check(int start, int finish){
+    void check(String start, String finish){
         int i, j, k = 0, min,min2,min3; /* i, j, k = for문을 위해 생성
 				  							  s = 시작노드 입력값
 				  							  e = 끝 노드 입력값

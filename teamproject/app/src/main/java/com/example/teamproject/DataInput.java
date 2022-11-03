@@ -5,7 +5,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DataInput {
-    ArrayList<Integer> station_index = new ArrayList<>();
+    ArrayList<String> station_index = new ArrayList<>();
     int[] station_info = { // 역간 이동시 소모 비용 정보가 들어있는 배열, 5개 단위로 0,1은 이동하는 두 역, 2,3,4는 시간, 거리, 비용을 의미함
             101, 102, 200, 500, 200,
             102, 103, 300, 400, 300,
@@ -153,47 +153,47 @@ public class DataInput {
     public DataInput(){
         int st_num = 101;
         for (int i = 0; i < 23; i++) {
-            station_index.add(st_num);
+            station_index.add(String.valueOf(st_num));
             st_num++;
         }
         st_num = 201;
         for (int i = 0; i < 17; i++) {
-            station_index.add(st_num);
+            station_index.add(String.valueOf(st_num));
             st_num++;
         }
         st_num = 301;
         for (int i = 0; i < 8; i++) {
-            station_index.add(st_num);
+            station_index.add(String.valueOf(st_num));
             st_num++;
         }
         st_num = 401;
         for (int i = 0; i < 17; i++) {
-            station_index.add(st_num);
+            station_index.add(String.valueOf(st_num));
             st_num++;
         }
         st_num = 501;
         for (int i = 0; i < 7; i++) {
-            station_index.add(st_num);
+            station_index.add(String.valueOf(st_num));
             st_num++;
         }
         st_num = 601;
         for (int i = 0; i < 22; i++) {
-            station_index.add(st_num);
+            station_index.add(String.valueOf(st_num));
             st_num++;
         }
         st_num = 701;
         for (int i = 0; i < 7; i++) {
-            station_index.add(st_num);
+            station_index.add(String.valueOf(st_num));
             st_num++;
         }
         st_num = 801;
         for (int i = 0; i < 6; i++) {
-            station_index.add(st_num);
+            station_index.add(String.valueOf(st_num));
             st_num++;
         }
         st_num = 901;
         for (int i = 0; i < 4; i++) {
-            station_index.add(st_num);
+            station_index.add(String.valueOf(st_num));
             st_num++;
         }
 
@@ -280,11 +280,11 @@ public class DataInput {
         return list;
     }
 
-    public ArrayList<Integer> getIndexOfStation(){
+    public ArrayList<String> getIndexOfStation(){
         return station_index; // 기차 역이 순서대로 들어있는 ArrayList반환
     }
-    public int[] getStationList(){
-        int[] list = new int[111];
+    public String[] getStationList(){
+        String[] list = new String[111];
         for(int i = 0; i < 111; i++){
             list[i] = station_index.get(i);
         }

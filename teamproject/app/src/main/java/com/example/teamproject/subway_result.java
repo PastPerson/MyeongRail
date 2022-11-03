@@ -59,15 +59,15 @@ public class subway_result extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch(checkedId){
                     case R.id.radio_time:
-                        sub.check(Integer.parseInt(start_point),Integer.parseInt(end_point));
+                        sub.check(start_point,end_point);
                         sub_result.setText(Integer.toString(sub.getAtime()/60)+"분"+Integer.toString(sub.getAtime()%60)+"초");
                         break;
                     case R.id.radio_distance:
-                        sub.check(Integer.parseInt(start_point),Integer.parseInt(end_point));
+                        sub.check(start_point,end_point);
                         sub_result.setText(Integer.toString(sub.getKm()));
                         break;
                     case R.id.radio_cost:
-                        sub.check(Integer.parseInt(start_point),Integer.parseInt(end_point));
+                        sub.check(start_point,end_point);
                         sub_result.setText(Integer.toString(sub.getCharge()));
                         break;
                 }
