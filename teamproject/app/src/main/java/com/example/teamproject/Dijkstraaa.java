@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class Dijkstraaa {
     Context context;
     ArrayList<String> station_index = new ArrayList<>();
+    int[][] station_line;
+    int[][] trans_station;
 
     public int getSum_t() {
         return sum_t;
@@ -27,45 +29,10 @@ public class Dijkstraaa {
         this.cc = cc;
     }
 
-    String cc[]=new String[40];
+    String cc[]=new String[111];
 
     int sum_t=0;
-    // t1~ t35까지 환승 역을 뜻함
-    boolean t1; // 101번 역
-    boolean t2; // 104번 역
-    boolean t3; // 107번 역
-    boolean t4; // 109번 역
-    boolean t5; // 112번 역
-    boolean t6; // 113번 역
-    boolean t7; // 115번 역
-    boolean t8; // 116번 역
-    boolean t9; // 119번 역
-    boolean t10; // 121번 역
-    boolean t11; // 122번 역
-    boolean t12; // 123번 역
-    boolean t13; // 202번 역
-    boolean t14; // 207번 역
-    boolean t15; // 209번 역
-    boolean t16; // 211번 역
-    boolean t17; // 214번 역
-    boolean t18; // 216번 역
-    boolean t19; // 303번 역
-    boolean t20; // 307번 역
-    boolean t21; // 403번 역
-    boolean t22; // 406번 역
-    boolean t23; // 409번 역
-    boolean t24; // 412번 역
-    boolean t25; // 416번 역
-    boolean t26; // 417번 역
-    boolean t27; // 503번 역
-    boolean t28; // 601번 역
-    boolean t29; // 605번 역
-    boolean t30; // 608번 역
-    boolean t31; // 614번 역
-    boolean t32; // 618번 역
-    boolean t33; // 621번 역
-    boolean t34; // 702번 역
-    boolean t35; // 705번 역
+    boolean[] trans = new boolean[35]; // 환승역의 환승여부를 저장하는 배열이다.
     public int km;
     int atime;
     int charge;
@@ -114,511 +81,62 @@ public class Dijkstraaa {
         this.time = data.getTime(); // 역간 이동 시 소모 시간 정보가 들어있는 배열을 받아온다.
         this.dist = data.getDist(); // 역간 이동 시 이동 거리 정보가 들어있는 배열을 받아온다.
         this.cost = data.getCost(); // 역간 이동 시 소모 비용 정보가 들어있는 배열을 받아온다.
+        this.station_line = data.getStationLine(); // 역이 어느 호선에 위치했는지에 대한 정보가 들어있는 배열을 받아온다.
+        this.trans_station = data.getTransStation(); // 환승역 정보가 들어있는 배열을 받아온다.
     }
 
     void trans_station(int[] path, int path_cnt, int s, int e){ // s에서 e까지 도달하는 경로에서 지나는 환승역을 구한다.
-
-        for(int i = path_cnt - 1; i >= 1; i--){
-            if(path[i] == 0){
-                t1=true;
-            }
-            if(path[i] ==3){
-                t2=true;
-            }
-            if(path[i] ==6){
-                t3=true;
-            }
-            if(path[i] ==8){
-                t4=true;
-            }
-            if(path[i] ==11){
-                t5=true;
-            }
-            if(path[i] ==12){
-                t6=true;
-            }
-            if(path[i] ==14){
-                t7=true;
-            }
-            if(path[i] ==15){
-                t8=true;
-            }
-            if(path[i] ==18){
-                t9=true;
-            }
-            if(path[i] ==20){
-                t10=true;
-            }
-            if(path[i] ==21){
-                t11=true;
-            }
-            if(path[i] ==22){
-                t12=true;
-            }
-            if(path[i] ==24){
-                t13=true;
-            }
-            if(path[i] ==29){
-                t14=true;
-            }
-            if(path[i] ==31){
-                t15=true;
-            }
-            if(path[i] ==33){
-                t16=true;
-            }
-            if(path[i] ==36){
-                t17=true;
-            }
-            if(path[i] ==38){
-                t18=true;
-            }
-            if(path[i] ==42){
-                t19=true;
-            }
-            if(path[i] ==46){
-                t20=true;
-            }
-            if(path[i] ==50){
-                t21=true;
-            }
-            if(path[i] ==53){
-                t22=true;
-            }
-            if(path[i] ==56){
-                t23=true;
-            }
-            if(path[i] ==59){
-                t24=true;
-            }
-            if(path[i] ==63){
-                t25=true;
-            }
-            if(path[i] ==64){
-                t26=true;
-            }
-            if(path[i] ==67){
-                t27=true;
-            }
-            if(path[i] ==72){
-                t28=true;
-            }
-            if(path[i] ==76){
-                t29=true;
-            }
-            if(path[i] ==79){
-                t30=true;
-            }
-            if(path[i] ==85){
-                t31=true;
-            }
-            if(path[i] ==89){
-                t32=true;
-            }
-            if(path[i] ==92){
-                t33=true;
-            }
-            if(path[i] ==95){
-                t34=true;
-            }
-            if(path[i] ==98){
-                t35=true;
-            }
-        }
-        for(int first =0 ;first<=22;first++){
-            if(s==first){
-                for (int last = 0 ; last <=22; last++){
-                    if(e==last){
-                        t1=false;
-                        t2=false;
-                        t3=false;
-                        t4=false;
-                        t5=false;
-                        t6=false;
-                        t7=false;
-                        t8=false;
-                        t9=false;
-                        t10=false;
-                        t11=false;
-                        t12=false;
-                    }
-                }
-
-            }
-        }
-        for(int first =23 ;first<=39;first++){
-            if(s== first ||s==0){
-                for (int last = 23 ; last <=39; last++) {
-                    if (e == last ||e==0 ) {
-                        t1 = false;
-                        t13 = false;
-                        t14 = false;
-                        t15 = false;
-                        t16 = false;
-                        t17 = false;
-                        t18 = false;
+        count = 0;
+        for(int i = path_cnt-2; i >= 1; i--){
+            int prev = path[i+1];
+            int now = path[i];
+            int next = path[i-1];
+            for(int j = 0; j < 35; j++){
+                if(now == trans_station[1][j]){
+                    if(station_line[prev][0] == station_line[now][0]){
+                        if(station_line[now][0] == station_line[next][0] || station_line[now][0] == station_line[next][1]){
+                            trans[j] = false;
+                        }else{
+                            trans[j] = true;
+                            cc[count++] = String.valueOf(trans_station[0][j]);
+                            sum_t++;
+                        }
+                    } else if(station_line[prev][0] == station_line[now][1]){
+                        if(station_line[now][1] == station_line[next][0] || station_line[now][1] == station_line[next][1]){
+                            trans[j] = false;
+                        }else{
+                            trans[j] = true;
+                            cc[count++] = String.valueOf(trans_station[0][j]);
+                            sum_t++;
+                        }
+                    } else if(station_line[prev][1] != 0 && station_line[prev][1] == station_line[now][0]){
+                        if(station_line[now][0] == station_line[next][0] || station_line[now][0] == station_line[next][1]){
+                            trans[j] = false;
+                        }else{
+                            trans[j] = true;
+                            cc[count++] = String.valueOf(trans_station[0][j]);
+                            sum_t++;
+                        }
+                    }else if(station_line[prev][1] != 0 && station_line[prev][1] == station_line[now][1]){
+                        if(station_line[now][1] == station_line[next][0] || station_line[now][1] == station_line[next][1]){
+                            trans[j] = false;
+                        }else{
+                            trans[j] = true;
+                            cc[count++] = String.valueOf(trans_station[0][j]);
+                            sum_t++;
+                        }
                     }
                 }
             }
         }
 
-        for(int first =40 ;first<=46;first++){
-            if(s== first || s ==6|| s==22 || s == 29){
-                for (int last = 40 ; last <=46; last++) {
-                    if (e == last || e ==6 || e==22 || s == 29) {
-                        t14 = false;
-                        t19 = false;
-                        t12 = false;
-                        t20 = false;
-                        t3 = false;
-                    }
-                }
-            }
-        }
-        for(int first =47 ;first<=63;first++){
-            if(s== first || s==3 || s == 14 || s == 38 || s == 46 ){
-                for (int last = 47 ; last <=63; last++) {
-                    if (e == last || e ==3 || e == 14 || e == 38 || e == 46) {
-                        t2 = false;
-                        t20 = false;
-                        t22 = false;
-                        t23 = false;
-                        t7 = false;
-                        t24 = false;
-                        t25 = false;
-                        t26 = false;
-                        t18 = false;
-                    }
-                }
-            }
-        }
-        for(int first =64 ;first<=70;first++){
-            if(s== first || s==8 || s==21 || s==31 || s==50){
-                for (int last = 64; last <=70; last++) {
-                    if (e == last || e==8 || e==21 || e==31 || e==50) {
-                        t15 = false;
-                        t27 = false;
-                        t11 = false;
-                        t21 = false;
-                        t4 = false;
-                    }
-                }
-            }
-        }
-        for(int first =71 ;first<=92;first++){
-            if(s== first || s==15 || s==20 || s==59 || s==64){
-                for (int last = 71 ; last <=92; last++) {
-                    if (e == last || e==15 || e==20 || e==59 || e==64) {
-                        t28 = false;
-                        t10 = false;
-                        t29 = false;
-                        t8 = false;
-                        t30 = false;
-                        t24 = false;
-                        t31 = false;
-                        t26 = false;
-                        t32 = false;
-                        t33 = false;
-                    }
-                }
-            }
-        }
-        for(int first =93 ;first<=99;first++){
-            if(s== first || s==24 || s==42 || s==67 || s==63 || s==72 || s==85){
-                for (int last = 93 ; last <=99; last++) {
-                    if (e == last || e==24 || e==42 || e==67 || e==63 || e==72 || e==85) {
-                        t13 = false;
-                        t19 = false;
-                        t27 = false;
-                        t29 = false;
-                        t34 = false;
-                        t35 = false;
-                        t25 = false;
-                        t31 = false;
-                    }
-                }
-            }
-        }
-        for(int first =100 ;first<=105;first++){
-            if(s== first || s==12 || s==36 || s==56 || s==79 || s== 89|| s==98){
-                for (int last = 100 ; last <=105; last++) {
-                    if (e == last || e==12 || e==36 || e==56 || e==79 || e==89 || e==98) {
-                        t6 = false;
-                        t23 = false;
-                        t30 = false;
-                        t35 = false;
-                        t33 = false;
-                        t17 = false;
-                    }
-                }
-            }
-        }for(int first =106 ;first<=110;first++){
-            if(s== first || s==11 || s==18 || s==33 || s==53 || s==76 || s==92 || s==95){
-                for (int last = 94 ; last <=100; last++) {
-                    if (e == last || e==11 || e==18 || e==33 || e==53 || e==76 || e==92 || e==95) {
-                        t5 = false;
-                        t22 = false;
-                        t9 = false;
-                        t34 = false;
-                        t33 = false;
-                        t16 = false;
-                    }
-                }
-            }
-        }
-        for (int i = path_cnt - 1; i >= 1; i--) {
-            // System.out.printf("%d -> ", path[i] + 1);
-            if(path[i]==0&& t1){
-                cc[count]= "T1";
-                count++;
-            }
-            if(path[i]==3&& t2){
-                cc[count]= "T2";
-                count++;
-            }
-            if(path[i]==6&& t3){
-                cc[count]= "T3";
-                count++;
-            }
-            if(path[i]==8&& t4){
-                cc[count]= "T4";
-                count++;
-            }
-            if(path[i]==11&& t5){
-                cc[count]= "T5";
-                count++;
-            }
-            if(path[i]==12&& t6){
-                cc[count]= "T6";
-                count++;
-            }
-            if(path[i]==14&& t7){
-                cc[count]= "T7";
-                count++;
-            }
-            if(path[i]==15&& t8){
-                cc[count]= "T8";
-                count++;
-            }
-            if(path[i]==18&& t9){
-                cc[count]= "T9";
-                count++;
-            }
-            if(path[i]==20&& t10){
-                cc[count]= "T10";
-                count++;
-            }
-            if(path[i]==21&& t11){
-                cc[count]= "T11";
-                count++;
-            }
-            if(path[i]==22&& t12){
-                cc[count]= "T12";
-                count++;
-            }
-            if(path[i]==24&& t13){
-                cc[count]= "T13";
-                count++;
-            }
-            if(path[i]==29&& t14){
-                cc[count]= "T14";
-                count++;
-            }
-            if(path[i]==31&& t15){
-                cc[count]= "T15";
-                count++;
-            }
-            if(path[i]==33&& t16){
-                cc[count]= "T16";
-                count++;
-            }
-            if(path[i]==36&& t17){
-                cc[count]= "T17";
-                count++;
-            }
-            if(path[i]==38&& t18){
-                cc[count]= "T18";
-                count++;
-            }
-            if(path[i]==42&& t19){
-                cc[count]= "T19";
-                count++;
-            }
-            if(path[i]==46&& t20){
-                cc[count]= "T20";
-                count++;
-            }
-            if(path[i]==50&& t21){
-                cc[count]= "T21";
-                count++;
-            }
-            if(path[i]==53&& t22){
-                cc[count]= "T22";
-                count++;
-            }
-            if(path[i]==56&& t23){
-                cc[count]= "T23";
-                count++;
-            }
-            if(path[i]==59&& t24){
-                cc[count]= "T24";
-                count++;
-            }
-            if(path[i]==63&& t25){
-                cc[count]= "T25";
-                count++;
-            }
-            if(path[i]==64&& t26){
-                cc[count]= "T26";
-                count++;
-            }
-            if(path[i]==67&& t27){
-                cc[count]= "T27";
-                count++;
-            }
-            if(path[i]==72&& t28){
-                cc[count]= "T28";
-                count++;
-            }
-            if(path[i]==76&& t29){
-                cc[count]= "T29";
-                count++;
-            }
-            if(path[i]==79&& t30){
-                cc[count]= "T30";
-                count++;
-            }
-            if(path[i]==85&& t31){
-                cc[count]= "T31";
-                count++;
-            }
-            if(path[i]==89&& t32){
-                cc[count]= "T32";
-                count++;
-            }
-            if(path[i]==92&& t33){
-                cc[count]= "T33";
-                count++;
-            }
-            if(path[i]==95&& t34){
-                cc[count]= "T34";
-                count++;
-            }
-            if(path[i]==98&& t35){
-                cc[count]= "T35";
-                count++;
-            }
-        }
         //System.out.printf("%d .\n", path[i] + 1);
         setCc(cc);
-
-        if (t1){
-            sum_t++;
-        }
-        if (t2){
-            sum_t++;
-        }
-        if (t3){
-            sum_t++;
-        }
-        if (t4){
-            sum_t++;
-        }
-        if (t5){
-            sum_t++;
-        }
-        if (t6){
-            sum_t++;
-        }
-        if (t7){
-            sum_t++;
-        }
-        if (t8){
-            sum_t++;
-        }
-        if (t9){
-            sum_t++;
-        }
-        if (t10){
-            sum_t++;
-        }
-        if (t11){
-            sum_t++;
-        }
-        if (t12){
-            sum_t++;
-        }
-        if (t13){
-            sum_t++;
-        }
-        if (t14){
-            sum_t++;
-        }
-        if (t15){
-            sum_t++;
-        }
-        if (t16){
-            sum_t++;
-        }
-        if (t17){
-            sum_t++;
-        }
-        if (t18){
-            sum_t++;
-        }
-        if (t19){
-            sum_t++;
-        }
-        if (t20){
-            sum_t++;
-        }
-        if (t21){
-            sum_t++;
-        }
-        if (t22){
-            sum_t++;
-        }
-        if (t23){
-            sum_t++;
-        }
-        if (t24){
-            sum_t++;
-        }
-        if (t25){
-            sum_t++;
-        }
-        if (t26){
-            sum_t++;
-        }
-        if (t27){
-            sum_t++;
-        }
-        if (t28){
-            sum_t++;
-        }
-        if (t29){
-            sum_t++;
-        }
-        if (t30){
-            sum_t++;
-        }
-        if (t31){
-            sum_t++;
-        }
-        if (t32){
-            sum_t++;
-        }
-        if (t33){
-            sum_t++;
-        }
-        if (t34){
-            sum_t++;
-        }
-        if (t35){
-            sum_t++;
-        }
-
         setSum_t(sum_t);
+//        System.out.println("환승횟수 "+sum_t);
+//        for(int i = 0; i < count; i++){
+//            System.out.println("환승 " + cc[i]);
+//        }
     }
 
 
