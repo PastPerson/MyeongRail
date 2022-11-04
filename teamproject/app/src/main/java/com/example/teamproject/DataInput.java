@@ -1,16 +1,13 @@
 package com.example.teamproject;
 
 
-import android.os.Build;
-import android.util.Log;
-
-import androidx.annotation.RequiresApi;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DataInput {
-    ArrayList<Integer> station_index = new ArrayList<>();
-    int[] station_indexlist = {
+    ArrayList<String> station_index = new ArrayList<>();
+    String[] station_list = new String[111];
+    int[] station_info = { // 역간 이동시 소모 비용 정보가 들어있는 배열, 5개 단위로 0,1은 이동하는 두 역, 2,3,4는 시간, 거리, 비용을 의미함
             101, 102, 200, 500, 200,
             102, 103, 300, 400, 300,
             103, 104, 1000, 600, 500,
@@ -151,58 +148,132 @@ public class DataInput {
             904, 621, 250, 650, 650,
             621, 211, 300, 400, 440
     };
-    int[][] station_cost = new int[139][3];
-    int[][] station_set = new int[139][2];
+    int[][] station_cost = new int[139][3]; // [i][0,1,2]에 0은 시간, 1은 거리, 2는 비용이 저장된다.
+    String[][] station_set = new String[139][2]; // [i][0,1] 에 0과 1에 서로 이동하는 역이 저장된다. 예를 들어 101에서 102역으로 이동가능 하다면 101과 102가 들어있음
+    int[][] station_line = new int[111][2]; // 각 역이 어떤 호선에 포함돼있는지 저장하는 배열이다. 환승역이 아닐경우 두번째 요소는 0을 가진다.
+    int[][] trans_station = {
+            {101, 104, 107, 109, 112, 113, 115, 116, 119,
+            121, 122, 123, 202, 207, 209, 211, 214, 216,
+            303, 307, 403, 406, 409, 412, 416, 417, 503,
+            601, 605, 608, 614, 618, 621, 702, 705},
+            {0, 3, 6, 8, 11, 12, 14, 15, 18, 20, 21, 22,
+            24, 29, 31, 33, 36, 38, 42, 46, 50, 53, 56, 59,
+            63, 64, 67, 72, 76, 79, 85, 89, 92, 95, 98}
+    }; // 35개의 환승역이 존재한다. 첫 번째 배열은 환승역의 이름, 두 번째는 환승역의 인덱스이다.
 
     public DataInput(){
         int st_num = 101;
-        for (int i = 0; i < 23; i++) {
-            station_index.add(st_num);
+        int n = 0;
+        for (int i = 0; i < 23; i++, n++) {
+            station_index.add(String.valueOf(st_num));
+            station_list[n] = String.valueOf(st_num);
+            station_line[n][0] = 1;
+            station_line[n][1] = 0;
             st_num++;
         }
         st_num = 201;
-        for (int i = 0; i < 17; i++) {
-            station_index.add(st_num);
+        for (int i = 0; i < 17; i++, n++) {
+            station_index.add(String.valueOf(st_num));
+            station_list[n] = String.valueOf(st_num);
+            station_line[n][0] = 2;
+            station_line[n][1] = 0;
             st_num++;
         }
         st_num = 301;
-        for (int i = 0; i < 8; i++) {
-            station_index.add(st_num);
+        for (int i = 0; i < 8; i++, n++) {
+            station_index.add(String.valueOf(st_num));
+            station_list[n] = String.valueOf(st_num);
+            station_line[n][0] = 3;
+            station_line[n][1] = 0;
             st_num++;
         }
         st_num = 401;
-        for (int i = 0; i < 17; i++) {
-            station_index.add(st_num);
+        for (int i = 0; i < 17; i++, n++) {
+            station_index.add(String.valueOf(st_num));
+            station_list[n] = String.valueOf(st_num);
+            station_line[n][0] = 4;
+            station_line[n][1] = 0;
             st_num++;
         }
         st_num = 501;
-        for (int i = 0; i < 7; i++) {
-            station_index.add(st_num);
+        for (int i = 0; i < 7; i++, n++) {
+            station_index.add(String.valueOf(st_num));
+            station_list[n] = String.valueOf(st_num);
+            station_line[n][0] = 5;
+            station_line[n][1] = 0;
             st_num++;
         }
         st_num = 601;
-        for (int i = 0; i < 22; i++) {
-            station_index.add(st_num);
+        for (int i = 0; i < 22; i++, n++) {
+            station_index.add(String.valueOf(st_num));
+            station_list[n] = String.valueOf(st_num);
+            station_line[n][0] = 6;
+            station_line[n][1] = 0;
             st_num++;
         }
         st_num = 701;
-        for (int i = 0; i < 7; i++) {
-            station_index.add(st_num);
+        for (int i = 0; i < 7; i++, n++) {
+            station_index.add(String.valueOf(st_num));
+            station_list[n] = String.valueOf(st_num);
+            station_line[n][0] = 7;
+            station_line[n][1] = 0;
             st_num++;
         }
         st_num = 801;
-        for (int i = 0; i < 6; i++) {
-            station_index.add(st_num);
+        for (int i = 0; i < 6; i++, n++) {
+            station_index.add(String.valueOf(st_num));
+            station_list[n] = String.valueOf(st_num);
+            station_line[n][0] = 8;
+            station_line[n][1] = 0;
             st_num++;
         }
         st_num = 901;
-        for (int i = 0; i < 4; i++) {
-            station_index.add(st_num);
+        for (int i = 0; i < 4; i++, n++) {
+            station_index.add(String.valueOf(st_num));
+            station_list[n] = String.valueOf(st_num);
+            station_line[n][0] = 9;
+            station_line[n][1] = 0;
             st_num++;
         }
 
+        station_line[0][1] = 2; // 환승역이 속하는 다른 호선을 기록한다.
+        station_line[3][1] = 4;
+        station_line[6][1] = 3;
+        station_line[8][1] = 5;
+        station_line[11][1] = 9;
+        station_line[12][1] = 8;
+        station_line[14][1] = 4;
+        station_line[15][1] = 6;
+        station_line[18][1] = 9;
+        station_line[20][1] = 6;
+        station_line[21][1] = 5;
+        station_line[22][1] = 3;
+        station_line[24][1] = 7;
+        station_line[29][1] = 3;
+        station_line[31][1] = 5;
+        station_line[33][1] = 9;
+        station_line[36][1] = 8;
+        station_line[38][1] = 4;
+        station_line[42][1] = 7;
+        station_line[46][1] = 4;
+        station_line[50][1] = 5;
+        station_line[53][1] = 9;
+        station_line[56][1] = 8;
+        station_line[59][1] = 6;
+        station_line[63][1] = 7;
+        station_line[64][1] = 6;
+        station_line[67][1] = 7;
+        station_line[72][1] = 7;
+        station_line[76][1] = 9;
+        station_line[79][1] = 8;
+        station_line[85][1] = 7;
+        station_line[89][1] = 8;
+        station_line[92][1] = 9;
+        station_line[95][1] = 9;
+        station_line[98][1] = 8;
 
-        int n = 0;
+
+        n = 0;
         int index = 0;
         for (int i = 0; i < 139 * 5; i++) {
             if (n == 5) {
@@ -210,15 +281,15 @@ public class DataInput {
                 n = 0;
             }
             if (n < 2) {
-                station_set[index][n] = station_indexlist[i];
+                station_set[index][n] = String.valueOf(station_info[i]);
             } else {
-                station_cost[index][n - 2] = station_indexlist[i];
+                station_cost[index][n - 2] = station_info[i];
             }
             n++;
         }
     }
 
-    public int[][] getTime(){
+    public int[][] getTime(){ // 역간 이동 시간 배열을 반환한다.
         int[][] list = new int[111][111];
         for(int i = 0; i < 111; i++) {
             for(int j = 0; j < 111; j++) {
@@ -230,17 +301,16 @@ public class DataInput {
             }
         }
         int index = 0;
-        for(int i = 0; i < 139; i++) {
+        for(int i = 0; i < 139; i++, index++) {
             int a = station_index.indexOf(station_set[i][0]);
             int b = station_index.indexOf(station_set[i][1]);
             list[a][b] = station_cost[index][0];
             list[b][a] = station_cost[index][0];
-            index++;
         }
         return list;
     }
 
-    public int[][] getDist(){
+    public int[][] getDist(){ // 역간 이동 거리 배열을 반환한다.
         int[][] list = new int[111][111];
         for(int i = 0; i < 111; i++) {
             for(int j = 0; j < 111; j++) {
@@ -262,7 +332,7 @@ public class DataInput {
         return list;
     }
 
-    public int[][] getCost(){
+    public int[][] getCost(){ // 역간 이동 비용 배열을 반환한다.
         int[][] list = new int[111][111];
         for(int i = 0; i < 111; i++) {
             for(int j = 0; j < 111; j++) {
@@ -282,5 +352,20 @@ public class DataInput {
             index++;
         }
         return list;
+    }
+
+    public ArrayList<String> getIndexOfStation(){
+        return station_index; // 기차 역이 순서대로 들어있는 ArrayList반환
+    }
+    public String[] getStationList(){
+        return station_list;
+    }
+
+    public int[][] getTransStation(){
+        return trans_station;
+    }
+
+    public int[][] getStationLine(){
+        return station_line;
     }
 }
