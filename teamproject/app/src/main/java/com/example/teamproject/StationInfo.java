@@ -1,10 +1,9 @@
 package com.example.teamproject;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class DataInput {
+public class StationInfo {
     ArrayList<String> station_index = new ArrayList<>();
     String[] station_list = new String[111];
     int[] station_info = { // 역간 이동시 소모 비용 정보가 들어있는 배열, 5개 단위로 0,1은 이동하는 두 역, 2,3,4는 시간, 거리, 비용을 의미함
@@ -161,21 +160,21 @@ public class DataInput {
             63, 64, 67, 72, 76, 79, 85, 89, 92, 95, 98}
     }; // 35개의 환승역이 존재한다. 첫 번째 배열은 환승역의 이름, 두 번째는 환승역의 인덱스이다.
 
-    public DataInput(){
+    public StationInfo(){
         int st_num = 101;
         int n = 0;
         for (int i = 0; i < 23; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 1;
-            station_line[n][1] = 0;
+            station_line[n][0] = 1; // 1호선에 포함됨
+            station_line[n][1] = 0; // 기본적으로 하나의 호선에만 포함되므로 0 저장
             st_num++;
         }
         st_num = 201;
         for (int i = 0; i < 17; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 2;
+            station_line[n][0] = 2; // 2호선에 포함됨
             station_line[n][1] = 0;
             st_num++;
         }
@@ -183,7 +182,7 @@ public class DataInput {
         for (int i = 0; i < 8; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 3;
+            station_line[n][0] = 3; // 3호선에 포함됨
             station_line[n][1] = 0;
             st_num++;
         }
@@ -191,7 +190,7 @@ public class DataInput {
         for (int i = 0; i < 17; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 4;
+            station_line[n][0] = 4; // 4호선에 포함됨
             station_line[n][1] = 0;
             st_num++;
         }
@@ -199,7 +198,7 @@ public class DataInput {
         for (int i = 0; i < 7; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 5;
+            station_line[n][0] = 5; // 5호선에 포함됨
             station_line[n][1] = 0;
             st_num++;
         }
@@ -207,7 +206,7 @@ public class DataInput {
         for (int i = 0; i < 22; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 6;
+            station_line[n][0] = 6; // 6호선에 포함됨
             station_line[n][1] = 0;
             st_num++;
         }
@@ -215,7 +214,7 @@ public class DataInput {
         for (int i = 0; i < 7; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 7;
+            station_line[n][0] = 7; // 7호선에 포함됨
             station_line[n][1] = 0;
             st_num++;
         }
@@ -223,7 +222,7 @@ public class DataInput {
         for (int i = 0; i < 6; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 8;
+            station_line[n][0] = 8; // 8호선에 포함됨
             station_line[n][1] = 0;
             st_num++;
         }
@@ -231,7 +230,7 @@ public class DataInput {
         for (int i = 0; i < 4; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 9;
+            station_line[n][0] = 9; // 9호선에 포함됨
             station_line[n][1] = 0;
             st_num++;
         }
@@ -281,9 +280,9 @@ public class DataInput {
                 n = 0;
             }
             if (n < 2) {
-                station_set[index][n] = String.valueOf(station_info[i]);
+                station_set[index][n] = String.valueOf(station_info[i]); // 서로 이동가능한 역을 저장한다.
             } else {
-                station_cost[index][n - 2] = station_info[i];
+                station_cost[index][n - 2] = station_info[i]; // 서로 이동할 때 소모하는 비용들을 저장한다.
             }
             n++;
         }
@@ -294,9 +293,9 @@ public class DataInput {
         for(int i = 0; i < 111; i++) {
             for(int j = 0; j < 111; j++) {
                 if(i != j) {
-                    list[i][j] = 9999;
+                    list[i][j] = 9999; // 이동할 수 없는 역의 경우 소모값을 9999로 설정하기 위해 9999로 초기화
                 }else {
-                    list[i][j] = 0;
+                    list[i][j] = 0; // 자기 자신의 경우 소모값을 0으로 설정
                 }
             }
         }
@@ -304,8 +303,8 @@ public class DataInput {
         for(int i = 0; i < 139; i++, index++) {
             int a = station_index.indexOf(station_set[i][0]);
             int b = station_index.indexOf(station_set[i][1]);
-            list[a][b] = station_cost[index][0];
-            list[b][a] = station_cost[index][0];
+            list[a][b] = station_cost[index][0]; // 이동 가능한 역의 소모값을 저장한다.
+            list[b][a] = station_cost[index][0]; // 이동 가능한 역의 소모값을 저장한다.
         }
         return list;
     }
@@ -315,9 +314,9 @@ public class DataInput {
         for(int i = 0; i < 111; i++) {
             for(int j = 0; j < 111; j++) {
                 if(i != j) {
-                    list[i][j] = 9999;
+                    list[i][j] = 9999; // 이동할 수 없는 역의 경우 소모값을 9999로 설정하기 위해 9999로 초기화
                 }else {
-                    list[i][j] = 0;
+                    list[i][j] = 0; // 자기 자신의 경우 소모값을 0으로 설정
                 }
             }
         }
@@ -325,8 +324,8 @@ public class DataInput {
         for(int i = 0; i < 139; i++) {
             int a = station_index.indexOf(station_set[i][0]);
             int b = station_index.indexOf(station_set[i][1]);
-            list[a][b] = station_cost[index][1];
-            list[b][a] = station_cost[index][1];
+            list[a][b] = station_cost[index][1]; // 이동 가능한 역의 소모값을 저장한다.
+            list[b][a] = station_cost[index][1]; // 이동 가능한 역의 소모값을 저장한다.
             index++;
         }
         return list;
@@ -337,9 +336,9 @@ public class DataInput {
         for(int i = 0; i < 111; i++) {
             for(int j = 0; j < 111; j++) {
                 if(i != j) {
-                    list[i][j] = 9999;
+                    list[i][j] = 9999; // 이동할 수 없는 역의 경우 소모값을 9999로 설정하기 위해 9999로 초기화
                 }else {
-                    list[i][j] = 0;
+                    list[i][j] = 0; // 자기 자신의 경우 소모값을 0으로 설정
                 }
             }
         }
@@ -347,25 +346,25 @@ public class DataInput {
         for(int i = 0; i < 139; i++) {
             int a = station_index.indexOf(station_set[i][0]);
             int b = station_index.indexOf(station_set[i][1]);
-            list[a][b] = station_cost[index][2];
-            list[b][a] = station_cost[index][2];
+            list[a][b] = station_cost[index][2]; // 이동 가능한 역의 소모값을 저장한다.
+            list[b][a] = station_cost[index][2]; // 이동 가능한 역의 소모값을 저장한다.
             index++;
         }
         return list;
     }
 
     public ArrayList<String> getIndexOfStation(){
-        return station_index; // 기차 역이 순서대로 들어있는 ArrayList반환
+        return station_index; // 기차 역의 이름이 순서대로 들어있는 ArrayList반환
     }
     public String[] getStationList(){
         return station_list;
-    }
+    } // 기차 역의 이름이 순서대로 들어있는 String 배열 반환
 
     public int[][] getTransStation(){
         return trans_station;
-    }
+    } // 환승역에 대한 정보가 들어있는 배열 반환
 
     public int[][] getStationLine(){
         return station_line;
-    }
+    } // 각 역이 어느 호선에 포함됐는지에 대한 정보가 들어있는 배열 반환
 }
