@@ -62,17 +62,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 account.setPassword(str_pwd);
 
                                 // setValue -> database에 삽입
-                                database_ref.child("UserAccount").child(firebase_user.getUid()).setValue(account);
+                                account.accountToDatabase(database_ref);
 
                                 //이메일 인증
-                                firebase_user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(RegisterActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
+                                account.sendVeriftEmail(firebase_user);
+                               
                                 Toast.makeText(RegisterActivity.this, "회원가입에 성공하셨습니다", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(RegisterActivity.this, login_main.class);
                                 //startActivity(intent);

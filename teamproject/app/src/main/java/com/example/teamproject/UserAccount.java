@@ -1,5 +1,14 @@
 package com.example.teamproject;
 
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+
 /*
  사용자 계정 정보 모델 클래스
  */
@@ -41,4 +50,20 @@ public class UserAccount {
     }
 
     public boolean getIsManager(){return isManager;}
+
+    public void accountToDatabase(DatabaseReference databaseRef){
+        databaseRef.child("UserAccount").child(this.userName).setValue(this);
+    }
+    //이메일 인증
+    public void sendVeriftEmail(FirebaseUser fbuser){
+        fbuser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //Toast.makeText(RegisterActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    //해당 유저가 작성한 게시글 불러오는 기능
 }
