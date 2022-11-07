@@ -8,8 +8,9 @@ import java.util.ArrayList;
 public class Dijkstraaa {
     Context context;
     ArrayList<String> station_index = new ArrayList<>(); // 역 이름이 들어있는 ArrayList
+    String[] station_list = new String[111];
     int[][] station_line;  // 각 역이 포함된 호선 정보를 담을 배열
-    int[][] trans_station; // 환승역 정보를 담을 배열
+    int[] trans_station; // 환승역 정보를 담을 배열
 
     public int getSum_t() {
         return sum_t;
@@ -78,6 +79,7 @@ public class Dijkstraaa {
         this.context = context;
         StationInfo data = new StationInfo(); // 지하철 역에 대한 정보를 제공하는 클래스 객체
         this.station_index = data.getIndexOfStation();
+        this.station_list = data.getStationList();
         this.time = data.getTime(); // 역간 이동 시 소모 시간 정보가 들어있는 배열을 받아온다.
         this.dist = data.getDist(); // 역간 이동 시 이동 거리 정보가 들어있는 배열을 받아온다.
         this.cost = data.getCost(); // 역간 이동 시 소모 비용 정보가 들어있는 배열을 받아온다.
@@ -92,13 +94,13 @@ public class Dijkstraaa {
             int now = path[i]; // 현재 역
             int next = path[i-1]; // 다음 역
             for(int j = 0; j < 35; j++){
-                if(now == trans_station[1][j]){ // 이전역과 다음역의 호선 정보를 통해 환승여부를 판단한다.
+                if(now == trans_station[j]){ // 이전역과 다음역의 호선 정보를 통해 환승여부를 판단한다.
                     if(station_line[prev][0] == station_line[now][0]){
                         if(station_line[now][0] == station_line[next][0] || station_line[now][0] == station_line[next][1]){
                             trans[j] = false;
                         }else{
                             trans[j] = true;
-                            cc[count++] = String.valueOf(trans_station[0][j]);
+                            cc[count++] = station_list[trans_station[j]];
                             sum_t++;
                         }
                     } else if(station_line[prev][0] == station_line[now][1]){
@@ -106,7 +108,7 @@ public class Dijkstraaa {
                             trans[j] = false;
                         }else{
                             trans[j] = true;
-                            cc[count++] = String.valueOf(trans_station[0][j]);
+                            cc[count++] = station_list[trans_station[j]];
                             sum_t++;
                         }
                     } else if(station_line[prev][1] != 0 && station_line[prev][1] == station_line[now][0]){
@@ -114,7 +116,7 @@ public class Dijkstraaa {
                             trans[j] = false;
                         }else{
                             trans[j] = true;
-                            cc[count++] = String.valueOf(trans_station[0][j]);
+                            cc[count++] = station_list[trans_station[j]];
                             sum_t++;
                         }
                     }else if(station_line[prev][1] != 0 && station_line[prev][1] == station_line[now][1]){
@@ -122,7 +124,7 @@ public class Dijkstraaa {
                             trans[j] = false;
                         }else{
                             trans[j] = true;
-                            cc[count++] = String.valueOf(trans_station[0][j]);
+                            cc[count++] = station_list[trans_station[j]];
                             sum_t++;
                         }
                     }
