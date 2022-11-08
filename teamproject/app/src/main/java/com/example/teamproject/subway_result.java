@@ -11,7 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public class subway_result extends AppCompatActivity {
-    private Dijkstraaa sub;
+    private Dijkstra sub;
     private String start_point="101";
     private String transfer_point="0";
     private String end_point="103";
@@ -33,7 +33,7 @@ public class subway_result extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subway_result);
-        sub=new Dijkstraaa(subway_result.this);
+        sub=new Dijkstra(subway_result.this);
         sub_result=findViewById(R.id.subway_result);
         st_txt=findViewById(R.id.startpoint_txt);
         tf_txt=findViewById(R.id.transferpoint_txt);

@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.ArrayList;
 
 
-public class Dijkstraaa {
+public class Dijkstra {
     Context context;
     ArrayList<String> station_index = new ArrayList<>(); // 역 이름이 들어있는 ArrayList
     String[] station_list = new String[111];
@@ -75,7 +75,7 @@ public class Dijkstraaa {
     int[][] cost; // 이동하는데 소모하는 비용
 
 
-    public Dijkstraaa(Context context){
+    public Dijkstra(Context context){
         this.context = context;
         StationInfo data = new StationInfo(); // 지하철 역에 대한 정보를 제공하는 클래스 객체
         this.station_index = data.getIndexOfStation();
