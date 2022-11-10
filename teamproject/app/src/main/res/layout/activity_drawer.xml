@@ -56,14 +56,25 @@
         android:textAlignment="center"
         android:textColor="#ffffff"
         android:textSize="40dp"></TextView>
+    <TextView
+        android:id="@+id/list_go"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/border_background"
+        android:clickable="true"
+        android:text="게시판"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="40dp"></TextView>
 
     <TextView
         android:id="@+id/nav_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="550dp"
-
+        android:layout_marginTop="450dp"
+        android:layout_marginLeft="38dp"
         android:text="로그아웃"
         android:textColor="#ffffff"
         android:textSize="15dp"></TextView>
