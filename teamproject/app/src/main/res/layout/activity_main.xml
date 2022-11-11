@@ -36,17 +36,21 @@
           android:text="역 이름을 입력하세요"></TextView>
 
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-      <ImageView
-          android:id="@+id/image_view"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:layout_gravity="bottom"
-          android:src="@drawable/subway"></ImageView>
-    </LinearLayout>
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/photoview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
+        />
+
+
+
+    </FrameLayout>
   </LinearLayout>
 
   <include layout="@layout/activity_drawer"></include>
