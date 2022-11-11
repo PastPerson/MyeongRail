@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class Dijkstraaa {
     Context context;
-    ArrayList<String> station_index = new ArrayList<>();
-    int[][] station_line;
-    int[][] trans_station;
+    ArrayList<String> station_index = new ArrayList<>(); // 역 이름이 들어있는 ArrayList
+    int[][] station_line;  // 각 역이 포함된 호선 정보를 담을 배열
+    int[][] trans_station; // 환승역 정보를 담을 배열
 
     public int getSum_t() {
         return sum_t;
@@ -29,7 +29,7 @@ public class Dijkstraaa {
         this.cc = cc;
     }
 
-    String cc[]=new String[111];
+    String cc[]=new String[111]; // 환승한 역이름을 저장할 배열
 
     int sum_t=0;
     boolean[] trans = new boolean[35]; // 환승역의 환승여부를 저장하는 배열이다.
@@ -76,7 +76,7 @@ public class Dijkstraaa {
 
     public Dijkstraaa(Context context){
         this.context = context;
-        DataInput data = new DataInput(); // 지하철 역에 대한 정보를 제공하는 클래스 객체
+        StationInfo data = new StationInfo(); // 지하철 역에 대한 정보를 제공하는 클래스 객체
         this.station_index = data.getIndexOfStation();
         this.time = data.getTime(); // 역간 이동 시 소모 시간 정보가 들어있는 배열을 받아온다.
         this.dist = data.getDist(); // 역간 이동 시 이동 거리 정보가 들어있는 배열을 받아온다.
@@ -88,11 +88,11 @@ public class Dijkstraaa {
     void trans_station(int[] path, int path_cnt, int s, int e){ // s에서 e까지 도달하는 경로에서 지나는 환승역을 구한다.
         count = 0;
         for(int i = path_cnt-2; i >= 1; i--){
-            int prev = path[i+1];
-            int now = path[i];
-            int next = path[i-1];
+            int prev = path[i+1]; // 이전 역
+            int now = path[i]; // 현재 역
+            int next = path[i-1]; // 다음 역
             for(int j = 0; j < 35; j++){
-                if(now == trans_station[1][j]){
+                if(now == trans_station[1][j]){ // 이전역과 다음역의 호선 정보를 통해 환승여부를 판단한다.
                     if(station_line[prev][0] == station_line[now][0]){
                         if(station_line[now][0] == station_line[next][0] || station_line[now][0] == station_line[next][1]){
                             trans[j] = false;

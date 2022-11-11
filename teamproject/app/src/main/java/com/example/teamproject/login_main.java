@@ -31,7 +31,7 @@ public class login_main extends AppCompatActivity {
         setContentView(R.layout.activity_login_main);
 
         firebase_auth = FirebaseAuth.getInstance(); //파이어베이스 인스터스값
-        database_reference = FirebaseDatabase.getInstance().getReference("login");//
+        database_reference = FirebaseDatabase.getInstance().getReference("login");
 
         id = findViewById(R.id.user_id);
         pw = findViewById(R.id.user_pwd);
@@ -40,23 +40,31 @@ public class login_main extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {//로그인 버튼을 눌렀을때 이벤트
             @Override
             public void onClick(View v) {
-                String str_id = id.getText().toString();
-                String str_pwd = pw.getText().toString();
+                try {
+                    String str_id = id.getText().toString();
+                    String str_pwd = pw.getText().toString();
 
-                firebase_auth.signInWithEmailAndPassword(str_id, str_pwd).addOnCompleteListener(login_main.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            // 로그인 성공!!
-                            Intent intent = new Intent(login_main.this, MainActivity.class);
-                            intent.putExtra("ID",str_id);
-                            startActivity(intent);
-                            finish();
-                        } else{
-                            Toast.makeText(login_main.this, "로그인 실패..", Toast.LENGTH_SHORT).show();
+                    firebase_auth.signInWithEmailAndPassword(str_id, str_pwd).addOnCompleteListener(login_main.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                if (firebase_auth.getCurrentUser().isEmailVerified()) {//이메일 인증을 진행한 계정만 로그인이 가능함
+                                    // 로그인 성공!!
+                                    Intent intent = new Intent(login_main.this, MainActivity.class);
+                                    intent.putExtra("ID", str_id);
+                                    startActivity(intent);
+                                    finish();
+                                } else {//계정은 존재하나 이메일 인증이 되지 않은 경우
+                                    Toast.makeText(login_main.this, "이메일 인증을 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(login_main.this, "로그인 실패..", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }catch(IllegalArgumentException e){
+                    Toast.makeText(login_main.this, "아이디와 비밀번호를 입력해주세요", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

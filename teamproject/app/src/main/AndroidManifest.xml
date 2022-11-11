@@ -12,6 +12,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Teamproject"
         tools:targetApi="31">
+        <activity android:name=".ListActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib.name"
+                android:value=""/>
+        </activity>
+        <activity
+            android:name=".subway_result"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Email_Authentication"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".RegisterActivity"
             android:exported="false">
@@ -33,6 +53,13 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity android:name=".PostWriteActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value=""/>
+        </activity>
+
         <activity
             android:name=".FirstScreen"
             android:exported="true"
