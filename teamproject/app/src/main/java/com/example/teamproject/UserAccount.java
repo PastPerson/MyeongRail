@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
@@ -54,6 +55,11 @@ public class UserAccount {
     public void accountToDatabase(DatabaseReference databaseRef){
         databaseRef.child("UserAccount").child(this.userName).setValue(this);
     }
+    public boolean isLogin(){
+        FirebaseAuth fb = FirebaseAuth.getInstance();
+        if(fb.getCurrentUser() == null){return false;}
+        else{return true;}
+    }
     //이메일 인증
     public void sendVeriftEmail(FirebaseUser fbuser){
         fbuser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -65,5 +71,6 @@ public class UserAccount {
             }
         });
     }
+
     //해당 유저가 작성한 게시글 불러오는 기능
 }
