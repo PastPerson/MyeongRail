@@ -17,25 +17,23 @@ import android.graphics.PointF;
 import android.os.Bundle;
 
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
-import android.view.KeyEvent;
 
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.davemorrissey.labs.subscaleview.ImageSource;
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,27 +44,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
+import java.util.EventListener;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    enum TOUCH_MODE {
-        NONE, //터치
-        SINGLE, //한손가락
-        MULTI //두손가락
-    }
-    Bitmap bitmap;
+
     private FirebaseAuth firebase_auth;
     
-    private TOUCH_MODE touchMode;
-    private Matrix matrix;      //기존 매트릭스
-    private Matrix savedMatrix; //작업 후 이미지에 매핑할 매트릭스
-    private PointF startPoint;  //한손가락 터치 이동 포인트
-    private PointF midPoint;    //두손가락 터치 시 중신 포인트
-    private float oldDistance;  //터치 시 두손가락 사이의 거리
-    private double oldDegree = 0; // 두손가락의 각도
-    private ImageView image_view; //이미지뷰
+
+
     private DrawerLayout drawerLayout; //메인 드로어
     private View dr_view; // 로그인 전 드로어뷰
     private TextView login_btn, logout_btn;//드로어뷰의 로그인 버튼 로그아웃버튼
@@ -75,12 +64,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser mFirebase_user;// 데이터베이스 유저
     private DatabaseReference mFirebaseDatabase;//데이터 베이스 레퍼런스
     private TextView list_btn; //드로어 뷰의 게시판 버튼
-    private BitmapFactory.Options getBitmapSize(File imageFile){
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds=true;
-        BitmapFactory.decodeFile(imageFile.getAbsolutePath(),options);
-        return options;
-    }
+    private Bitmap myBitmap;
+    private PhotoView photoview;
+    private Station_coordinate st;
+    private String start_point=null;
+    private String transfer_point=null;
+    private String end_point=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,19 +84,78 @@ public class MainActivity extends AppCompatActivity {
         EditText search = findViewById(R.id.search_main);
         Button menu_button=findViewById(R.id.menu_button);
         profile_id=findViewById(R.id.profile_id);
-        //image_view= findViewById(R.id.image_view);
-        //image_view.setOnTouchListener(onTouch);
-        //image_view.setScaleType(ImageView.ScaleType.MATRIX);
+        st=new Station_coordinate();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);//메인 레이아웃
         drawerLayout.setDrawerListener(listener);//메인 레이아웃
         dr_view = (View) findViewById(R.id.drawerView);//로그인 전 사이드 레이아웃
         profile_id=(TextView)findViewById(R.id.profile_id);
-        /*image_view.setImageBitmap(bitmap);
-        matrix = new Matrix();
-        savedMatrix=new Matrix();*/
-        PhotoView photoview=findViewById(R.id.photoview);
+        myBitmap=BitmapFactory.decodeResource(getResources(),R.drawable.subway);
+        photoview=findViewById(R.id.photoview);
         photoview.setImageResource(R.drawable.subway);
+        Intent get_intent=getIntent();
+        try{
+            if(start_point==null)
+                start_point=get_intent.getStringExtra("start_point");//시작역 받는 변수
+            if(transfer_point==null)
+                transfer_point=get_intent.getStringExtra("transfer_point");//경유 역 받는 변수
+            if(end_point==null)
+                end_point=get_intent.getStringExtra("end_point");//도착역 받는 변수
+        }catch(NullPointerException e){}
 
+        photoview.setOnPhotoTapListener(new OnPhotoTapListener() {
+
+
+            @Override
+            public void onPhotoTap(ImageView view, float x, float y) {
+                int old_x=(int)(myBitmap.getWidth()*x);
+                int old_y=(int)(myBitmap.getHeight()*y);
+                int station=st.Check_Coor(old_x,old_y);
+                Intent istate=getIntent();
+                int state=istate.getIntExtra("state",0);
+                //데이터 전달
+                Log.d("viewTest", "좌표 : "+old_x+", "+old_y);
+                Log.d("viewTest","크기: "+myBitmap.getWidth()+" "+myBitmap.getHeight());
+                if(station!=0) {
+                    switch (state) {
+                        case (0):
+                            Intent intent = new Intent(MainActivity.this, PopupActivity.class);
+                            intent.putExtra("data", Integer.toString(station));
+                            startActivityForResult(intent, 1);
+                            break;
+                        case (1):
+                            intent=new Intent(MainActivity.this,subway_result.class);
+                            start_point=Integer.toString(station);
+                            if(start_point.equals(transfer_point)) {transfer_point=null;}
+                            else if(start_point.equals(end_point)){end_point=null;}
+                            intent.putExtra("start_point",start_point);
+                            if(transfer_point!=null){intent.putExtra("transfer_point",transfer_point);}
+                            if(end_point!=null){intent.putExtra("end_point",end_point);}
+                            startActivity(intent);
+                            break;
+                        case(2):
+                            intent=new Intent(MainActivity.this,subway_result.class);
+                            transfer_point=Integer.toString(station);
+                            if(transfer_point.equals(start_point)) {start_point=null;}
+                            else if(transfer_point.equals(end_point)){end_point=null;}
+                            intent.putExtra("transfer_point",transfer_point);
+                            if(start_point!=null){intent.putExtra("start_point",start_point);}
+                            if(end_point!=null){intent.putExtra("end_point",end_point);}
+                            startActivity(intent);
+                            break;
+                        case(3):
+                            intent=new Intent(MainActivity.this,subway_result.class);
+                            end_point=Integer.toString(station);
+                            if(end_point.equals(start_point)) {start_point=null;}
+                            else if(end_point.equals(transfer_point)){transfer_point=null;}
+                            intent.putExtra("end_point",end_point);
+                            intent.putExtra("start_point",start_point);
+                          intent.putExtra("transfer_point",transfer_point);
+                            startActivity(intent);
+                            break;
+                    }
+                }
+            }
+        });
 
         if(firebase_auth.getInstance().getCurrentUser() != null){
             login_btn.setVisibility(View.GONE);
@@ -165,48 +213,6 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(dr_view);
             }
         });
-        /*image_view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                int parentWidth = ((ViewGroup)v.getParent()).getWidth();    // 부모 View 의 Width
-                int parentHeight = ((ViewGroup)v.getParent()).getHeight();    // 부모 View 의 Height
-                float oldXvalue=0;
-                float oldYvalue=0;
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    // 뷰 누름
-                     oldXvalue = event.getRawX();
-                     oldYvalue = event.getY();
-                    Log.d("viewTest", "oldXvalue : "+ oldXvalue + " oldYvalue : " + oldYvalue);    // View 내부에서 터치한 지점의 상대 좌표값.
-                    Log.d("viewTest", "v.getX() : "+v.getX());    // View 의 좌측 상단이 되는 지점의 절대 좌표값.
-                    Log.d("viewTest", "RawX : " + event.getRawX() +" RawY : " + event.getRawY());    // View 를 터치한 지점의 절대 좌표값.
-                    Log.d("viewTest", "v.getHeight : " + v.getHeight() + " v.getWidth : " + v.getWidth());    // View 의 Width, Height
-
-                }else if(event.getAction() == MotionEvent.ACTION_MOVE){
-                    // 뷰 이동 중
-                    v.setX(v.getX() + (event.getX()) - (v.getWidth()/2));
-                    v.setY(v.getY() + (event.getY()) - (v.getHeight()/2));
-
-                }else if(event.getAction() == MotionEvent.ACTION_UP){
-                    // 뷰에서 손을 뗌
-
-                    /*if(v.getX() > 0){
-                        v.setX(0);
-                    }else if((v.getX() + v.getWidth()) < parentWidth){
-                        v.setX(parentWidth - v.getWidth());
-                    }
-
-                    if(v.getY() > 0){
-                        v.setY(0);
-                    }else if((v.getY() + v.getHeight()) < parentHeight){
-                        v.setY(parentHeight - v.getHeight());
-                    }*/
-
-              /*  }
-                return true;
-            }
-        });*/
-
     }
 
     DrawerLayout.DrawerListener listener = new DrawerLayout.DrawerListener() {
