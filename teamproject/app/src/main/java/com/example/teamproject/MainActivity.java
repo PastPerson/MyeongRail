@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         login_btn= (TextView) findViewById(R.id.menu_login);
         logout_btn = findViewById(R.id.nav_logout);
         list_btn=(TextView)findViewById(R.id.list_go);
-        EditText search = findViewById(R.id.search_main);
+        TextView search = findViewById(R.id.search_main);
         Button menu_button=findViewById(R.id.menu_button);
         profile_id=findViewById(R.id.profile_id);
         st=new Station_coordinate();
@@ -187,9 +187,9 @@ public class MainActivity extends AppCompatActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, search_activity_first.class));
-            }
-        });
+                startActivity(new Intent(MainActivity.this, Search.class));
+
+            }});
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
