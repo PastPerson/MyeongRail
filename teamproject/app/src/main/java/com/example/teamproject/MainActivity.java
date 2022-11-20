@@ -141,6 +141,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 drawerLayout.openDrawer(dr_view);
+                Dijkstra d = new Dijkstra(MainActivity.this);
+                d.check("101","108");
+//                System.out.println("m: "+ d.getBTime().getTime());
+//                d.check2("101","108");
+//                d.check3("101","108");
             }
         });
     }

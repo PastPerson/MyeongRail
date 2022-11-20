@@ -79,38 +79,45 @@ class ResearchRecord{
 }
 public class StationDensity {
     private DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("density");
-
+    private ResearchRecord change_value = null;
     public StationDensity(){
 //        database_ref = FirebaseDatabase.getInstance().getReference("station_density");
 //        database_ref.setValue("101");
     }
 
-    public void addRecord(Data a, float num){
-        String[] path = new String[111];
-        StationInfo s = new StationInfo();
-
-        for(int i = 0; i < 111; i++){
-            if(a.getPath()[i] != -1){
-                path[i] = s.getStationList()[a.getPath()[i]];
-//                System.out.println(path[i]);
-                if(path[i] == a.getEnd()) break;
-                int finalI = i;
-                database_ref.child("station").child(path[i]).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        ResearchRecord r = task.getResult().getValue(ResearchRecord.class);
-                        if (r == null) {
-                            database_ref.child("station").child(path[finalI]).setValue(new ResearchRecord(path[finalI]));
-                        }else{
+    public void addRecord(Data a, Data b, Data c) {
+        database_ref.child("station").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                float[] path = new float[111];
+                StationInfo s = new StationInfo();
+                String[] st_list = s.getStationList();
+                for(int i = 0; i < 111; i++){
+                    if(i < a.getPath_cnt()){
+                        path[a.getPath()[i]] += (float) 0.7;
+                    }
+                    if(i < b.getPath_cnt()){
+                        path[b.getPath()[i]] += (float) 0.2;
+                    }
+                    if(i < c.getPath_cnt()){
+                        path[c.getPath()[i]] += (float) 0.1;
+                    }
+                }
+                for(int i = 0; i < 111; i++){
+                    if(path[i] != 0){
+                        ResearchRecord r = task.getResult().child(st_list[i]).getValue(ResearchRecord.class);
+                        if(r == null){
+                            database_ref.child("station").child(st_list[i]).setValue(new ResearchRecord(st_list[i]));
+                        } else{
                             int lastAB = r.getAb();
                             LocalTime now = LocalTime.now();
-                            if(now.getMinute() < 30){
+                            if (now.getMinute() < 30) {
                                 r.setAb(1);
 //                                if(lastAB == 0){
 //                                    r.setA_search(0);
 //                                    r.setC_search(r.getA_search());
 //                                }
-                            }else{
+                            } else {
                                 r.setAb(0);
 //                                if(lastAB == 1){
 //                                    r.setB_search(0);
@@ -118,20 +125,19 @@ public class StationDensity {
 //                                }
                             }
 
-                            if(r.getAb() == 0) {
-                                r.setA_search(r.getA_search() + num);
-                                System.out.println("fi call "+r.getA_search() + "path " +path[finalI]);
-                            }else{
-                                r.setB_search(r.getB_search() + num);
-                                System.out.println("fi call "+r.getB_search()+ "path " +path[finalI]);
+                            if (r.getAb() == 0) {
+                                r.setA_search(r.getA_search() + path[i]);
+                                    System.out.println("fi call " + r.getA_search() + " path " + st_list[i]);
+                            } else {
+                                r.setB_search(r.getB_search() + path[i]);
+                                    System.out.println("fi call " + r.getB_search() + "path " + st_list[i]);
                             }
-                            database_ref.child("station").child(path[finalI]).setValue(r);
+                            database_ref.child("station").child(st_list[i]).setValue(r);
                         }
                     }
-                });
-            }else{
-                break;
+                }
             }
-        }
+        });
     }
+
 }

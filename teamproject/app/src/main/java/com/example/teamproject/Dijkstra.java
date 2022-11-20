@@ -351,9 +351,9 @@ public class Dijkstra {
                 break;
             k[0] = via[0][k[0]];
         }
+        path[path_cnt] = -1;
         trans_station(path, path_cnt, s, e);
         b_time = new Data(atime, km, charge, start, finish, cc, sum_t, path, path_cnt);
-        density.addRecord(b_time, (float) 0.7);
 
         atime = distance1[1][e];
         km = distance[1][e];
@@ -370,7 +370,6 @@ public class Dijkstra {
         path[path_cnt] = -1;
         trans_station(path, path_cnt, s, e);
         b_dist = new Data(atime, km, charge, start, finish, cc, sum_t, path, path_cnt);
-        density.addRecord(b_dist, (float) 0.2);
 
         atime = distance1[2][e];
         km = distance[2][e];
@@ -388,42 +387,111 @@ public class Dijkstra {
 
         trans_station(path, path_cnt, s, e);
         b_charge = new Data(atime, km, charge, start, finish, cc, sum_t, path, path_cnt);
-        density.addRecord(b_charge, (float) 0.1);
+        density.addRecord(b_time, b_dist, b_charge);
     }
 
-    void check(String start, String via, String end){
-        int s = station_index.indexOf(start);
-        int e = station_index.indexOf(end);
-        check(start, via);
-        Data first_time = getBTime();
-        Data first_dist = getBDist();
-        Data  first_charge = getBCharge();
-        check(via, end);
-        b_time = datasquash(first_time, getBTime());
-        b_dist = datasquash(first_dist, getBDist());
-        b_charge = datasquash(first_charge, getBCharge());
-    }
-    int[] pathappend(int[] a, int alen, int[] b, int blen){
-        int[] c = new int[alen + blen];
-        System.arraycopy(a, 0, c, 0, alen);
-        System. arraycopy(b, 1, c, alen, blen-1);
-        return c;
-    }
-
-    Data datasquash(Data a, Data b){
-        int time = a.getTime()+b.getTime();
-        int dist = a.getDist()+b.getDist();
-        int charge = a.getCharge()+b.getCharge();
-        String start = a.getStart();
-        String end = b.getEnd();
-        int[] path = pathappend(b.getPath(),b.getPath_cnt(), a.getPath(), a.getPath_cnt());
-        int path_cnt = a.getPath_cnt()+b.getPath_cnt()-1;
-        trans_station(path, path_cnt, station_index.indexOf(start), station_index.indexOf(end));
-        String[] trans = getCc();
-        int sum_t = getSum_t();
-        return new Data(time, dist, charge, start, end, trans, sum_t, path, path_cnt);
-    }
-
+//    void check(String start, String via, String end){
+//        int s = station_index.indexOf(start);
+//        int e = station_index.indexOf(end);
+//        check(start, via);
+//        Data first_time = getBTime();
+//        Data first_dist = getBDist();
+//        Data  first_charge = getBCharge();
+//        check(via, end);
+//        b_time = datasquash(first_time, getBTime());
+//        b_dist = datasquash(first_dist, getBDist());
+//        b_charge = datasquash(first_charge, getBCharge());
+//    }
+//    int[] pathappend(int[] a, int alen, int[] b, int blen){
+//        int[] c = new int[alen + blen];
+//        System.arraycopy(a, 0, c, 0, alen);
+//        System. arraycopy(b, 1, c, alen, blen-1);
+//        return c;
+//    }
+//
+//    Data datasquash(Data a, Data b){
+//        int time = a.getTime()+b.getTime();
+//        int dist = a.getDist()+b.getDist();
+//        int charge = a.getCharge()+b.getCharge();
+//        String start = a.getStart();
+//        String end = b.getEnd();
+//        int[] path = pathappend(b.getPath(),b.getPath_cnt(), a.getPath(), a.getPath_cnt());
+//        int path_cnt = a.getPath_cnt()+b.getPath_cnt()-1;
+//        trans_station(path, path_cnt, station_index.indexOf(start), station_index.indexOf(end));
+//        String[] trans = getCc();
+//        int sum_t = getSum_t();
+//        return new Data(time, dist, charge, start, end, trans, sum_t, path, path_cnt);
+//    }
+//
+//    void check1(String start, String finish){
+//        int i, j, k = 0, min,min2,min3; /* i, j, k = for문을 위해 생성
+//				  							  s = 시작노드 입력값
+//				  							  e = 끝 노드 입력값
+//				  							  min = 최소값을 찾기 위함*/
+//        int s = station_index.indexOf(start);
+//        int e = station_index.indexOf(finish);
+//        int[] v = new int[111]; //이동하는 최단 거리 확인
+//        int[] distance = new int[111];//지나간 노드 확인
+//        int[] distance1 = new int[111];//지나간 노드 확인
+//        int[] distance2 = new int[111];//지나간 노드 확인
+//        int[] via = new int[111]; //지나간 노드를 오름차순으로 정렬해서 저장
+//        for (j = 0; j < 111; j++) {
+//            v[j] = 0;//초기화
+//            distance[j] = INF; //j의 거리를 아직 연결되지 않음을 설정
+//        }
+//        distance[s] = 0;
+//
+//        for (i = 0; i < 111; i++) {
+//            min2 = INF;  //최소값을 아직 연결되지 않음을 설정
+//            for (j = 0; j < 111; j++) {
+//                if (v[j] == 0 && distance[j] < min2)
+//                //이웃한 노드 중 방문하지 않은 노드일 경우
+//                {
+//                    k = j;//최단거리 노드번호를 k에 저장
+//                    min = distance[j];//min에 최단거리를 장
+//                    min2 = distance1[j];
+//                    min3 = distance2[j];
+//
+//                }
+//            }
+//
+//
+//            v[k] = 1;
+//            if (min2 == INF)
+//                break;
+//
+//            for (j = 0; j < 111; j++) {
+//                if (distance[j] > distance[k] + dist[k][j]) {
+//                    distance[j] = distance[k] + dist[k][j];
+//                    distance1[j] = distance1[k] + time[k][j];
+//                    distance2[j] = distance2[k] + cost[k][j];
+//                    via[j] = k;
+//                }
+//            }
+//        }
+//
+//
+//
+//        km = distance[e];
+//        setKm(km);
+//        atime = distance1[e];
+//        setAtime(atime);
+//        charge = distance2[e];
+//        setCharge(charge);
+//        int path[] = new int[111];
+//        int path_cnt = 0;
+//        k = e;
+//        while (true) {
+//            path[path_cnt++] = k;
+//            if (k == s)
+//                break;
+//            k = via[k];
+//        }
+//        // System.out.print(" 경로 :");
+//
+//        trans_station(path, path_cnt, s, e);
+//    }
+//
 //    void check2(String start, String finish){
 //        int i, j, k = 0, min,min2,min3; /* i, j, k = for문을 위해 생성
 //				  							  s = 시작노드 입력값
