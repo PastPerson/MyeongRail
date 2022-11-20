@@ -119,7 +119,7 @@
             android:layout_width="180dp"
             android:layout_height="45dp"
             android:background="@drawable/border_background"
-            android:text="1호선"
+            android:text="예상 밀집도:여유"
             android:textAlignment="center"
             android:gravity="center"
             android:layout_marginTop="170dp"
@@ -147,6 +147,14 @@
             android:textSize="34sp"
             android:layout_marginTop="150dp"
             android:layout_marginLeft="270dp"></TextView>
+
+        <Button
+            android:id="@+id/change_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:layout_marginLeft="160dp"
+            android:text="전환" />
     </FrameLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -243,7 +251,7 @@
             android:id="@+id/radio_distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="최소 환승"
+            android:text="최단거리"
             android:layout_marginEnd="5dp"
             android:textSize="10dp"/>
 

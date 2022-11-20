@@ -90,6 +90,10 @@
         <item>58</item>
         <item>59</item>
     </string-array>
-
-    [출처] 안드로이드 스피너 (Selectbox) 구현 방법|작성자 히키코보라
+    <string name="subway_result"></string>
+    <string-array name="selectSearch">
+        <item>출발</item>
+        <item>경유</item>
+        <item>도착</item>
+    </string-array>
 </resources>

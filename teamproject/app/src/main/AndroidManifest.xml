@@ -26,6 +26,12 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity android:name=".Search"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value=""></meta-data>
+        </activity>
         <activity
             android:name=".RegisterActivity"
             android:exported="false">
@@ -40,6 +46,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <activity
             android:name=".search_activity_first"
             android:exported="false">
