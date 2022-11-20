@@ -67,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap myBitmap;
     private PhotoView photoview;
     private Station_coordinate st;
-
+    private String start_point=null;
+    private String transfer_point=null;
+    private String end_point=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         login_btn= (TextView) findViewById(R.id.menu_login);
         logout_btn = findViewById(R.id.nav_logout);
         list_btn=(TextView)findViewById(R.id.list_go);
-        EditText search = findViewById(R.id.search_main);
+        TextView search = findViewById(R.id.search_main);
         Button menu_button=findViewById(R.id.menu_button);
         profile_id=findViewById(R.id.profile_id);
         st=new Station_coordinate();
@@ -90,8 +92,15 @@ public class MainActivity extends AppCompatActivity {
         myBitmap=BitmapFactory.decodeResource(getResources(),R.drawable.subway);
         photoview=findViewById(R.id.photoview);
         photoview.setImageResource(R.drawable.subway);
-
-
+        Intent get_intent=getIntent();
+        try{
+            if(start_point==null)
+                start_point=get_intent.getStringExtra("start_point");//시작역 받는 변수
+            if(transfer_point==null)
+                transfer_point=get_intent.getStringExtra("transfer_point");//경유 역 받는 변수
+            if(end_point==null)
+                end_point=get_intent.getStringExtra("end_point");//도착역 받는 변수
+        }catch(NullPointerException e){}
 
         photoview.setOnPhotoTapListener(new OnPhotoTapListener() {
 
@@ -101,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 int old_x=(int)(myBitmap.getWidth()*x);
                 int old_y=(int)(myBitmap.getHeight()*y);
                 int station=st.Check_Coor(old_x,old_y);
-
                 Intent istate=getIntent();
                 int state=istate.getIntExtra("state",0);
                 //데이터 전달
@@ -116,17 +124,32 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case (1):
                             intent=new Intent(MainActivity.this,subway_result.class);
-                            intent.putExtra("start_data",Integer.toString(station));
+                            start_point=Integer.toString(station);
+                            if(start_point.equals(transfer_point)) {transfer_point=null;}
+                            else if(start_point.equals(end_point)){end_point=null;}
+                            intent.putExtra("start_point",start_point);
+                            if(transfer_point!=null){intent.putExtra("transfer_point",transfer_point);}
+                            if(end_point!=null){intent.putExtra("end_point",end_point);}
                             startActivity(intent);
                             break;
                         case(2):
                             intent=new Intent(MainActivity.this,subway_result.class);
-                            intent.putExtra("transfer_data",Integer.toString(station));
+                            transfer_point=Integer.toString(station);
+                            if(transfer_point.equals(start_point)) {start_point=null;}
+                            else if(transfer_point.equals(end_point)){end_point=null;}
+                            intent.putExtra("transfer_point",transfer_point);
+                            if(start_point!=null){intent.putExtra("start_point",start_point);}
+                            if(end_point!=null){intent.putExtra("end_point",end_point);}
                             startActivity(intent);
                             break;
                         case(3):
                             intent=new Intent(MainActivity.this,subway_result.class);
-                            intent.putExtra("end_data",Integer.toString(station));
+                            end_point=Integer.toString(station);
+                            if(end_point.equals(start_point)) {start_point=null;}
+                            else if(end_point.equals(transfer_point)){transfer_point=null;}
+                            intent.putExtra("end_point",end_point);
+                            intent.putExtra("start_point",start_point);
+                          intent.putExtra("transfer_point",transfer_point);
                             startActivity(intent);
                             break;
                     }
@@ -164,9 +187,9 @@ public class MainActivity extends AppCompatActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, search_activity_first.class));
-            }
-        });
+                startActivity(new Intent(MainActivity.this, Search.class));
+
+            }});
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

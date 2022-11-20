@@ -2,8 +2,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
-    >
+    android:theme="@android:style/Theme.NoTitleBar">
     <item
         android:id="@+id/start"
         android:title="출발"

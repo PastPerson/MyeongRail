@@ -35,7 +35,7 @@ public class PopupActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(PopupActivity.this,subway_result.class);
-                intent.putExtra("start_data", station.getText());
+                intent.putExtra("start_point", station.getText());
                 Log.d("viewTest", "이름"+station.getText() );
                 startActivity(intent);
             }
@@ -43,16 +43,18 @@ public class PopupActivity extends Activity {
         transfer_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.putExtra("transfer_data", station.getText());
-                startActivity(new Intent(PopupActivity.this,subway_result.class));
+                Intent intent=new Intent(PopupActivity.this,subway_result.class);
+                intent.putExtra("transfer_point", station.getText());
+
                 startActivity(intent);
             }
         });
         end_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.putExtra("end_data", station.getText());
-                startActivity(new Intent(PopupActivity.this,subway_result.class));
+                Intent intent=new Intent(PopupActivity.this,subway_result.class);
+                intent.putExtra("end_point", station.getText());
+
                 startActivity(intent);
             }
         });
