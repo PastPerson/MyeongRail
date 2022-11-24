@@ -1,8 +1,105 @@
 package com.example.teamproject;
 
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
+
+class station {
+    String name;
+    int index;
+    int[][] line = new int[2][2];
+    int[][] uptime = new int[2][36];
+    int[][] downtime = new int[2][36];
+
+    public station() {
+    }
+
+    public station(String name, int index) {
+        this.name = name;
+        this.index = index;
+        init_line();
+        init_time();
+    }
+    public void init_line(){
+        line[0][0] = -1;
+        line[1][0] = -1;
+    }
+
+    public void init_time() {
+        for (int i = 0; i < 36; i++) {
+            uptime[0][i] = -1;
+            uptime[1][i] = -1;
+            downtime[0][i] = -1;
+            downtime[1][i] = -1;
+        }
+    }
+    public void setLine(int l, int n){
+        if(line[0][0] == -1){
+            line[0][0] = l;
+            line[0][1] = n;
+        } else{
+            line[1][0] = l;
+            line[1][1] = n;
+        }
+    }
+    public int[][] getLine(){
+        return line;
+    }
+
+    public void setTime(int[] up, int[] down) {
+        setUptime(up);
+        setDowntime(down);
+    }
+
+    public void setUptime(int[] up){
+        if (uptime[0][0] == -1) {
+            uptime[0] = up;
+        } else {
+            uptime[1] = up;
+        }
+    }
+    public void setUptime(int line, int k, int time){
+        if(this.line[0][0] == line){
+            uptime[0][k] = time;
+        } else{
+            uptime[1][k] = time;
+        }
+    }
+    public void setDowntime(int[] down){
+        if (downtime[0][0] == -1) {
+            downtime[0] = down;
+        } else {
+            downtime[1] = down;
+        }
+    }
+    public void setDowntime(int line, int k, int time){
+        if(this.line[0][0] == line){
+            downtime[0][k] = time;
+        } else{
+            downtime[1][k] = time;
+        }
+    }
+    public int[] getUptime(int line){
+        if(this.line[0][0] == line){
+            return uptime[0];
+        }
+        else return uptime[1];
+    }
+    public int[] getDowntime(int line){
+        if(this.line[0][0] == line){
+            return downtime[0];
+        }
+        else return downtime[1];
+    }
+}
 public class StationInfo {
     ArrayList<String> station_index = new ArrayList<>();
     String[] station_list = new String[111];
@@ -155,6 +252,204 @@ public class StationInfo {
             24, 29, 31, 33, 36, 38, 42, 46, 50, 53, 56, 59,
             63, 64, 67, 72, 76, 79, 85, 89, 92, 95, 98
     }; // 35개의 환승역이 존재한다. 첫 번째 배열은 환승역의 이름, 두 번째는 환승역의 인덱스이다.
+    int[] line_num = {23, 18, 11, 21, 11, 26, 13, 12, 11}; // 노선에 존재하는 역 개수 저장.
+//    boolean[] is_cycle = {true, false, false, false, false, true, false, false, false}; // 각 노선이 순환선인지를 표시하는 배열. 순환선이면 true
+    station[] st = new station[111];
+    Line line = new Line();
+    startTime time = new startTime();
+
+    class startTime{
+        // 각 노선의 종점 시간표
+        int[][] uptime = new int[9][36]; // 상행선 시간표
+        int[][] downtime = new int[9][36]; // 하행선 시간표
+
+        public startTime(){
+            int time = 21600;
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 36; j++){
+                    uptime[i][j] = time;
+                    downtime[i][j] = time;
+                    time += 1800;
+                }
+            }
+        }
+
+        public int[][] getUptime(){
+            return uptime;
+        }
+        public int[] getUptime(int line){
+            return uptime[line];
+        }
+        public int[][] getDowntime(){
+            return downtime;
+        }
+        public int[] getDowntime(int line){
+            return downtime[line];
+        }
+    }
+    class Line {
+        int[] line_num = {23, 18, 11, 21, 11, 26, 13, 12, 11};
+        int[][] line_st = new int[9][];
+
+        public Line() {
+            for (int i = 0; i < 9; i++) {
+                line_st[i] = new int[line_num[i]];
+            }
+            for (int i = 0; i < 9; i++) {
+                if (i == 0) {
+                    for (int j = 0; j < 26; j++) {
+                        if (j < 23) {
+                            line_st[i][j] = j;
+                        }
+                    }
+                }
+                if (i == 1) {
+                    int temp = 23;
+                    for (int j = 0; j < 26; j++) {
+                        if (j == 0) {
+                            line_st[i][j] = 0;
+                        } else if (j < 18) {
+                            line_st[i][j] = temp++;
+                        }
+                    }
+                }
+                if (i == 2) {
+                    int temp = 40;
+                    for (int j = 0; j < 26; j++) {
+                        if (j == 0) {
+                            line_st[i][j] = 29;
+                        } else if (j == 5) {
+                            line_st[i][j] = 22;
+                        } else if (j == 10) {
+                            line_st[i][j] = 6;
+                        } else if (j < 11) {
+                            line_st[i][j] = temp++;
+                        }
+                    }
+                }
+                if (i == 3) {
+                    int temp = 48;
+                    for (int j = 0; j < 26; j++) {
+                        if (j == 0) {
+                            line_st[i][j] = 3;
+                        } else if (j == 2) {
+                            line_st[i][j] = 46;
+                        } else if (j == 9) {
+                            line_st[i][j] = 14;
+                        } else if (j == 20) {
+                            line_st[i][j] = 38;
+                        } else if (j < 21) {
+                            line_st[i][j] = temp++;
+                        }
+                    }
+                }
+                if (i == 4) {
+                    int temp = 65;
+                    for (int j = 0; j < 26; j++) {
+                        if (j == 0) {
+                            line_st[i][j] = 31;
+                        } else if (j == 5) {
+                            line_st[i][j] = 21;
+                        } else if (j == 8) {
+                            line_st[i][j] = 50;
+                        } else if (j == 10) {
+                            line_st[i][j] = 8;
+                        } else if (j < 11) {
+                            line_st[i][j] = temp++;
+                        }
+                    }
+                }
+                if (i == 5) {
+                    int temp = 72;
+                    for (int j = 0; j < 26; j++) {
+                        if (j == 2) {
+                            line_st[i][j] = 20;
+                        } else if (j == 7) {
+                            line_st[i][j] = 15;
+                        } else if (j == 11) {
+                            line_st[i][j] = 59;
+                        } else if (j == 19) {
+                            line_st[i][j] = 64;
+                        } else if (j < 26) {
+                            line_st[i][j] = temp++;
+                        }
+                    }
+                }
+                if (i == 6) {
+                    int temp = 94;
+                    for (int j = 0; j < 26; j++) {
+                        if (j == 0) {
+                            line_st[i][j] = 24;
+                        } else if (j == 1) {
+                            line_st[i][j] = 42;
+                        } else if (j == 2) {
+                            line_st[i][j] = 67;
+                        } else if (j == 3) {
+                            line_st[i][j] = 72;
+                        } else if (j == 10) {
+                            line_st[i][j] = 63;
+                        } else if (j == 12) {
+                            line_st[i][j] = 85;
+                        } else if (j < 13) {
+                            line_st[i][j] = temp++;
+                        }
+                    }
+                }
+                if (i == 7) {
+                    int temp = 101;
+                    for (int j = 0; j < 26; j++) {
+                        if (j == 0) {
+                            line_st[i][j] = 12;
+                        } else if (j == 4) {
+                            line_st[i][j] = 56;
+                        } else if (j == 5) {
+                            line_st[i][j] = 79;
+                        } else if (j == 9) {
+                            line_st[i][j] = 98;
+                        } else if (j == 10) {
+                            line_st[i][j] = 89;
+                        } else if (j == 11) {
+                            line_st[i][j] = 36;
+                        } else if (j < 12) {
+                            line_st[i][j] = temp++;
+                        }
+                    }
+                }
+                if (i == 8) {
+                    int temp = 107;
+                    for (int j = 0; j < 26; j++) {
+                        if (j == 0) {
+                            line_st[i][j] = 11;
+                        } else if (j == 2) {
+                            line_st[i][j] = 53;
+                        } else if (j == 3) {
+                            line_st[i][j] = 76;
+                        } else if (j == 5) {
+                            line_st[i][j] = 18;
+                        } else if (j == 7) {
+                            line_st[i][j] = 95;
+                        } else if (j == 9) {
+                            line_st[i][j] = 92;
+                        } else if (j == 10) {
+                            line_st[i][j] = 33;
+                        } else if (j < 11) {
+                            line_st[i][j] = temp++;
+                        }
+                    }
+                }
+            }
+        }
+
+        public int[] getLine_num() {
+            return line_num;
+        }
+
+        public int[][] getLine_st() {
+            return line_st;
+        }
+    }
+
+
 
     public StationInfo(){
         int st_num = 101;
@@ -164,6 +459,7 @@ public class StationInfo {
             station_list[n] = String.valueOf(st_num);
             station_line[n][0] = 1; // 1호선에 포함됨
             station_line[n][1] = 0; // 기본적으로 하나의 호선에만 포함되므로 0 저장
+            st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
         st_num = 201;
@@ -172,6 +468,7 @@ public class StationInfo {
             station_list[n] = String.valueOf(st_num);
             station_line[n][0] = 2; // 2호선에 포함됨
             station_line[n][1] = 0;
+            st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
         st_num = 301;
@@ -180,6 +477,7 @@ public class StationInfo {
             station_list[n] = String.valueOf(st_num);
             station_line[n][0] = 3; // 3호선에 포함됨
             station_line[n][1] = 0;
+            st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
         st_num = 401;
@@ -188,6 +486,7 @@ public class StationInfo {
             station_list[n] = String.valueOf(st_num);
             station_line[n][0] = 4; // 4호선에 포함됨
             station_line[n][1] = 0;
+            st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
         st_num = 501;
@@ -196,6 +495,7 @@ public class StationInfo {
             station_list[n] = String.valueOf(st_num);
             station_line[n][0] = 5; // 5호선에 포함됨
             station_line[n][1] = 0;
+            st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
         st_num = 601;
@@ -204,6 +504,7 @@ public class StationInfo {
             station_list[n] = String.valueOf(st_num);
             station_line[n][0] = 6; // 6호선에 포함됨
             station_line[n][1] = 0;
+            st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
         st_num = 701;
@@ -212,6 +513,7 @@ public class StationInfo {
             station_list[n] = String.valueOf(st_num);
             station_line[n][0] = 7; // 7호선에 포함됨
             station_line[n][1] = 0;
+            st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
         st_num = 801;
@@ -220,6 +522,7 @@ public class StationInfo {
             station_list[n] = String.valueOf(st_num);
             station_line[n][0] = 8; // 8호선에 포함됨
             station_line[n][1] = 0;
+            st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
         st_num = 901;
@@ -228,7 +531,16 @@ public class StationInfo {
             station_list[n] = String.valueOf(st_num);
             station_line[n][0] = 9; // 9호선에 포함됨
             station_line[n][1] = 0;
+            st[n] = new station(String.valueOf(st_num), n);
             st_num++;
+        }
+        int[] line_num = line.getLine_num();
+        for(int i = 0; i < 9; i++){
+            st[line.getLine_st()[i][0]].setUptime(time.getUptime(i));
+            st[line.getLine_st()[i][line_num[i]-1]].setDowntime(time.getDowntime(i));
+            for(int j = 0; j < line_num[i]; j++){
+                st[line.getLine_st()[i][j]].setLine(i, j);
+            }
         }
 
         station_line[0][1] = 2; // 환승역이 속하는 다른 호선을 기록한다.
@@ -281,6 +593,80 @@ public class StationInfo {
                 station_cost[index][n - 2] = station_info[i]; // 서로 이동할 때 소모하는 비용들을 저장한다.
             }
             n++;
+        }
+
+    }
+    station temp = new station();
+    public station getStation(String s){
+        int t = station_index.indexOf(s);
+        DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("time");
+        database_ref.child("time").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                boolean init = false;
+                for(int i = 0; i < 111; i++){
+                    String te = task.getResult().child("time").getValue(String.class);
+                    if(te == null){
+                        if(!init){
+                            setStationTime();
+                            init = true;
+                        }
+                        for(int j = 0; j < 36; j++) {
+                            String index = String.valueOf(j);
+                            int line1 = st[i].getLine()[0][0];
+                            int line2 = st[i].getLine()[1][0];
+                            database_ref.child("time").child(station_list[i]).child(String.valueOf(line1)).child("uptime").child(index).setValue(st[i].getUptime(line1)[j]);
+                            database_ref.child("time").child(station_list[i]).child(String.valueOf(line1)).child("downtime").child(index).setValue(st[i].getDowntime(line1)[j]);
+                            database_ref.child("time").child(station_list[i]).child(String.valueOf(line2)).child("uptime").child(index).setValue(st[i].getUptime(line2)[j]);
+                            database_ref.child("time").child(station_list[i]).child(String.valueOf(line2)).child("downtime").child(index).setValue(st[i].getDowntime(line2)[j]);
+                        }
+                    }
+                    else break;
+                    if(i == t){
+                        temp = st[i];
+                    }
+                }
+            }
+        });
+        return st[t];
+    }
+    public void setStationTime(int n){
+        for(int j = 1; j < line.getLine_num()[n]; j++){
+            int a = line.getLine_st()[n][j];
+            int b = line.getLine_st()[n][j-1];
+            int c = line.getLine_st()[n][line.getLine_num()[n]-j-1];
+            int d = line.getLine_st()[n][line.getLine_num()[n]-j];
+            int[] bu = st[b].getUptime(n);
+            int[] dd = st[d].getDowntime(n);
+            for(int k = 0; k < 36; k++){
+                st[a].setUptime(n, k, bu[k]+getTime()[b][a]);
+                st[c].setDowntime(n, k, dd[k]+getTime()[d][c]);
+            }
+        }
+    }
+    public void setStationTime(){
+        for(int i = 0; i < 9; i++){
+            int n = line.getLine_num()[i];
+            for(int j = 1; j < n; j++){
+                int a = line.getLine_st()[i][j];
+                int b = line.getLine_st()[i][j-1];
+                int c = line.getLine_st()[i][n-j-1];
+                int d = line.getLine_st()[i][n-j];
+                int[] bu = st[b].getUptime(i);
+                int[] dd = st[d].getDowntime(i);
+                for(int k = 0; k < 36; k++){
+                    st[a].setUptime(i, k, bu[k]+getTime()[b][a]);
+                    st[c].setDowntime(i, k, dd[k]+getTime()[d][c]);
+                }
+            }
+        }
+    }
+
+    public int[] getTimeTable(int station, int line, int ud){
+        if(ud == 0){
+            return st[station].getUptime(line);
+        }else{
+            return st[station].getDowntime(line);
         }
     }
 

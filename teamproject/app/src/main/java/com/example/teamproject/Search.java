@@ -31,6 +31,9 @@ public class Search extends AppCompatActivity {
     private ArrayAdapter Ara_type;
     private List<String> s_list;
     private String type;
+    private String start_point=null;
+    private String transfer_point=null;
+    private String end_point=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,11 +45,19 @@ public class Search extends AppCompatActivity {
         spinner.setAdapter(Ara_type);
         editSearch = (EditText) findViewById(R.id.editSearch);
         listView = (ListView) findViewById(R.id.listView);
+        Intent get_intent=getIntent();
         Intent intent=new Intent(Search.this,subway_result.class);
         // 리스트를 생성한다.
         s_list=new ArrayList<String>();
         s_list=list.station_index;
-
+        try{
+            if(start_point==null)
+                start_point=get_intent.getStringExtra("start_point");//시작역 받는 변수
+            if(transfer_point==null)
+                transfer_point=get_intent.getStringExtra("transfer_point");//경유 역 받는 변수
+            if(end_point==null)
+                end_point=get_intent.getStringExtra("end_point");//도착역 받는 변수
+        }catch(NullPointerException e){}
 
 
         // 리스트의 모든 데이터를 arraylist에 복사한다.// list 복사본을 만든다.
@@ -62,7 +73,10 @@ public class Search extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String str= s_list.get(position);
-
+                Check_sameStd(type,str);
+                intent.putExtra("start_point",start_point);
+                intent.putExtra("transfer_point",transfer_point);
+                intent.putExtra("end_point",end_point);
                 intent.putExtra(type,str);
                 Log.d("viewTest", "이름 : "+str);
                 startActivity(intent);
@@ -122,7 +136,22 @@ public class Search extends AppCompatActivity {
             }
         });
     }
+    public void Check_sameStd(String type,String str){
+        if(type.equals("start_point")&&str.equals(end_point)){
+            end_point=start_point;
+        }else if(type.equals("start_point")&&str.equals(transfer_point))
+            transfer_point=start_point;
+        if(type.equals("end_point")&&str.equals(start_point)){
+            start_point=end_point;
+        }else if(type.equals("end_point")&&str.equals(transfer_point))
+            transfer_point=end_point;
+        if(type.equals("transfer_point")&&str.equals(start_point)){
+            start_point=transfer_point;
+        }else if(type.equals("transfer_point")&&str.equals(end_point)){
+            end_point=transfer_point;
+        }
 
+    }
     // 검색을 수행하는 메소드
     public void search(String charText) {
 

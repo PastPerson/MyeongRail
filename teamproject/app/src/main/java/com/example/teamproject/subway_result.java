@@ -1,16 +1,8 @@
 package com.example.teamproject;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.renderscript.ScriptGroup;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,9 +12,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class subway_result extends AppCompatActivity {
 
-    private Dijkstraaa sub;
+    private Dijkstra sub;
+
     private String start_point;//시작역 받는 변수
     private String transfer_point;;//경유 역 받는 변수
     private String end_point;;//도착역 받는 변수
@@ -43,13 +38,15 @@ public class subway_result extends AppCompatActivity {
     private RadioGroup radioGroup;
     private RadioButton default_rad_btn;
     private Intent intent;
-
+    private Button back_btn;
+    private TextView search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_subway_result);
-            sub = new Dijkstraaa(subway_result.this);
+            search=findViewById(R.id.search_result);
+            sub = new Dijkstra(subway_result.this);
             sub_result = findViewById(R.id.subway_result);
             st_txt = findViewById(R.id.startpoint_txt);//시작역 텍스트
             tf_txt = findViewById(R.id.transferpoint_txt);//경유역 텍스트
@@ -71,7 +68,7 @@ public class subway_result extends AppCompatActivity {
             minAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             m_spin.setAdapter(minAdapter);
             radioGroup = findViewById(R.id.radio_group);
-
+            back_btn=findViewById(R.id.result_back_button);
         try{
 
                 start_point=intent.getStringExtra("start_point");//시작역 받는 변수
@@ -82,6 +79,19 @@ public class subway_result extends AppCompatActivity {
         }catch(NullPointerException e){}
 
         point_setting(start_point, transfer_point, end_point);//존재하는 역에 따라 레이아웃 변화
+
+       back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(subway_result.this,MainActivity.class));//뒤로가기니까 정보 안가지고 감
+            }
+        });
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendstationtoSearch();
+            }
+        });
         ch_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +125,7 @@ public class subway_result extends AppCompatActivity {
         if(default_rad_btn.isChecked()){//기존 라디오버튼이 체크되어있을 때
             try {
                 sub.check(start_point, end_point);
-                sub_result.setText(Integer.toString(sub.getAtime() / 60) + "분" + Integer.toString(sub.getAtime() % 60) + "초");
+                sub_result.setText(Integer.toString(sub.getBTime().time));
             }catch(ArrayIndexOutOfBoundsException e){}
         }
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -124,15 +134,7 @@ public class subway_result extends AppCompatActivity {
                 try {
                     switch (checkedId) {
                         case R.id.radio_time:
-                            sub.check(start_point,end_point);
-                            int time = sub.getAtime();
-                            if(time>=3600)
-                                sub_result.setText(Integer.toString(time/60)+Integer.toString(time%60 / 60) + "분" + Integer.toString((time % 60/60)%60) + "초");
-                            else if(time >= 600)
-                                sub_result.setText(Integer.toString(time/ 60) + "분" + Integer.toString(time %60) + "초");
-                            else if(time>=60)
-                                sub_result.setText(Integer.toString(time)+"초");
-                            break;
+                            sub_result.setText(get_Time());
                         case R.id.radio_distance:
                             sub.check(start_point, end_point);
                             int distance=sub.getKm();
@@ -152,6 +154,15 @@ public class subway_result extends AppCompatActivity {
             }
         });
     }
+    public void sendstationtoSearch(){
+        Intent intent=new Intent(subway_result.this,Search.class);
+        if(Check_Point(start_point)){intent.putExtra("start_point",start_point);}
+        if(Check_Point(transfer_point)){intent.putExtra("transfer_point",transfer_point);}
+        if(Check_Point(end_point)){intent.putExtra("end_point",end_point);}
+
+        startActivity(intent);
+    }
+
     public void send_station(int state){
         Intent intent=new Intent(subway_result.this,MainActivity.class);
         if(Check_Point(start_point)){intent.putExtra("start_point",start_point);}
@@ -197,5 +208,49 @@ public class subway_result extends AppCompatActivity {
         else
             return true;
     }
-
+    public String get_Time(){
+        try {
+            StringBuilder sb = new StringBuilder();
+            int time;
+            int distance;
+            int charge;
+            if (transfer_point == null)
+                sub.check(start_point, end_point);
+            else
+                sub.check(start_point, transfer_point, end_point);
+            time = sub.getBTime().time;
+            distance = sub.getBTime().dist;
+            charge = sub.getBTime().charge;
+            String str;
+            sb.append("시간: ");//시간 출력
+            if (time >= 3600) {
+                sb.append(time / 3600 + "시간 ");
+                if (time % 3600 != 0) {
+                    sb.append((time % 3600) / 60 + "분 ");
+                    if ((time % 3600) % 60 != 0) {
+                        sb.append((time % 3600) % 60 + "초");
+                    }
+                }
+            } else if (time >= 60) {
+                sb.append(time / 60 + "분 ");
+                if (time % 60 != 0)
+                    sb.append(time % 60 + "초");
+            }
+            sb.append("\n거리: ");//거리 출력
+            if (distance >= 1000) {
+                sb.append(distance / 1000 + "Km ");
+                if (distance % 1000 != 0)
+                    sb.append(distance % 1000 + "m");
+            } else
+                sb.append(distance + "m");
+            sb.append("\n요금: ");//요금 출력
+            sb.append(charge);
+            str = sb.toString();
+            Log.d("test","테스트: "+str);
+            return str;
+        }catch (ArrayIndexOutOfBoundsException e){
+            Toast.makeText(subway_result.this, "출발역 또는 도착역이 설정되지 않았습니다", Toast.LENGTH_SHORT).show();
+        }
+        return null;
+    }
 }
