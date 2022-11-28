@@ -107,14 +107,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPhotoTap(ImageView view, float x, float y) {
-                int old_x=(int)(8225*x);
-                int old_y=(int)(5957*y);
+                int old_x=(int)(myBitmap.getWidth()*x);
+                int old_y=(int)(myBitmap.getHeight()*y);
                 int station=st.Check_Coor(old_x,old_y);
                 Intent istate=getIntent();
                 int state=istate.getIntExtra("state",0);
                 //데이터 전달
                 Log.d("viewTest", "좌표 : "+old_x+", "+old_y);
-               // Log.d("viewTest","크기: "+myBitmap.getWidth()+" "+myBitmap.getHeight());
+                Log.d("viewTest","크기: "+myBitmap.getWidth()+" "+myBitmap.getHeight());
                 if(station!=0) {
                     switch (state) {
                         case (0):
