@@ -3,9 +3,11 @@ package com.example.teamproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -23,8 +25,8 @@ public class subway_result extends AppCompatActivity {
     private String end_point;;//도착역 받는 변수
     private TextView st_txt; //시작 텍스트
     private TextView tf_txt; //경유 텍스트
-    private TextView ed_txt; //
-    private TextView st_cir;
+    private TextView ed_txt; //끝 텍스트
+    private TextView st_cir;//시작 원형 모습
     private TextView ed_cir;
     private TextView sub_result;
     private Button st_btn;
@@ -40,7 +42,7 @@ public class subway_result extends AppCompatActivity {
     private Intent intent;
     private Button back_btn;
     private TextView search;
-
+    private LinearLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -51,12 +53,12 @@ public class subway_result extends AppCompatActivity {
             st_txt = findViewById(R.id.startpoint_txt);//시작역 텍스트
             tf_txt = findViewById(R.id.transferpoint_txt);//경유역 텍스트
             ed_txt = findViewById(R.id.endpoint_txt);//도착역 텍스트
-            ch_btn=findViewById(R.id.change_btn);
+            ch_btn=findViewById(R.id.change_btn); //전환버튼
             st_btn = findViewById(R.id.startpoint_btn);//시작역 추가버튼
             tf_btn = findViewById(R.id.transferpoint_btn);//경유역 추가 버튼
             ed_btn = findViewById(R.id.endpoint_btn);//도착역 추가 버튼
-            st_cir = findViewById(R.id.startpoint_circle);//원형 시작역 텍스트
-            ed_cir = findViewById(R.id.endpoint_circle);//원형 도착역 텍스트
+            //st_cir = findViewById(R.id.startpoint_circle);//원형 시작역 텍스트
+            //ed_cir = findViewById(R.id.endpoint_circle);//원형 도착역 텍스트
             intent=getIntent();
             h_spin = findViewById(R.id.spinner_hour);//시 설정
             m_spin = findViewById(R.id.spinner_min);//분 설정
@@ -69,6 +71,8 @@ public class subway_result extends AppCompatActivity {
             m_spin.setAdapter(minAdapter);
             radioGroup = findViewById(R.id.radio_group);
             back_btn=findViewById(R.id.result_back_button);
+            layout=findViewById(R.id.result_layoutsheet);
+
         try{
 
                 start_point=intent.getStringExtra("start_point");//시작역 받는 변수
@@ -80,9 +84,10 @@ public class subway_result extends AppCompatActivity {
 
         point_setting(start_point, transfer_point, end_point);//존재하는 역에 따라 레이아웃 변화
 
-       back_btn.setOnClickListener(new View.OnClickListener() {
+        back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                layout.removeAllViews();
                 startActivity(new Intent(subway_result.this,MainActivity.class));//뒤로가기니까 정보 안가지고 감
             }
         });
@@ -101,20 +106,31 @@ public class subway_result extends AppCompatActivity {
                 end_point=temp;
                 point_setting(start_point, transfer_point, end_point);
                 radioGroup.check(R.id.radio_time);
+                set_display(layout,sub.getBTime());
             }
+        });
+        //상단 역들을 클릭할 경우 설정할 수있다.
+        st_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {send_station(1);}
         });
         st_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-               send_station(1);
-
-            }
+            public void onClick(View v) {send_station(1);}
+        });
+        tf_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {send_station(2);}
         });
         tf_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 send_station(2);
             }
+        });
+        ed_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {send_station(3);}
         });
         ed_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,8 +140,8 @@ public class subway_result extends AppCompatActivity {
         });
         if(default_rad_btn.isChecked()){//기존 라디오버튼이 체크되어있을 때
             try {
-                sub.check(start_point, end_point);
-                sub_result.setText(Integer.toString(sub.getBTime().time));
+                get_Time(0);
+                set_display(layout,sub.getBTime());
             }catch(ArrayIndexOutOfBoundsException e){}
         }
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -134,18 +150,19 @@ public class subway_result extends AppCompatActivity {
                 try {
                     switch (checkedId) {
                         case R.id.radio_time:
-                            sub_result.setText(get_Time());
+
+                            get_Time(0);
+                            set_display(layout,sub.getBTime());
+                            break;
                         case R.id.radio_distance:
-                            sub.check(start_point, end_point);
-                            int distance=sub.getKm();
-                            if(distance>=1000)
-                                sub_result.setText(Integer.toString(sub.getKm()/1000)+"km"+Integer.toString(sub.getKm()%1000)+"m");
-                            else
-                                sub_result.setText(Integer.toString(sub.getKm())+"m");
+
+                            get_Time(1);
+                            set_display(layout,sub.getBDist());
                             break;
                         case R.id.radio_cost:
-                            sub.check(start_point, end_point);
-                            sub_result.setText(Integer.toString(sub.getCharge())+"원");
+
+                            get_Time(2);
+                            set_display(layout,sub.getBCharge());
                             break;
                     }
                 } catch (ArrayIndexOutOfBoundsException e){
@@ -175,7 +192,7 @@ public class subway_result extends AppCompatActivity {
     public void point_setting(String st_pt, String tf_pt, String ed_pt){
         if(Check_Point(st_pt)){
             st_txt.setText((st_pt));
-            st_cir.setText((st_pt));
+           // st_cir.setText((st_pt));
             st_txt.setVisibility(View.VISIBLE);
             st_btn.setVisibility(View.GONE);
         }else{
@@ -194,7 +211,7 @@ public class subway_result extends AppCompatActivity {
         }
         if(Check_Point(ed_pt)){
             ed_txt.setText(ed_pt);
-            ed_cir.setText(ed_pt);
+           // ed_cir.setText(ed_pt);
             ed_txt.setVisibility(View.VISIBLE);
             ed_btn.setVisibility(View.GONE);
         }else {
@@ -208,7 +225,7 @@ public class subway_result extends AppCompatActivity {
         else
             return true;
     }
-    public String get_Time(){
+    public void get_Time(int state){//시간을 얻을수 잇다..
         try {
             StringBuilder sb = new StringBuilder();
             int time;
@@ -218,9 +235,19 @@ public class subway_result extends AppCompatActivity {
                 sub.check(start_point, end_point);
             else
                 sub.check(start_point, transfer_point, end_point);
-            time = sub.getBTime().time;
-            distance = sub.getBTime().dist;
-            charge = sub.getBTime().charge;
+            if(state==0) {
+                time = sub.getBTime().time;
+                distance = sub.getBTime().dist;
+                charge = sub.getBTime().charge;
+            }else if(state==1){
+                time = sub.getBDist().time;
+                distance = sub.getBDist().dist;
+                charge = sub.getBDist().charge;
+            }else{
+                time = sub.getBCharge().time;
+                distance = sub.getBCharge().dist;
+                charge = sub.getBCharge().charge;
+            }
             String str;
             sb.append("시간: ");//시간 출력
             if (time >= 3600) {
@@ -244,13 +271,130 @@ public class subway_result extends AppCompatActivity {
             } else
                 sb.append(distance + "m");
             sb.append("\n요금: ");//요금 출력
-            sb.append(charge);
+            sb.append(charge+"원");
             str = sb.toString();
             Log.d("test","테스트: "+str);
-            return str;
+
+            sub_result.setText(str);
         }catch (ArrayIndexOutOfBoundsException e){
-            Toast.makeText(subway_result.this, "출발역 또는 도착역이 설정되지 않았습니다", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(subway_result.this, "출발역 또는 도착역이 설정되지 않았습니다", Toast.LENGTH_SHORT).show();
         }
-        return null;
+
     }
-}
+
+    //결과에 따라 뷰를 동적 생성해주는 뷰
+    public void set_display(LinearLayout f,Data D){
+        f.removeAllViews();
+        TextView start_view = new TextView(this);
+        TextView density_f = new TextView(this);
+        TextView density_t;
+        TextView end_view = new TextView(this);
+        TextView trans_view;
+                f.setGravity(Gravity.CENTER);
+                f.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                //if(sub.sum_t==0) {
+
+                start_view.setBackgroundResource(R.drawable.shape);//
+                f.addView(start_view);
+                start_view.setText(start_point);
+                start_view.setTextSize(70);
+
+                start_view.getLayoutParams().height = 500;
+                start_view.getLayoutParams().width = 500;
+                start_view.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                start_view.setGravity(Gravity.CENTER);
+                LinearLayout.LayoutParams parms_f=(LinearLayout.LayoutParams) start_view.getLayoutParams();
+                parms_f.setMargins(50,0,0,0);
+                //환승역 및 경유역 체크
+
+                try {//중간에 환승역이 있는경우
+                    Log.d("test", "환승역 개수" + sub.cc.length+", "+sub.sum_t);
+                    if((sub.cc[0]==null&&transfer_point!=null)||(transfer_point!=null&&sub.transfer_list[1].equals(sub.cc[0]))||(transfer_point!=null&&sub.transfer_list[0].equals(sub.cc[0]))){//환승역이 없고 경유역이 있는 경우
+                        density_t = new TextView(this);
+                        density_t.setText("밀집도: 평균");
+                        f.addView(density_t);
+                        LinearLayout.LayoutParams parms_s = (LinearLayout.LayoutParams) density_t.getLayoutParams();
+                        parms_s.setMargins(20, 0, 20, 0);
+                        trans_view=new TextView(this);
+                        trans_view.setBackgroundResource(R.drawable.shape);
+                        f.addView(trans_view);
+                        trans_view.setText(transfer_point);
+                        trans_view.setTextSize(70);
+                        trans_view.getLayoutParams().height = 500;
+                        trans_view.getLayoutParams().width = 500;
+                        trans_view.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        trans_view.setGravity(Gravity.CENTER);
+                    }
+                } catch (NullPointerException e) {
+                    Log.d("error",e.toString());
+                }
+                    //Log.d("txt",sub.trans[0]);
+                    for (int i = 0; sub.cc[i]!=null; i++) {
+                        Log.d("test","경로"+sub.cc[i]);
+                        TextView density = new TextView(this);
+                        density.setText("밀집도: 평균");
+                        f.addView(density);
+                        LinearLayout.LayoutParams parms = (LinearLayout.LayoutParams) density.getLayoutParams();
+                        parms.setMargins(20, 0, 20, 0);
+                        TextView view = new TextView(this);
+                        view.setText(sub.cc[i]);
+                        view.setBackgroundResource(R.drawable.shape);
+                        f.addView(view);
+                        view.setTextSize(70);
+                        view.getLayoutParams().height = 500;
+                        view.getLayoutParams().width = 500;
+                        view.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        view.setGravity(Gravity.CENTER);
+                        Log.d("txt","전환승역"+sub.transfer_list[0]+"후 환승역"+sub.transfer_list[1]+"해당환승역"+sub.cc[i]+"다음환승역"+sub.cc[i+1]);
+                        /*try {
+                            if (transfer_point.equals(sub.cc[i+1])!=true&&((transfer_point != null &&(sub.transfer_list[0].equals(sub.cc[i]))) ||
+                                    (transfer_point != null && sub.transfer_list[1].equals(sub.cc[i + 1])))) {//전 환승역과 후 환승역이 같다면 거기에 경유역을 생성한다.
+                                Log.d("txt", "전환승역" + sub.transfer_list[0] + "후 환승역" + sub.transfer_list[1]);
+                                density_t = new TextView(this);
+                                density_t.setText("밀집도: 평균");
+                                f.addView(density_t);
+                                LinearLayout.LayoutParams parms_s = (LinearLayout.LayoutParams) density_t.getLayoutParams();
+                                parms_s.setMargins(20, 0, 20, 0);
+                                trans_view=new TextView(this);
+                                trans_view.setBackgroundResource(R.drawable.shape);
+                                f.addView(trans_view);
+                                trans_view.setText(transfer_point);
+                                trans_view.setTextSize(70);
+                                trans_view.getLayoutParams().height = 500;
+                                trans_view.getLayoutParams().width = 500;
+                                trans_view.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                trans_view.setGravity(Gravity.CENTER);
+                            }
+                        }catch (NullPointerException e){
+                            Log.d("error",e.toString());
+                        }*/
+
+
+                    }
+
+
+
+                density_f.setText("밀집도: 평균");
+                f.addView(density_f);
+                LinearLayout.LayoutParams parms_s=(LinearLayout.LayoutParams)density_f.getLayoutParams();
+                parms_s.setMargins(20,0,20,0);
+
+                end_view.setBackgroundResource(R.drawable.shape);
+                f.addView(end_view);
+                end_view.setText(end_point);
+                end_view.setTextSize(70);
+                end_view.getLayoutParams().height = 500;
+                end_view.getLayoutParams().width = 500;
+                end_view.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                end_view.setGravity(Gravity.CENTER);
+               // }
+                //else {
+                    /*start_view.setVisibility(View.GONE);
+                    density_f.setVisibility(View.GONE);
+                    end_view.setVisibility(View.GONE);*/
+
+               // }
+            }
+
+    }
+

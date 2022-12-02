@@ -1,25 +1,35 @@
 package com.example.teamproject;
 
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 class station {
     String name;
     int index;
     int[][] line = new int[2][2];
-    int[][] uptime = new int[2][36];
-    int[][] downtime = new int[2][36];
+    long[][] uptime = new long[2][36];
+    long[][] downtime = new long[2][36];
+    HashMap<Integer, HashMap<Integer, HashMap<Integer, Float>>> value = new HashMap<>(); // 밀집도를 위한 변수
 
     public station() {
+    }
+
+    public station(String name) {
+        this.name = name;
+        StationInfo s = new StationInfo();
+        index = s.getIndexOfStation().indexOf(name);
+        init_line();
+        init_time();
+    }
+
+    public station(int index) {
+        StationInfo s = new StationInfo();
+        name = s.getStationList()[index];
+        this.index = index;
+        init_line();
+        init_time();
     }
 
     public station(String name, int index) {
@@ -54,56 +64,83 @@ class station {
         return line;
     }
 
-    public void setTime(int[] up, int[] down) {
-        setUptime(up);
-        setDowntime(down);
-    }
-
-    public void setUptime(int[] up){
-        if (uptime[0][0] == -1) {
+    public void setUptime(int line, long[] up){
+        if (this.line[0][0] == line) {
             uptime[0] = up;
         } else {
             uptime[1] = up;
         }
     }
-    public void setUptime(int line, int k, int time){
+    public void setUptime(int line, int k, long time){
         if(this.line[0][0] == line){
             uptime[0][k] = time;
         } else{
             uptime[1][k] = time;
         }
     }
-    public void setDowntime(int[] down){
-        if (downtime[0][0] == -1) {
+    public void setDowntime(int line, long[] down){
+        if (this.line[0][0] == line) {
             downtime[0] = down;
         } else {
             downtime[1] = down;
         }
     }
-    public void setDowntime(int line, int k, int time){
+    public void setDowntime(int line, int k, long time){
         if(this.line[0][0] == line){
             downtime[0][k] = time;
         } else{
             downtime[1][k] = time;
         }
     }
-    public int[] getUptime(int line){
+    public long[] getUptime(int line){
         if(this.line[0][0] == line){
             return uptime[0];
         }
         else return uptime[1];
     }
-    public int[] getDowntime(int line){
+    public long[] getDowntime(int line){
         if(this.line[0][0] == line){
             return downtime[0];
         }
         else return downtime[1];
     }
+
+    public void addValue(int line, int ud, int index, float v){
+        if(value.containsKey(line)){
+            HashMap<Integer, HashMap<Integer, Float>> t1 = value.get(line);
+            if(t1.containsKey(ud)){
+                HashMap<Integer, Float> t2 = t1.get(ud);
+                if(t2.containsKey(index)){
+                    float f = t2.get(index);
+                    value.get(line).get(ud).put(index,f+v);
+                } else{
+                    value.get(line).get(ud).put(index,v);
+
+                }
+            } else{
+                HashMap<Integer, Float> t2 = new HashMap<>();
+                value.get(line).put(ud, t2);
+                t2.put(index, v);
+            }
+        } else{
+            HashMap<Integer, Float> t1 = new HashMap<>();
+            HashMap<Integer, HashMap<Integer, Float>> t2 = new HashMap<>();
+            value.put(line, t2);
+            t2.put(ud, t1);
+            t1.put(index, v);
+        }
+        System.out.println("name: "+name + " line "+ line+"  ud  " +ud +"  index  "+index);
+        System.out.println("value :  "+value.get(line).get(ud).get(index));
+    }
+
+    public HashMap<Integer, HashMap<Integer, HashMap<Integer, Float>>> getValue() {
+        return value;
+    }
 }
 public class StationInfo {
     ArrayList<String> station_index = new ArrayList<>();
     String[] station_list = new String[111];
-    int[] station_info = { // 역간 이동시 소모 비용 정보가 들어있는 배열, 5개 단위로 0,1은 이동하는 두 역, 2,3,4는 시간, 거리, 비용을 의미함
+    static int[] station_info = { // 역간 이동시 소모 비용 정보가 들어있는 배열, 5개 단위로 0,1은 이동하는 두 역, 2,3,4는 시간, 거리, 비용을 의미함
             101, 102, 200, 500, 200,
             102, 103, 300, 400, 300,
             103, 104, 1000, 600, 500,
@@ -247,43 +284,45 @@ public class StationInfo {
     int[][] station_cost = new int[139][3]; // [i][0,1,2]에 0은 시간, 1은 거리, 2는 비용이 저장된다.
     String[][] station_set = new String[139][2]; // [i][0,1] 에 0과 1에 서로 이동하는 역이 저장된다. 예를 들어 101에서 102역으로 이동가능 하다면 101과 102가 들어있음
     int[][] station_line = new int[111][2]; // 각 역이 어떤 호선에 포함돼있는지 저장하는 배열이다. 환승역이 아닐경우 두번째 요소는 0을 가진다.
-    int[] trans_station = {
+    static int[] trans_station = {
             0, 3, 6, 8, 11, 12, 14, 15, 18, 20, 21, 22,
             24, 29, 31, 33, 36, 38, 42, 46, 50, 53, 56, 59,
             63, 64, 67, 72, 76, 79, 85, 89, 92, 95, 98
     }; // 35개의 환승역이 존재한다. 첫 번째 배열은 환승역의 이름, 두 번째는 환승역의 인덱스이다.
-    int[] line_num = {23, 18, 11, 21, 11, 26, 13, 12, 11}; // 노선에 존재하는 역 개수 저장.
+    static int[] line_num = {23, 18, 11, 21, 11, 26, 13, 12, 11}; // 노선에 존재하는 역 개수 저장.
 //    boolean[] is_cycle = {true, false, false, false, false, true, false, false, false}; // 각 노선이 순환선인지를 표시하는 배열. 순환선이면 true
     station[] st = new station[111];
+
+
     Line line = new Line();
     startTime time = new startTime();
 
     class startTime{
         // 각 노선의 종점 시간표
-        int[][] uptime = new int[9][36]; // 상행선 시간표
-        int[][] downtime = new int[9][36]; // 하행선 시간표
+        long[][] uptime = new long[9][36]; // 상행선 시간표
+        long[][] downtime = new long[9][36]; // 하행선 시간표
 
         public startTime(){
-            int time = 21600;
             for(int i = 0; i < 9; i++){
+                long time = 2160;
                 for(int j = 0; j < 36; j++){
                     uptime[i][j] = time;
                     downtime[i][j] = time;
-                    time += 1800;
+                    time += 180;
                 }
             }
         }
 
-        public int[][] getUptime(){
+        public long[][] getUptime(){
             return uptime;
         }
-        public int[] getUptime(int line){
+        public long[] getUptime(int line){
             return uptime[line];
         }
-        public int[][] getDowntime(){
+        public long[][] getDowntime(){
             return downtime;
         }
-        public int[] getDowntime(int line){
+        public long[] getDowntime(int line){
             return downtime[line];
         }
     }
@@ -457,8 +496,8 @@ public class StationInfo {
         for (int i = 0; i < 23; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 1; // 1호선에 포함됨
-            station_line[n][1] = 0; // 기본적으로 하나의 호선에만 포함되므로 0 저장
+            station_line[n][0] = 0; // 1호선에 포함됨
+            station_line[n][1] = -1; // 기본적으로 하나의 호선에만 포함되므로 0 저장
             st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
@@ -466,8 +505,8 @@ public class StationInfo {
         for (int i = 0; i < 17; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 2; // 2호선에 포함됨
-            station_line[n][1] = 0;
+            station_line[n][0] = 1; // 2호선에 포함됨
+            station_line[n][1] = -1;
             st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
@@ -475,8 +514,8 @@ public class StationInfo {
         for (int i = 0; i < 8; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 3; // 3호선에 포함됨
-            station_line[n][1] = 0;
+            station_line[n][0] = 2; // 3호선에 포함됨
+            station_line[n][1] = -1;
             st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
@@ -484,8 +523,8 @@ public class StationInfo {
         for (int i = 0; i < 17; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 4; // 4호선에 포함됨
-            station_line[n][1] = 0;
+            station_line[n][0] = 3; // 4호선에 포함됨
+            station_line[n][1] = -1;
             st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
@@ -493,8 +532,8 @@ public class StationInfo {
         for (int i = 0; i < 7; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 5; // 5호선에 포함됨
-            station_line[n][1] = 0;
+            station_line[n][0] = 4; // 5호선에 포함됨
+            station_line[n][1] = -1;
             st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
@@ -502,8 +541,8 @@ public class StationInfo {
         for (int i = 0; i < 22; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 6; // 6호선에 포함됨
-            station_line[n][1] = 0;
+            station_line[n][0] = 5; // 6호선에 포함됨
+            station_line[n][1] = -1;
             st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
@@ -511,8 +550,8 @@ public class StationInfo {
         for (int i = 0; i < 7; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 7; // 7호선에 포함됨
-            station_line[n][1] = 0;
+            station_line[n][0] = 6; // 7호선에 포함됨
+            station_line[n][1] = -1;
             st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
@@ -520,8 +559,8 @@ public class StationInfo {
         for (int i = 0; i < 6; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 8; // 8호선에 포함됨
-            station_line[n][1] = 0;
+            station_line[n][0] = 7; // 8호선에 포함됨
+            station_line[n][1] = -1;
             st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
@@ -529,55 +568,54 @@ public class StationInfo {
         for (int i = 0; i < 4; i++, n++) {
             station_index.add(String.valueOf(st_num));
             station_list[n] = String.valueOf(st_num);
-            station_line[n][0] = 9; // 9호선에 포함됨
-            station_line[n][1] = 0;
+            station_line[n][0] = 8; // 9호선에 포함됨
+            station_line[n][1] = -1;
             st[n] = new station(String.valueOf(st_num), n);
             st_num++;
         }
-        int[] line_num = line.getLine_num();
+
         for(int i = 0; i < 9; i++){
-            st[line.getLine_st()[i][0]].setUptime(time.getUptime(i));
-            st[line.getLine_st()[i][line_num[i]-1]].setDowntime(time.getDowntime(i));
             for(int j = 0; j < line_num[i]; j++){
                 st[line.getLine_st()[i][j]].setLine(i, j);
             }
         }
 
-        station_line[0][1] = 2; // 환승역이 속하는 다른 호선을 기록한다.
-        station_line[3][1] = 4;
-        station_line[6][1] = 3;
-        station_line[8][1] = 5;
-        station_line[11][1] = 9;
-        station_line[12][1] = 8;
-        station_line[14][1] = 4;
-        station_line[15][1] = 6;
-        station_line[18][1] = 9;
-        station_line[20][1] = 6;
-        station_line[21][1] = 5;
-        station_line[22][1] = 3;
-        station_line[24][1] = 7;
-        station_line[29][1] = 3;
-        station_line[31][1] = 5;
-        station_line[33][1] = 9;
-        station_line[36][1] = 8;
-        station_line[38][1] = 4;
-        station_line[42][1] = 7;
-        station_line[46][1] = 4;
-        station_line[50][1] = 5;
-        station_line[53][1] = 9;
-        station_line[56][1] = 8;
-        station_line[59][1] = 6;
-        station_line[63][1] = 7;
-        station_line[64][1] = 6;
-        station_line[67][1] = 7;
-        station_line[72][1] = 7;
-        station_line[76][1] = 9;
-        station_line[79][1] = 8;
-        station_line[85][1] = 7;
-        station_line[89][1] = 8;
-        station_line[92][1] = 9;
-        station_line[95][1] = 9;
-        station_line[98][1] = 8;
+
+        station_line[0][1] = 1; // 환승역이 속하는 다른 호선을 기록한다.
+        station_line[3][1] = 3;
+        station_line[6][1] = 2;
+        station_line[8][1] = 4;
+        station_line[11][1] = 8;
+        station_line[12][1] = 7;
+        station_line[14][1] = 3;
+        station_line[15][1] = 5;
+        station_line[18][1] = 8;
+        station_line[20][1] = 5;
+        station_line[21][1] = 4;
+        station_line[22][1] = 2;
+        station_line[24][1] = 6;
+        station_line[29][1] = 2;
+        station_line[31][1] = 4;
+        station_line[33][1] = 8;
+        station_line[36][1] = 7;
+        station_line[38][1] = 3;
+        station_line[42][1] = 6;
+        station_line[46][1] = 3;
+        station_line[50][1] = 4;
+        station_line[53][1] = 8;
+        station_line[56][1] = 7;
+        station_line[59][1] = 5;
+        station_line[63][1] = 6;
+        station_line[64][1] = 5;
+        station_line[67][1] = 6;
+        station_line[72][1] = 6;
+        station_line[76][1] = 8;
+        station_line[79][1] = 7;
+        station_line[85][1] = 6;
+        station_line[89][1] = 7;
+        station_line[92][1] = 8;
+        station_line[95][1] = 8;
+        station_line[98][1] = 7;
 
 
         n = 0;
@@ -597,47 +635,78 @@ public class StationInfo {
 
     }
     station temp = new station();
-    public station getStation(String s){
+//    public void changeStation(int i, station s){
+//        st[i] = s;
+//    }
+//    public station getStation(String s){
+//        int t = station_index.indexOf(s);
+//        if(st[t].getUptime(st[t].getLine()[0][0])[0] == -1) {
+//            DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("time");
+//            database_ref.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                    Object o = task.getResult().child(s).getValue(Object.class);
+//                    GenericTypeIndicator<HashMap<String, ArrayList<Integer>>> T = new GenericTypeIndicator<HashMap<String, ArrayList<Integer>>>() {
+//                        @Override
+//                        public int hashCode() {
+//                            return super.hashCode();
+//                        }
+//                    };
+//                    if(o == null) {
+//                        setStationTime();
+//                        for (int i = 0; i < 111; i++) {
+//                            for (int j = 0; j < 36; j++) {
+//                                String index = String.valueOf(j);
+//                                int line1 = st[i].getLine()[0][0];
+//                                int line2 = st[i].getLine()[1][0];
+//                                database_ref.child(station_list[i]).child(String.valueOf(line1)).child("uptime").child(index).setValue(st[i].getUptime(line1)[j]);
+//                                database_ref.child(station_list[i]).child(String.valueOf(line1)).child("downtime").child(index).setValue(st[i].getDowntime(line1)[j]);
+//                                if (line2 != -1) {
+//                                    database_ref.child(station_list[i]).child(String.valueOf(line2)).child("uptime").child(index).setValue(st[i].getUptime(line2)[j]);
+//                                    database_ref.child(station_list[i]).child(String.valueOf(line2)).child("downtime").child(index).setValue(st[i].getDowntime(line2)[j]);
+//                                }
+//                            }
+//                        }
+//                    }else{
+//                        HashMap<String, ArrayList<Integer>> h = task.getResult().child(s).child(String.valueOf(st[t].getLine()[0][0])).getValue(T);
+//                        for(int i = 0; i < 36; i++){
+//                            st[t].setUptime(st[t].getLine()[0][0], i, h.get("uptime").get(i));
+//                            st[t].setDowntime(st[t].getLine()[0][0], i, h.get("downtime").get(i));
+////                            System.out.println("t: "+ t);
+////                            System.out.println(st[t].getUptime(st[t].getLine()[0][0])[i]);
+//                            if(st[t].getLine()[1][0] != -1) {
+//                                st[t].setUptime(st[t].getLine()[1][0], i, h.get("uptime").get(i));
+//                                st[t].setDowntime(st[t].getLine()[0][0], i, h.get("downtime").get(i));
+//                            }
+//                        }
+////                        System.out.println(st[t].getUptime(st[t].getLine()[0][0])[0]);
+//                    }
+//                }
+//            });
+//        }
+//
+//        for(int i = 0; i < 36; i++){
+//            System.out.println(st[t].getUptime(st[t].getLine()[0][0])[i]);
+//        }
+//        return st[t];
+//    }
+
+    public station getStation(int line, String s){
         int t = station_index.indexOf(s);
-        DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("time");
-        database_ref.child("time").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                boolean init = false;
-                for(int i = 0; i < 111; i++){
-                    String te = task.getResult().child("time").getValue(String.class);
-                    if(te == null){
-                        if(!init){
-                            setStationTime();
-                            init = true;
-                        }
-                        for(int j = 0; j < 36; j++) {
-                            String index = String.valueOf(j);
-                            int line1 = st[i].getLine()[0][0];
-                            int line2 = st[i].getLine()[1][0];
-                            database_ref.child("time").child(station_list[i]).child(String.valueOf(line1)).child("uptime").child(index).setValue(st[i].getUptime(line1)[j]);
-                            database_ref.child("time").child(station_list[i]).child(String.valueOf(line1)).child("downtime").child(index).setValue(st[i].getDowntime(line1)[j]);
-                            database_ref.child("time").child(station_list[i]).child(String.valueOf(line2)).child("uptime").child(index).setValue(st[i].getUptime(line2)[j]);
-                            database_ref.child("time").child(station_list[i]).child(String.valueOf(line2)).child("downtime").child(index).setValue(st[i].getDowntime(line2)[j]);
-                        }
-                    }
-                    else break;
-                    if(i == t){
-                        temp = st[i];
-                    }
-                }
-            }
-        });
+        if(st[t].getUptime(line)[0] == -1){
+            setStationTime(line);
+        }
         return st[t];
     }
+
     public void setStationTime(int n){
         for(int j = 1; j < line.getLine_num()[n]; j++){
             int a = line.getLine_st()[n][j];
             int b = line.getLine_st()[n][j-1];
             int c = line.getLine_st()[n][line.getLine_num()[n]-j-1];
             int d = line.getLine_st()[n][line.getLine_num()[n]-j];
-            int[] bu = st[b].getUptime(n);
-            int[] dd = st[d].getDowntime(n);
+            long[] bu = st[b].getUptime(n);
+            long[] dd = st[d].getDowntime(n);
             for(int k = 0; k < 36; k++){
                 st[a].setUptime(n, k, bu[k]+getTime()[b][a]);
                 st[c].setDowntime(n, k, dd[k]+getTime()[d][c]);
@@ -645,6 +714,12 @@ public class StationInfo {
         }
     }
     public void setStationTime(){
+        int[] line_num = line.getLine_num();
+        for(int i = 0; i < 9; i++){
+            st[line.getLine_st()[i][0]].setUptime(i,time.getUptime(i));
+            st[line.getLine_st()[i][line_num[i]-1]].setDowntime(i,time.getDowntime(i));
+//            System.out.println("station: "+ station_list[line.getLine_st()[i][0]]+" line: "+ i + " time: "+st[line.getLine_st()[i][0]].getUptime(i)[0]);
+        }
         for(int i = 0; i < 9; i++){
             int n = line.getLine_num()[i];
             for(int j = 1; j < n; j++){
@@ -652,17 +727,17 @@ public class StationInfo {
                 int b = line.getLine_st()[i][j-1];
                 int c = line.getLine_st()[i][n-j-1];
                 int d = line.getLine_st()[i][n-j];
-                int[] bu = st[b].getUptime(i);
-                int[] dd = st[d].getDowntime(i);
+                long[] bu = st[b].getUptime(i);
+                long[] dd = st[d].getDowntime(i);
                 for(int k = 0; k < 36; k++){
-                    st[a].setUptime(i, k, bu[k]+getTime()[b][a]);
-                    st[c].setDowntime(i, k, dd[k]+getTime()[d][c]);
+                    st[a].setUptime(i, k, bu[k]+(getTime()[b][a])/10);
+                    st[c].setDowntime(i, k, dd[k]+(getTime()[d][c])/10);
                 }
             }
         }
     }
 
-    public int[] getTimeTable(int station, int line, int ud){
+    public long[] getTimeTable(int station, int line, int ud){
         if(ud == 0){
             return st[station].getUptime(line);
         }else{
@@ -749,4 +824,16 @@ public class StationInfo {
     public int[][] getStationLine(){
         return station_line;
     } // 각 역이 어느 호선에 포함됐는지에 대한 정보가 들어있는 배열 반환
+
+
+    public Line getLine() {
+        return line;
+    }
+
+    public station getst(int n){
+        return st[n];
+    }
+    public station[] getst(){
+        return st;
+    }
 }

@@ -190,11 +190,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 drawerLayout.openDrawer(dr_view);
+                Dijkstra d = new Dijkstra(MainActivity.this);
                 StationInfo s = new StationInfo();
-                station t = s.getStation("101");
-                for(int i = 0; i < 36; i++){
-                    System.out.println("time: "+ t.getUptime(t.getLine()[0][0])[i]);
-                }
+                d.check("601", "613");
+
+//                Data p = d.getBTime();
+//                for(int i = 0; i < p.getPath_cnt(); i++){
+//                    System.out.println(i+"번째 역: "+ s.getStationList()[p.getPath()[i]]);
+//                }
+//                for(int i = 0; i < p.getSum_t(); i++){
+//                    System.out.println(i+"번쨰 환승 역: "+p.getTrans()[i]);
+//                }
+//                System.out.println("시간: "+p.getTime());
+//                station t = s.getStation("101");
+//                for(int i = 0; i < 36; i++){
+//                    System.out.println("time: "+ t.getUptime(t.getLine()[0][0])[i]);
+//                }
             }
         });
     }
