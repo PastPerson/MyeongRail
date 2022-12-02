@@ -192,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(dr_view);
                 Dijkstra d = new Dijkstra(MainActivity.this);
                 StationInfo s = new StationInfo();
+//                for(int i = 0; i < 111; i++){
+//                    s.getStation(s.getStationList()[i]);
+//                }
                 d.check("601", "613");
 
 //                Data p = d.getBTime();

@@ -1,6 +1,15 @@
 package com.example.teamproject;
 
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -129,8 +138,8 @@ class station {
             t2.put(ud, t1);
             t1.put(index, v);
         }
-        System.out.println("name: "+name + " line "+ line+"  ud  " +ud +"  index  "+index);
-        System.out.println("value :  "+value.get(line).get(ud).get(index));
+//        System.out.println("name: "+name + " line "+ line+"  ud  " +ud +"  index  "+index);
+//        System.out.println("value :  "+value.get(line).get(ud).get(index));
     }
 
     public HashMap<Integer, HashMap<Integer, HashMap<Integer, Float>>> getValue() {
@@ -635,61 +644,61 @@ public class StationInfo {
 
     }
     station temp = new station();
-//    public void changeStation(int i, station s){
-//        st[i] = s;
-//    }
-//    public station getStation(String s){
-//        int t = station_index.indexOf(s);
-//        if(st[t].getUptime(st[t].getLine()[0][0])[0] == -1) {
-//            DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("time");
-//            database_ref.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                    Object o = task.getResult().child(s).getValue(Object.class);
-//                    GenericTypeIndicator<HashMap<String, ArrayList<Integer>>> T = new GenericTypeIndicator<HashMap<String, ArrayList<Integer>>>() {
-//                        @Override
-//                        public int hashCode() {
-//                            return super.hashCode();
-//                        }
-//                    };
-//                    if(o == null) {
-//                        setStationTime();
-//                        for (int i = 0; i < 111; i++) {
-//                            for (int j = 0; j < 36; j++) {
-//                                String index = String.valueOf(j);
-//                                int line1 = st[i].getLine()[0][0];
-//                                int line2 = st[i].getLine()[1][0];
-//                                database_ref.child(station_list[i]).child(String.valueOf(line1)).child("uptime").child(index).setValue(st[i].getUptime(line1)[j]);
-//                                database_ref.child(station_list[i]).child(String.valueOf(line1)).child("downtime").child(index).setValue(st[i].getDowntime(line1)[j]);
-//                                if (line2 != -1) {
-//                                    database_ref.child(station_list[i]).child(String.valueOf(line2)).child("uptime").child(index).setValue(st[i].getUptime(line2)[j]);
-//                                    database_ref.child(station_list[i]).child(String.valueOf(line2)).child("downtime").child(index).setValue(st[i].getDowntime(line2)[j]);
-//                                }
-//                            }
-//                        }
-//                    }else{
-//                        HashMap<String, ArrayList<Integer>> h = task.getResult().child(s).child(String.valueOf(st[t].getLine()[0][0])).getValue(T);
-//                        for(int i = 0; i < 36; i++){
-//                            st[t].setUptime(st[t].getLine()[0][0], i, h.get("uptime").get(i));
-//                            st[t].setDowntime(st[t].getLine()[0][0], i, h.get("downtime").get(i));
-////                            System.out.println("t: "+ t);
-////                            System.out.println(st[t].getUptime(st[t].getLine()[0][0])[i]);
-//                            if(st[t].getLine()[1][0] != -1) {
-//                                st[t].setUptime(st[t].getLine()[1][0], i, h.get("uptime").get(i));
-//                                st[t].setDowntime(st[t].getLine()[0][0], i, h.get("downtime").get(i));
-//                            }
-//                        }
-////                        System.out.println(st[t].getUptime(st[t].getLine()[0][0])[0]);
-//                    }
-//                }
-//            });
-//        }
-//
+    public void changeStation(int i, station s){
+        st[i] = s;
+    }
+    public station getStation(String s){
+        int t = station_index.indexOf(s);
+        if(st[t].getUptime(st[t].getLine()[0][0])[0] == -1) {
+            DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("time");
+            database_ref.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    Object o = task.getResult().child(s).getValue(Object.class);
+                    GenericTypeIndicator<HashMap<String, ArrayList<Integer>>> T = new GenericTypeIndicator<HashMap<String, ArrayList<Integer>>>() {
+                        @Override
+                        public int hashCode() {
+                            return super.hashCode();
+                        }
+                    };
+                    if(o == null) {
+                        setStationTime();
+                        for (int i = 0; i < 111; i++) {
+                            for (int j = 0; j < 36; j++) {
+                                String index = String.valueOf(j);
+                                int line1 = st[i].getLine()[0][0];
+                                int line2 = st[i].getLine()[1][0];
+                                database_ref.child(station_list[i]).child(String.valueOf(line1)).child("uptime").child(index).setValue(st[i].getUptime(line1)[j]);
+                                database_ref.child(station_list[i]).child(String.valueOf(line1)).child("downtime").child(index).setValue(st[i].getDowntime(line1)[j]);
+                                if (line2 != -1) {
+                                    database_ref.child(station_list[i]).child(String.valueOf(line2)).child("uptime").child(index).setValue(st[i].getUptime(line2)[j]);
+                                    database_ref.child(station_list[i]).child(String.valueOf(line2)).child("downtime").child(index).setValue(st[i].getDowntime(line2)[j]);
+                                }
+                            }
+                        }
+                    }else{
+                        HashMap<String, ArrayList<Integer>> h = task.getResult().child(s).child(String.valueOf(st[t].getLine()[0][0])).getValue(T);
+                        for(int i = 0; i < 36; i++){
+                            st[t].setUptime(st[t].getLine()[0][0], i, h.get("uptime").get(i));
+                            st[t].setDowntime(st[t].getLine()[0][0], i, h.get("downtime").get(i));
+//                            System.out.println("t: "+ t);
+//                            System.out.println(st[t].getUptime(st[t].getLine()[0][0])[i]);
+                            if(st[t].getLine()[1][0] != -1) {
+                                st[t].setUptime(st[t].getLine()[1][0], i, h.get("uptime").get(i));
+                                st[t].setDowntime(st[t].getLine()[0][0], i, h.get("downtime").get(i));
+                            }
+                        }
+//                        System.out.println(st[t].getUptime(st[t].getLine()[0][0])[0]);
+                    }
+                }
+            });
+        }
+
 //        for(int i = 0; i < 36; i++){
 //            System.out.println(st[t].getUptime(st[t].getLine()[0][0])[i]);
 //        }
-//        return st[t];
-//    }
+        return st[t];
+    }
 
     public station getStation(int line, String s){
         int t = station_index.indexOf(s);
@@ -700,6 +709,9 @@ public class StationInfo {
     }
 
     public void setStationTime(int n){
+
+        st[line.getLine_st()[n][0]].setUptime(n,time.getUptime(n));
+        st[line.getLine_st()[n][line_num[n]-1]].setDowntime(n,time.getDowntime(n));
         for(int j = 1; j < line.getLine_num()[n]; j++){
             int a = line.getLine_st()[n][j];
             int b = line.getLine_st()[n][j-1];
@@ -708,8 +720,8 @@ public class StationInfo {
             long[] bu = st[b].getUptime(n);
             long[] dd = st[d].getDowntime(n);
             for(int k = 0; k < 36; k++){
-                st[a].setUptime(n, k, bu[k]+getTime()[b][a]);
-                st[c].setDowntime(n, k, dd[k]+getTime()[d][c]);
+                st[a].setUptime(n, k, bu[k]+getTime()[b][a]/10);
+                st[c].setDowntime(n, k, dd[k]+getTime()[d][c]/10);
             }
         }
     }
@@ -738,6 +750,9 @@ public class StationInfo {
     }
 
     public long[] getTimeTable(int station, int line, int ud){
+        if(st[station].getUptime(line)[0] == -1){
+            st[station] = getStation(line, station_list[station]);
+        }
         if(ud == 0){
             return st[station].getUptime(line);
         }else{

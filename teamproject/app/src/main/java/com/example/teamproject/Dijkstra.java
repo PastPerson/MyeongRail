@@ -393,7 +393,12 @@ class Data{
         LocalTime now = LocalTime.now();
         int[] wait = new int[sum_t+1];
         int[][] line_time = getLineTime();
-        int now_sec = now.getHour()*360 + now.getMinute()*6;
+        int now_sec;
+        if(now.getHour()+9 > 23){
+            now_sec = (now.getHour()+9-24)*360 + now.getMinute()*6;
+        }else{
+            now_sec = now.getHour()*360 + now.getMinute()*6;
+        }
         String[] ride_st = new String[sum_t+1];
         ride_st[0] = start;
         for(int i = 1; i < sum_t+1; i++){
@@ -422,7 +427,13 @@ class Data{
         int[] t = new int[sum_t+1];
         int[][] line_time = getLineTime();
         LocalTime now = LocalTime.now();
-        int now_sec = now.getHour()*360 + now.getMinute()*6;
+        int now_sec;
+        if(now.getHour()+9 > 23){
+            now_sec = (now.getHour()+9-24)*360 + now.getMinute()*6;
+        }else{
+            now_sec = now.getHour()*360 + now.getMinute()*6;
+        }
+//        System.out.println("hour: "+now.getHour()+"  minute: "+now.getMinute());
         String[] ride_st = new String[sum_t+1];
         ride_st[0] = start;
         for(int i = 1; i < sum_t+1; i++){
@@ -431,9 +442,13 @@ class Data{
         StationInfo s = new StationInfo();
         int[] b = between_time();
         int[] wait = wait_time();
+//        now_sec = 4000;
+//        System.out.println("a name "+ride_st[0]);
         for(int i = 0; i < sum_t+1; i++){
+//            System.out.println("nowsec: "+ now_sec);
             long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
             int n = 0;
+//            System.out.println("a time: "+a[n]);
             while(a[n] < now_sec){
                 n++;
                 if(n == 36){
