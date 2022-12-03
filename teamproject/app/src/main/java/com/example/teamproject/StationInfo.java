@@ -138,8 +138,8 @@ class station {
             t2.put(ud, t1);
             t1.put(index, v);
         }
-//        System.out.println("name: "+name + " line "+ line+"  ud  " +ud +"  index  "+index);
-//        System.out.println("value :  "+value.get(line).get(ud).get(index));
+        System.out.println("name: "+name + " line "+ line+"  ud  " +ud +"  index  "+index);
+        System.out.println("value :  "+value.get(line).get(ud).get(index));
     }
 
     public HashMap<Integer, HashMap<Integer, HashMap<Integer, Float>>> getValue() {

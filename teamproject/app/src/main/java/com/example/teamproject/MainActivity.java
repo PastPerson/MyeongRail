@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
 //                for(int i = 0; i < 111; i++){
 //                    s.getStation(s.getStationList()[i]);
 //                }
-                d.check("601", "613");
+                d.check("703", "107");
 
 //                Data p = d.getBTime();
 //                for(int i = 0; i < p.getPath_cnt(); i++){

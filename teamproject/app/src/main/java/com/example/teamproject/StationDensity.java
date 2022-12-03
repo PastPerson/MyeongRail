@@ -110,7 +110,7 @@ public class StationDensity {
 //                    System.out.println("c환승역 "+c.getTrans()[i]);
 //                }
                 for(int i = a.getPath_cnt() - 1; i >= 0; i--){
-//                    System.out.println("a: "+st_list[a.getPath()[i]]);
+                    System.out.println("a: "+st_list[a.getPath()[i]]);
                     st[a.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
 
                     if(n < a.getSum_t() && st_list[a.getPath()[i]].equals(a.getTrans()[n])) {
@@ -123,7 +123,7 @@ public class StationDensity {
                 index = b.time_index();
                 n = 0;
                 for(int i = b.getPath_cnt() - 1; i >= 0; i--){
-//                    System.out.println("b: "+s.getStationList()[b.getPath()[i]]);
+                    System.out.println("b: "+s.getStationList()[b.getPath()[i]]);
                     st[b.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
                     if(n < b.getSum_t() && st_list[b.getPath()[i]].equals(b.getTrans()[n])) {
                         n++;
@@ -134,27 +134,29 @@ public class StationDensity {
                 index = c.time_index();
                 n = 0;
                 for(int i = c.getPath_cnt() - 1; i >= 0; i--){
-//                    System.out.println("c: "+s.getStationList()[c.getPath()[i]]);
-
+                    System.out.println("c: "+s.getStationList()[c.getPath()[i]]);
                     st[c.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
-                    if( n < b.getSum_t() && st_list[c.getPath()[i]].equals(c.getTrans()[n])) {
+                    if( n < c.getSum_t() && st_list[c.getPath()[i]].equals(c.getTrans()[n])) {
                         n++;
                         st[c.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
 
                     }
                 }
 
-                for(int i = 0; i < 111; i++){
-                    if(i < a.getPath_cnt()){
-                        path[a.getPath()[i]] = 1;
-                    }
-                    if(i < b.getPath_cnt()){
-                        path[b.getPath()[i]] = 1;
-                    }
-                    if(i < c.getPath_cnt()){
-                        path[c.getPath()[i]] = 1;
-                    }
-                }
+//                for(int i = 0; i < 111; i++){
+//                    if(i < a.getPath_cnt()){
+//                        path[a.getPath()[i]] = 1;
+//                        System.out.println("a경로: "+st_list[a.getPath()[i]]);
+//                    }
+//                    if(i < b.getPath_cnt()){
+//                        path[b.getPath()[i]] = 1;
+//                        System.out.println("b경로: "+st_list[b.getPath()[i]]);
+//                    }
+//                    if(i < c.getPath_cnt()){
+//                        path[c.getPath()[i]] = 1;
+//                        System.out.println("c경로: "+st_list[c.getPath()[i]]);
+//                    }
+//                }
 
                 for(int i = 0; i < 111; i++){
                     if(path[i] == 1){
@@ -163,6 +165,7 @@ public class StationDensity {
                             r = new ResearchRecord(st_list[i]);
 
                         }
+//                        System.out.println("역 이름: "+st_list[i]);
                         for(int line : st[i].getValue().keySet()){
                             for(int ud : st[i].getValue().get(line).keySet()){
                                 for(int t_index : st[i].getValue().get(line).get(ud).keySet()){
