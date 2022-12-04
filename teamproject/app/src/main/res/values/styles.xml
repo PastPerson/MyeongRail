@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat">
-        <item name ="windowActionBar">false</item>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name ="windowActionBar">true</item>
         <item name ="windowNoTitle">true</item>
+        <item name="colorPrimaryDark">@color/blue</item>
+
+
     </style>
 
+<<<<<<< Updated upstream
+=======
+    </style>
+
+>>>>>>> Stashed changes
     <style name="SplashTheme" parent="android:Theme.Light.NoTitleBar">
         <item name="android:windowBackground">@drawable/loading</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
+
 </resources>
