@@ -138,8 +138,6 @@ class station {
             t2.put(ud, t1);
             t1.put(index, v);
         }
-//        System.out.println("name: "+name + " line "+ line+"  ud  " +ud +"  index  "+index);
-//        System.out.println("value :  "+value.get(line).get(ud).get(index));
     }
 
     public HashMap<Integer, HashMap<Integer, HashMap<Integer, Float>>> getValue() {
@@ -681,22 +679,16 @@ public class StationInfo {
                         for(int i = 0; i < 36; i++){
                             st[t].setUptime(st[t].getLine()[0][0], i, h.get("uptime").get(i));
                             st[t].setDowntime(st[t].getLine()[0][0], i, h.get("downtime").get(i));
-//                            System.out.println("t: "+ t);
-//                            System.out.println(st[t].getUptime(st[t].getLine()[0][0])[i]);
                             if(st[t].getLine()[1][0] != -1) {
                                 st[t].setUptime(st[t].getLine()[1][0], i, h.get("uptime").get(i));
                                 st[t].setDowntime(st[t].getLine()[0][0], i, h.get("downtime").get(i));
                             }
                         }
-//                        System.out.println(st[t].getUptime(st[t].getLine()[0][0])[0]);
                     }
                 }
             });
         }
 
-//        for(int i = 0; i < 36; i++){
-//            System.out.println(st[t].getUptime(st[t].getLine()[0][0])[i]);
-//        }
         return st[t];
     }
 
@@ -730,7 +722,6 @@ public class StationInfo {
         for(int i = 0; i < 9; i++){
             st[line.getLine_st()[i][0]].setUptime(i,time.getUptime(i));
             st[line.getLine_st()[i][line_num[i]-1]].setDowntime(i,time.getDowntime(i));
-//            System.out.println("station: "+ station_list[line.getLine_st()[i][0]]+" line: "+ i + " time: "+st[line.getLine_st()[i][0]].getUptime(i)[0]);
         }
         for(int i = 0; i < 9; i++){
             int n = line.getLine_num()[i];
