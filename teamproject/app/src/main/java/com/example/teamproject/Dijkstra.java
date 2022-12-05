@@ -855,7 +855,7 @@ public class Dijkstra {
             t[n] = cc[n];
         }
         b_charge = new Data(atime, km, charge, start, finish, cc, sum_t, path, path_cnt, 2);
-       density.addRecord(b_time, b_dist, b_charge, now_time);
+       density.densityRequire(start, finish, now_time);
     }
     void check(String start, String finish){
         int i, j; /* i, j, = for문을 위해 생성
@@ -1003,7 +1003,7 @@ public class Dijkstra {
             t[n] = cc[n];
         }
         b_charge = new Data(atime, km, charge, start, finish, cc, sum_t, path, path_cnt, 2);
-        density.addRecord(b_time, b_dist, b_charge);
+        density.densityRequire(start, finish);
 //        System.out.println("what " + b_time.getSum_t());
 //        for(int t = 0; t < b_time.getSum_t(); t++){
 //            System.out.println( b_time.getTrans()[t]);
@@ -1169,6 +1169,34 @@ public class Dijkstra {
 //            System.out.println(b_time.getPath()[t]);
 //        }
     }
+    public void no_record_check(String start, String via, String end){
+        int s = station_index.indexOf(start);
+        int e = station_index.indexOf(end);
+
+        no_record_check(start, via);
+        for(int i=0; this.cc[i]!=null;i++){
+            if(this.cc[i+1]==null){
+                transfer_list[0]=this.cc[i];
+                transfer_list[1]="0";
+            }
+        }
+        Data first_time = getBTime();
+        Data first_dist = getBDist();
+        Data  first_charge = getBCharge();
+        no_record_check(via, end);
+        if(transfer_list[0]==null){
+            transfer_list[0]="0";
+            transfer_list[1]=this.cc[0];
+        }
+        b_time = datasquash(first_time, getBTime(), 0);
+        b_dist = datasquash(first_dist, getBDist(), 1);
+        b_charge = datasquash(first_charge, getBCharge(), 2);
+        System.out.println("환승 몇번: " + b_time.getSum_t());
+        for(int i = 0; i < b_time.getSum_t(); i++){
+            System.out.println(b_time.getTrans()[i]);
+        }
+
+    }
     void check(String start, String via, String end){
         int s = station_index.indexOf(start);
         int e = station_index.indexOf(end);
@@ -1200,7 +1228,7 @@ public class Dijkstra {
         int s = station_index.indexOf(start);
         int e = station_index.indexOf(end);
 
-        no_record_check(start, via);
+        check(start, via);
         for(int i=0; this.cc[i]!=null;i++){
             if(this.cc[i+1]==null){
                 transfer_list[0]=this.cc[i];
@@ -1210,7 +1238,7 @@ public class Dijkstra {
         Data first_time = getBTime();
         Data first_dist = getBDist();
         Data  first_charge = getBCharge();
-        no_record_check(via, end);
+        check(via, end);
         if(transfer_list[0]==null){
             transfer_list[0]="0";
             transfer_list[1]=this.cc[0];
@@ -1222,7 +1250,7 @@ public class Dijkstra {
         for(int i = 0; i < b_time.getSum_t(); i++){
             System.out.println(b_time.getTrans()[i]);
         }
-        density.addRecord(b_time, b_dist, b_charge, now_time);
+//        density.addRecord(b_time, b_dist, b_charge, now_time);
     }
     int[] pathappend(int[] a, int alen, int[] b, int blen){
         int[] c = new int[alen + blen];

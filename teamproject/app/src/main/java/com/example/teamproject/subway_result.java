@@ -1,39 +1,28 @@
 package com.example.teamproject;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PersistableBundle;
 import android.os.SystemClock;
-import android.renderscript.ScriptGroup;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -148,7 +137,6 @@ public class subway_result extends AppCompatActivity {
                             set_display(layout, sub.getBTime());
                             Log.d("test", "바뀌고난 초:" + allsec);
                         }
-
 
 
                 },Integer.parseInt(shour),Integer.parseInt(smin),false);
@@ -351,9 +339,11 @@ public class subway_result extends AppCompatActivity {
     public void type_check(){
         try {
             if (transfer_point == null)
-                sub.check(start_point, end_point,allsec);
+                sub.check(start_point, end_point,(allsec/10));
             else
-                sub.check(start_point, transfer_point, end_point,allsec);
+                sub.check(start_point, transfer_point, end_point,(allsec/10));
+
+            Log.d("allsec: ", "allsec: "+allsec);
         }catch (ArrayIndexOutOfBoundsException e){}
     }
     Handler handler = new Handler() {
