@@ -7,18 +7,18 @@
 
     tools:context=".login_main">
 
-    <TextView
+    <ImageView
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="112dp"
-        android:text="명레일"
+        android:layout_width="374dp"
+        android:layout_height="161dp"
+        android:layout_marginTop="68dp"
+        android:src="@drawable/app_logo"
         android:textAlignment="center"
         android:textSize="40dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.432"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></TextView>
+        app:layout_constraintTop_toTopOf="parent"></ImageView>
 
     <LinearLayout
 
@@ -39,23 +39,23 @@
             android:id="@+id/user_id"
             android:layout_width="match_parent"
             android:layout_height="65dp"
+            android:layout_margin="0dp"
             android:layout_marginBottom="12dp"
             android:hint="ID"
-            android:layout_margin="0dp"
-            android:imeOptions="actionSearch"
+            android:nextFocusDown="@id/user_pwd"
             android:inputType="text"
             app:layout_constraintBottom_toTopOf="@+id/user_password"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"></EditText>
 
         <EditText
-            android:id="@+id/user_password"
+            android:id="@+id/user_pwd"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_marginBottom="352dp"
             android:hint="Password"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
+            android:nextFocusDown="@id/login"
+            android:inputType="textPassword"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
@@ -71,7 +71,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        android:background="#1E5FBE"
+        android:textColor="@color/white"
         android:text="로그인">
     </Button>
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="261dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="8dp"
+        android:background="#1E5FBE"
+        android:text="회원가입"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login"></Button>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,12 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
         android:layout_width="140dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:id="@+id/drawerView"
-        android:background="#5559b4">
+        android:background="#1E5FBE">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/profile"
+        android:layout_width="140dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/border_background">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="71dp"
+            android:layout_height="26dp"
+            android:clickable="true"
+            android:text="id:"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"></TextView>
+
+        <TextView
+            android:id="@+id/profile_id"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:text=""
+            android:textColor="#ffffff"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"></TextView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/menu_login"
@@ -19,14 +56,25 @@
         android:textAlignment="center"
         android:textColor="#ffffff"
         android:textSize="40dp"></TextView>
+    <TextView
+        android:id="@+id/list_go"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/border_background"
+        android:clickable="true"
+        android:text="게시판"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="40dp"></TextView>
 
     <TextView
         android:id="@+id/nav_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="550dp"
-
+        android:layout_marginTop="450dp"
+        android:layout_marginLeft="38dp"
         android:text="로그아웃"
         android:textColor="#ffffff"
         android:textSize="15dp"></TextView>

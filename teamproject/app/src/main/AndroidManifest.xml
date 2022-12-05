@@ -13,6 +13,48 @@
         android:theme="@style/Theme.Teamproject"
         tools:targetApi="31">
         <activity
+            android:name=".stationtimetable"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ListActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib.name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".subway_result"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Email_Authentication"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Search"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".login_main"
             android:exported="false">
             <meta-data
@@ -20,7 +62,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".search_activity_first"
+            android:name=".PostWriteActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -55,6 +97,9 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity
+            android:name=".PopupActivity"
+            android:theme="@android:style/Theme.Dialog" />
     </application>
 
 </manifest>

@@ -7,12 +7,10 @@
 
 
     </style>
+    <style name="TitleTheme" parent="Theme.AppCompat">
 
-<<<<<<< Updated upstream
-=======
     </style>
 
->>>>>>> Stashed changes
     <style name="SplashTheme" parent="android:Theme.Light.NoTitleBar">
         <item name="android:windowBackground">@drawable/loading</item>
         <item name="android:windowDisablePreview">true</item>

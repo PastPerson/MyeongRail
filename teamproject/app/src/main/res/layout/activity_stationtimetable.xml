@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".stationtimetable">
+
+    <!-- 상단바-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#1E5FBF"
+        >
+
+        <TextView
+            android:id="@+id/station_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="listname"
+            android:textSize="50dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:background="#1E5FBF"
+            android:textColor="@color/white">
+        </TextView>
+        <Button
+            android:id="@+id/table_backbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#0186D1"
+            android:textColor="@color/white"
+            android:layout_margin="10dp"
+            android:text="뒤로가기">
+
+        </Button>
+
+
+    </FrameLayout>
+
+
+    <!-- 메인바-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:orientation="vertical">
+        <HorizontalScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                >
+                <!--1번째 노선도 역시간표-->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/first_line_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="59dp"
+                        android:textAlignment="center"
+                        android:textSize="40dp">
+
+                    </TextView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="6"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/border_background"
+                                android:text="상행선"
+                                android:textAlignment="center"
+                                android:textSize="20dp"></TextView>
+
+                            <ListView
+                                android:id="@+id/fuptime_list"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="10"
+                                android:background="@drawable/border_background"
+                                android:textAlignment="center">
+
+                            </ListView>
+                        </LinearLayout>
+                        <!--하행선-->
+                        <LinearLayout
+
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/border_background"
+                                android:text="하행선"
+                                android:textAlignment="center"
+                                android:textSize="20dp"></TextView>
+
+                            <ListView
+                                android:id="@+id/fdowntime_list"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="10"
+                                android:background="@drawable/border_background"
+                                android:textAlignment="center">
+
+                            </ListView>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:id="@+id/last_line_sheet">
+
+                    <TextView
+                        android:id="@+id/last_line_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="59dp"
+                        android:textAlignment="center"
+                        android:textSize="40dp">
+
+                    </TextView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="6"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/border_background"
+                                android:text="상행선"
+                                android:textAlignment="center"
+                                android:textSize="20dp"></TextView>
+
+                            <ListView
+                                android:id="@+id/luptime_list"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="10"
+                                android:background="@drawable/border_background"
+                                android:textAlignment="center">
+
+                            </ListView>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/border_background"
+                                android:text="하행선"
+                                android:textAlignment="center"
+                                android:textSize="20dp"></TextView>
+
+                            <ListView
+                                android:id="@+id/ldowntime_list"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="10"
+                                android:background="@drawable/border_background"
+                                android:textAlignment="center">
+
+                            </ListView>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+
+
+
+
+
+       <!-- <com.google.android.material.tabs.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="상행"></TextView>
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ListView
+                                android:id = "@+id/uplist"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:divider = "#999999"
+                                android:dividerHeight="1dp"/>
+
+                        </ScrollView>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="하행"></TextView>
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ListView
+                                android:id = "@+id/downlist"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:divider = "#999999"
+                                android:dividerHeight="1dp"/>
+                        </ScrollView>
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+
+        </com.google.android.material.tabs.TabLayout>-->
+    </LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
