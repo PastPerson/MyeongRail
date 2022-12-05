@@ -988,6 +988,161 @@ public class Dijkstra {
 //        }
     }
 
+    void no_record_check(String start, String finish){
+        int i, j; /* i, j, = for문을 위해 생성
+				  	 s = 시작노드 입력값
+				  	 e = 끝 노드 입력값*/
+        int[] k = new int[3];
+        int[] min = new int[3];//min = 최소값을 찾기 위함
+        int s = station_index.indexOf(start); // 역이름에 맞는 인덱스 반환
+        int e = station_index.indexOf(finish);// 역이름에 맞는 인덱스 반환
+        int[][] v = new int[3][111]; //이동하는 최단 거리 확인
+        int[][] distance = new int[3][111];//지나간 노드 확인
+        int[][] distance1 = new int[3][111];//지나간 노드 확인
+        int[][] distance2 = new int[3][111];//지나간 노드 확인
+        int[][] via = new int[3][111]; //지나간 노드를 오름차순으로 정렬해서 저장
+        for (j = 0; j < 111; j++) {
+            v[0][j] = 0;//초기화
+            v[1][j] = 0;//초기화
+            v[2][j] = 0;//초기화
+            distance1[0][j] = INF; //j의 거리를 아직 연결되지 않음을 설정
+            distance[1][j] = INF; //j의 거리를 아직 연결되지 않음을 설정
+            distance2[2][j] = INF; //j의 거리를 아직 연결되지 않음을 설정
+        }
+        distance1[0][s] = 0;
+        distance[1][s] = 0;
+        distance2[2][s] = 0;
+
+        for (i = 0; i < 111; i++) {
+            min[0] = INF;  //최소값을 아직 연결되지 않음을 설정
+            min[1] = INF;
+            min[2] = INF;
+            for (j = 0; j < 111; j++) {
+                if (v[0][j] == 0 && distance1[0][j] < min[0])
+                //이웃한 노드 중 방문하지 않은 노드일 경우
+                {
+                    k[0] = j;//최단거리 노드번호를 k에 저장
+                    min[0] = distance1[0][j];//min에 최단거리를 장
+                }
+                if (v[1][j] == 0 && distance[1][j] < min[1])
+                //이웃한 노드 중 방문하지 않은 노드일 경우
+                {
+                    k[1] = j;//최단거리 노드번호를 k에 저장
+                    min[1] = distance[1][j];//min에 최단거리를 장
+                }
+                if (v[2][j] == 0 && distance2[2][j] < min[2])
+                //이웃한 노드 중 방문하지 않은 노드일 경우
+                {
+                    k[2] = j;//최단거리 노드번호를 k에 저장
+                    min[2] = distance2[2][j];//min에 최단거리를 장
+                }
+            }
+
+            v[0][k[0]] = 1;
+            v[1][k[1]] = 1;
+            v[2][k[2]] = 1;
+            if (min[0] == INF)
+                break;
+            if (min[1] == INF)
+                break;
+
+            for (j = 0; j < 111; j++) {
+                if (distance1[0][j] > distance1[0][k[0]] + time[k[0]][j]) {
+                    distance[0][j] = distance[0][k[0]] + dist[k[0]][j];
+                    distance1[0][j] = distance1[0][k[0]] + time[k[0]][j];
+                    distance2[0][j] = distance2[0][k[0]] + cost[k[0]][j];
+                    via[0][j] = k[0];
+                }
+            }
+            for (j = 0; j < 111; j++) {
+                if (distance[1][j] > distance[1][k[1]] + dist[k[1]][j]) {
+                    distance[1][j] = distance[1][k[1]] + dist[k[1]][j];
+                    distance1[1][j] = distance1[1][k[1]] + time[k[1]][j];
+                    distance2[1][j] = distance2[1][k[1]] + cost[k[1]][j];
+                    via[1][j] = k[1];
+                }
+            }
+            for (j = 0; j < 111; j++) {
+                if (distance2[2][j] > distance2[2][k[2]] + cost[k[2]][j]) {
+                    distance[2][j] = distance[2][k[2]] + dist[k[2]][j];
+                    distance1[2][j] = distance1[2][k[2]] + time[k[2]][j];
+                    distance2[2][j] = distance2[2][k[2]] + cost[k[2]][j];
+                    via[2][j] = k[2];
+                }
+            }
+        }
+
+        km = distance[0][e];
+        setKm(km);
+        atime = distance1[0][e];
+        setAtime(atime);
+        charge = distance2[0][e];
+        setCharge(charge);
+        int path[] = new int[111];
+        int path_cnt = 0;
+        k[0] = e;
+        while (true) {
+            path[path_cnt++] = k[0];
+            if (k[0] == s)
+                break;
+            k[0] = via[0][k[0]];
+        }
+        path[path_cnt] = -1;
+        trans_station(path, path_cnt, s, e);
+        String[] t = new String[sum_t];
+        for(int n = 0; n < sum_t; n++){
+            t[n] = cc[n];
+        }
+        b_time = new Data(atime, km, charge, start, finish, t, sum_t, path, path_cnt, 0);
+        atime = distance1[1][e];
+        km = distance[1][e];
+        charge = distance2[1][e];
+        path = new int[111];
+        path_cnt = 0;
+        k[1] = e;
+        while (true) {
+            path[path_cnt++] = k[1];
+            if (k[1] == s)
+                break;
+            k[1] = via[1][k[1]];
+        }
+        path[path_cnt] = -1;
+        trans_station(path, path_cnt, s, e);
+        t = new String[sum_t];
+        for(int n = 0; n < sum_t; n++){
+            t[n] = cc[n];
+        }
+        b_dist = new Data(atime, km, charge, start, finish, t, sum_t, path, path_cnt, 1);
+
+        atime = distance1[2][e];
+        km = distance[2][e];
+        charge = distance2[2][e];
+        path = new int[111];
+        path_cnt = 0;
+        k[2] = e;
+        while (true) {
+            path[path_cnt++] = k[2];
+            if (k[2] == s)
+                break;
+            k[2] = via[2][k[2]];
+        }
+        path[path_cnt] = -1;
+
+        trans_station(path, path_cnt, s, e);
+        t = new String[sum_t];
+        for(int n = 0; n < sum_t; n++){
+            t[n] = cc[n];
+        }
+        b_charge = new Data(atime, km, charge, start, finish, cc, sum_t, path, path_cnt, 2);
+//        System.out.println("what " + b_time.getSum_t());
+//        for(int t = 0; t < b_time.getSum_t(); t++){
+//            System.out.println( b_time.getTrans()[t]);
+//        }
+//        System.out.println("where " + b_time.getPath_cnt());
+//        for(int t = 0; t < b_time.getPath_cnt(); t++){
+//            System.out.println(b_time.getPath()[t]);
+//        }
+    }
     void check(String start, String via, String end){
         int s = station_index.indexOf(start);
         int e = station_index.indexOf(end);
@@ -1014,6 +1169,34 @@ public class Dijkstra {
         for(int i = 0; i < b_time.getSum_t(); i++){
             System.out.println(b_time.getTrans()[i]);
         }
+    }
+    void check(String start, String via, String end, int now_time){
+        int s = station_index.indexOf(start);
+        int e = station_index.indexOf(end);
+
+        no_record_check(start, via);
+        for(int i=0; this.cc[i]!=null;i++){
+            if(this.cc[i+1]==null){
+                transfer_list[0]=this.cc[i];
+                transfer_list[1]="0";
+            }
+        }
+        Data first_time = getBTime();
+        Data first_dist = getBDist();
+        Data  first_charge = getBCharge();
+        no_record_check(via, end);
+        if(transfer_list[0]==null){
+            transfer_list[0]="0";
+            transfer_list[1]=this.cc[0];
+        }
+        b_time = datasquash(first_time, getBTime(), 0);
+        b_dist = datasquash(first_dist, getBDist(), 1);
+        b_charge = datasquash(first_charge, getBCharge(), 2);
+        System.out.println("환승 몇번: " + b_time.getSum_t());
+        for(int i = 0; i < b_time.getSum_t(); i++){
+            System.out.println(b_time.getTrans()[i]);
+        }
+        density.addRecord(b_time, b_dist, b_charge, now_time);
     }
     int[] pathappend(int[] a, int alen, int[] b, int blen){
         int[] c = new int[alen + blen];
