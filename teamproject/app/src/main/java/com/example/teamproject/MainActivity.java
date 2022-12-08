@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private View dr_view; // 로그인 전 드로어뷰
     private TextView login_btn, logout_btn;//드로어뷰의 로그인 버튼 로그아웃버튼
     private TextView profile_id;//id표시
-    private ConstraintLayout profile_box;//id박스 표시
+    private TextView profile_box;//id박스 표시
     private FirebaseUser mFirebase_user;// 데이터베이스 유저
     private DatabaseReference mFirebaseDatabase;//데이터 베이스 레퍼런스
     private TextView list_btn; //드로어 뷰의 게시판 버튼
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private String transfer_point=null;
     private String end_point=null;
     private final long finishtimeed = 1000;
+    private Long mLastClickTime = 0L;
     private long presstime = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         firebase_auth = FirebaseAuth.getInstance();
         mFirebase_user= firebase_auth.getCurrentUser();//
         mFirebaseDatabase=FirebaseDatabase.getInstance().getReference("login");//데이터베이스의 path
-        profile_box=(ConstraintLayout) findViewById(R.id.profile);
+        profile_box=(TextView) findViewById(R.id.profile_id);
         login_btn= (TextView) findViewById(R.id.menu_login);
         logout_btn = findViewById(R.id.nav_logout);
         list_btn=(TextView)findViewById(R.id.list_go);
@@ -151,7 +153,9 @@ public class MainActivity extends AppCompatActivity {
                         StationDensity d = new StationDensity();
                         d.RequestReceive();
                     }
-                    profile_id.setText(value);
+                    System.out.println("abc");
+                    System.out.println(value);
+                    profile_id.setText(value+"님 환영합니다.");
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {}
@@ -168,6 +172,10 @@ public class MainActivity extends AppCompatActivity {
         list_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 if(firebase_auth.getInstance().getCurrentUser() != null) {
                     startActivity(new Intent(MainActivity.this, ListActivity.class));
                 }else{
@@ -191,12 +199,20 @@ public class MainActivity extends AppCompatActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 startActivity(new Intent(MainActivity.this,login_main.class));
             }
         });
         logout_btn.setOnClickListener(new View.OnClickListener() {//로그아웃
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 firebase_auth.signOut();
                 logout_btn.setVisibility(View.GONE);
                 login_btn.setVisibility(View.VISIBLE);
@@ -208,6 +224,10 @@ public class MainActivity extends AppCompatActivity {
         menu_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 drawerLayout.openDrawer(dr_view);
             }
         });
@@ -238,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (0 <= intervalTime && finishtimeed >= intervalTime)
         {
-            moveTaskToBack(true);
+            moveTaskToBack(false);
             finish();
             android.os.Process.killProcess(android.os.Process.myPid());
         }

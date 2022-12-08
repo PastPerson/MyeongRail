@@ -22,7 +22,14 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,6 +71,7 @@ public class subway_result extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
     private int alltime;
     private int af_hour,af_min;
+    private ResearchRecord rc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -72,6 +80,7 @@ public class subway_result extends AppCompatActivity {
             search=findViewById(R.id.search_result);
             now=System.currentTimeMillis();
             Date date = new Date(now);
+            rc=new ResearchRecord();
             SimpleDateFormat chour = new SimpleDateFormat("HH");
             SimpleDateFormat cmin = new SimpleDateFormat("mm");
             SimpleDateFormat csec = new SimpleDateFormat("ss");
@@ -102,8 +111,8 @@ public class subway_result extends AppCompatActivity {
             allsec=Integer.parseInt(shour)*3600+Integer.parseInt(smin)*60+Integer.parseInt(sec);
             int allhour;
             int allmin;
-            Log.d("test","초기 초:"+allsec);
-        Log.d("test",chour.format(date)+" 시 "+cmin.format(date)+" 분 "+csec.format(date)+" 초 ");
+//            Log.d("test","초기 초:"+allsec);
+//        Log.d("test",chour.format(date)+" 시 "+cmin.format(date)+" 분 "+csec.format(date)+" 초 ");
         try{
 
                 start_point=intent.getStringExtra("start_point");//시작역 받는 변수
@@ -128,15 +137,20 @@ public class subway_result extends AppCompatActivity {
                         allsec = hour * 3600 + min * 60;
                         type_check();
                         int i=radioGroup.getCheckedRadioButtonId();
-                        if(i==R.id.radio_time)
+                        if(i==R.id.radio_time) {
                             get_Time(0);
-                        else if(i==R.id.radio_distance)
-                            get_Time(1);
-                        else if(i==R.id.radio_cost)
-                            get_Time(2);
-                            set_display(layout, sub.getBTime());
-                            Log.d("test", "바뀌고난 초:" + allsec);
+                            set_display(layout,sub.getBTime());
                         }
+                        else if(i==R.id.radio_distance) {
+                            get_Time(1);
+                            set_display(layout,sub.getBDist());
+                        }
+                        else if(i==R.id.radio_cost) {
+                            get_Time(2);
+                            set_display(layout, sub.getBCharge());
+                        }
+//                            Log.d("test", "바뀌고난 초:" + allsec);
+                    }
 
 
                 },Integer.parseInt(shour),Integer.parseInt(smin),false);
@@ -484,7 +498,51 @@ public class subway_result extends AppCompatActivity {
 //        }
 
     }
+    public void get_density(Data d, String st, TextView tv){
+        tr= new Thread(new Runnable() {
+            @Override
+            public void run() {
 
+            }
+        });
+        DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("density");
+        int[] path = d.getPath();
+        StationInfo s = new StationInfo();
+        int index = 0;
+        for(int i = d.getPath_cnt(); i >= 0; i--){
+            if(s.getStationList()[path[i]].equals(st)){
+                break;
+            }
+            if(d.getTrans().equals(s.getStationList()[path[i]])){
+                index++;
+            }
+        }
+        int[][] lt = d.getLineTime();
+        String l = lt[index][0] + "line";
+        String ud;
+        if(lt[index][1] == 0){
+            ud = "uptime";
+        }else{
+            ud = "downtime";
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-DD");
+        String date = simpleDateFormat.format(System.currentTimeMillis());
+        database_ref.child("station").child(date).child(st).child("timeIndex").child(l).child(ud).child(String.valueOf(index)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                Float f = task.getResult().getValue(Float.class);
+                if(f>=3){
+                    tv.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
+                }else{
+                    tv.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00FF7F")));
+                }
+                System.out.println("ff: "+ f);
+            }
+        });
+
+
+    }
 
 
 
@@ -509,19 +567,21 @@ public class subway_result extends AppCompatActivity {
         start_view.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams parms_f=(LinearLayout.LayoutParams) start_view.getLayoutParams();
         parms_f.setMargins(50,0,0,0);
-        Log.d("txt",start_point+transfer_point+end_point);
+
+//        Log.d("txt",start_point+transfer_point+end_point);
         String prev_station=" ";
         if(start_point!=null) {
              prev_station = start_point;
-            if (Integer.parseInt(start_point) % 2 == 0) {
-                start_view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
-
-                start_view.setTextColor(Color.parseColor("#FFFAFA"));
-            } else {
-                start_view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00FF7F")));
-
-                start_view.setTextColor(Color.parseColor("#F0FFF0"));
-            }
+            get_density(D,start_point,start_view);
+//            if (Integer.parseInt(start_point) % 2 == 0) {
+//                start_view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
+//
+//                start_view.setTextColor(Color.parseColor("#FFFAFA"));
+//            } else {
+//                start_view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00FF7F")));
+//
+//                start_view.setTextColor(Color.parseColor("#F0FFF0"));
+//            }
              if(end_point==null){
                  end_view.setVisibility(View.GONE);
                  start_view.setVisibility(View.GONE);
@@ -535,46 +595,49 @@ public class subway_result extends AppCompatActivity {
             end_view.setVisibility(View.VISIBLE);
         }
 
-        Log.d("text",si.getStation("122").getLine()[0][1]+" "+si.getStation("122").getLine()[0][1]+" "+si.getStation("122").getLine()[0][1]);
+//        Log.d("text",si.getStation("122").getLine()[0][1]+" "+si.getStation("122").getLine()[0][1]+" "+si.getStation("122").getLine()[0][1]);
         //환승역 및 경유역 체크
         if(D!=null&&D.getSum_t()!=0) {
             for (int i = 0; i< D.getSum_t(); i++) {
-                Log.d("test", "경로" + D.getTrans()[i]);
+//                Log.d("test", "경로" + D.getTrans()[i]);
                 TextView density = new TextView(this);
                 int num1=0;
                 for(int[] j:si.getStation(prev_station).getLine()){
                     int num2=0;
 
                     for(int[] k:si.getStation(D.getTrans()[i]).getLine()){
-                        Log.d("test", "전역: " + j[0]+"다음역: "+k[0]);
+//                        Log.d("test", "전역: " + j[0]+"다음역: "+k[0]);
                         if(j[0]==k[0]&&j[0]!=-1){
                             density.setText(String.valueOf(j[0]+1)+"호선");
                         }
-                        Log.d("test","전역의이름:"+prev_station+" 이번역의 이름: "+D.getTrans()[i]);
+//                        Log.d("test","전역의이름:"+prev_station+" 이번역의 이름: "+D.getTrans()[i]);
 
                     }
 
                     num1++;
                 }
+
                 prev_station=D.getTrans()[i];
                 density.setTextSize(30);
                 f.addView(density);
                 LinearLayout.LayoutParams parms = (LinearLayout.LayoutParams) density.getLayoutParams();
                 parms.setMargins(20, 0, 20, 0);
                 TextView view = new TextView(this);
+                get_density(D,D.getTrans()[i],view);
                 view.setText(D.getTrans()[i]);
                 view.setBackgroundResource(R.drawable.shape);
                 f.addView(view);
-                if(Integer.parseInt(D.getTrans()[i])%2==0){
-                    view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
+//                if(Integer.parseInt(D.getTrans()[i])%2==0){
+//                    view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
+//
+//                    view.setTextColor(Color.parseColor("#FFFAFA"));
+//                }
+//                else{
+//                    view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00FF7F")));
+//
+//                    view.setTextColor(Color.parseColor("#F0FFF0"));
+//                }
 
-                    view.setTextColor(Color.parseColor("#FFFAFA"));
-                }
-                else{
-                    view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00FF7F")));
-
-                    view.setTextColor(Color.parseColor("#F0FFF0"));
-                }
                 view.setTextSize(70);
                 view.getLayoutParams().height = 500;
                 view.getLayoutParams().width = 500;
@@ -590,7 +653,7 @@ public class subway_result extends AppCompatActivity {
             int num2=0;
             if(end_point!=null) {
                 for (int[] k : si.getStation(end_point).getLine()) {
-                    Log.d("test", "전역: " + j[num1] + "다음역: " + k[num2]);
+//                    Log.d("test", "전역: " + j[num1] + "다음역: " + k[num2]);
                     if (j[0] == k[0] && j[0] != -1) {
                         density_f.setText(String.valueOf(j[0] + 1) + "호선");
                     }
@@ -606,15 +669,7 @@ public class subway_result extends AppCompatActivity {
         //end_view=new TextView(this);
         end_view.setBackgroundResource(R.drawable.shape);
         if(end_point!=null){
-            if (Integer.parseInt(end_point) % 2 == 0) {
-                end_view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
-
-                end_view.setTextColor(Color.parseColor("#FFFAFA"));
-            } else {
-                end_view.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00FF7F")));
-
-                end_view.setTextColor(Color.parseColor("#F0FFF0"));
-            }
+            get_density(D,end_point,end_view);
         }
         f.addView(end_view);
         end_view.setText(end_point);

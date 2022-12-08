@@ -47,7 +47,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:background="@drawable/border_background"
+
                 android:layout_width="136dp"
                 android:layout_height="50dp"
                 android:gravity="center"
@@ -57,7 +57,7 @@
                 ></TextView>
 
             <TextView
-                android:background="@drawable/border_background"
+
                 android:layout_width="137dp"
                 android:layout_height="50dp"
                 android:text="경유"
@@ -68,7 +68,7 @@
             <TextView
                 android:layout_width="136dp"
                 android:layout_height="50dp"
-                android:background="@drawable/border_background"
+
                 android:gravity="center"
                 android:text="도착"
                 android:textAlignment="center"

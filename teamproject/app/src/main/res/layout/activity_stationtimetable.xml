@@ -26,14 +26,17 @@
             android:background="#1E5FBF"
             android:textColor="@color/white">
         </TextView>
+
         <Button
             android:id="@+id/table_backbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="#0186D1"
-            android:textColor="@color/white"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="right"
             android:layout_margin="10dp"
-            android:text="뒤로가기">
+            android:background="#1E5FBF"
+            android:text="X"
+            android:textSize="10dp"
+            android:textColor="@color/white">
 
         </Button>
 

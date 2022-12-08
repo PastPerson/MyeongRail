@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#eeeeee"
+
     android:orientation="vertical"
     android:layout_width="300dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/radius"
+    >
 
     <!-- 타이틀바 -->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
         <TextView
+
             android:id="@+id/station_pop"
             android:text=""
             android:textSize="20sp"
             android:textColor="#fff"
             android:gravity="center"
-            android:background="#1E5FBE"
+            android:background="@drawable/radius_bottomconnect"
+            android:backgroundTint="#1E5FBE"
             android:layout_width="match_parent"
             android:layout_height="53dp" />
     </LinearLayout>
@@ -27,12 +32,14 @@
 
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        
+        >
         <TextView
             android:id="@+id/start_pop"
             android:text="출발역"
             android:textColor="#000"
-
+            android:background="@color/white"
             android:gravity="center"
 
             android:layout_width="match_parent"
@@ -41,7 +48,7 @@
             android:id="@+id/transfer_pop"
             android:text="경유역"
             android:textColor="#000"
-
+            android:background="@color/white"
             android:gravity="center"
 
             android:layout_width="match_parent"
@@ -50,7 +57,7 @@
             android:id="@+id/end_pop"
             android:text="도착역"
             android:textColor="#000"
-
+            android:background="@color/white"
             android:gravity="center"
 
             android:layout_width="match_parent"
@@ -58,6 +65,7 @@
         <TextView
             android:id="@+id/std_info"
             android:text="역 시간표"
+            android:background="@color/white"
             android:textColor="#000"
             android:gravity="center"
             android:layout_width="match_parent"
@@ -75,7 +83,8 @@
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
         <Button
             android:text="확인"
             android:textSize="15sp"

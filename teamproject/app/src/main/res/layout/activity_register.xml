@@ -23,7 +23,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="272dp"
         android:layout_height="200dp"
-        android:background="@drawable/border_background"
+
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -77,16 +77,17 @@
 
     <Button
         android:id="@+id/btn_register"
-        android:layout_width="261dp"
-        android:layout_height="51dp"
-        android:layout_marginBottom="232dp"
-        android:text="가입완료"
+        android:layout_width="272dp"
+        android:layout_height="52dp"
+
         android:background="#1E5FBE"
+        android:text="가입완료"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.617" />
+        app:layout_constraintVertical_bias="0.116" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

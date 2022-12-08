@@ -4,68 +4,62 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-        android:layout_width="140dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:id="@+id/drawerView"
-        android:background="#1E5FBE">
+    android:layout_width="200dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:id="@+id/drawerView"
+    android:background="@color/white"
+    android:clickable="true"
+    android:importantForAccessibility="no"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:orientation="vertical"
+        android:background="#1E5FBE"
+        >
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/profile"
-        android:layout_width="140dp"
-        android:layout_height="26dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="0dp"
-        android:background="@drawable/border_background">
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/user">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="71dp"
-            android:layout_height="26dp"
-            android:clickable="true"
-            android:text="id:"
-            android:textAlignment="center"
-            android:textColor="#ffffff"
-            android:textSize="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"></TextView>
-
+        </ImageView>
         <TextView
             android:id="@+id/profile_id"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="25dp"
             android:text=""
+            android:layout_marginTop="10dp"
             android:textColor="#ffffff"
             android:textSize="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"></TextView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:textAlignment="center"
+            ></TextView>
 
     <TextView
         android:id="@+id/menu_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/border_background"
+        android:layout_marginTop="10dp"
         android:clickable="true"
-        android:text="로그인"
+        android:text="로그인을 해주세요"
         android:textAlignment="center"
         android:textColor="#ffffff"
-        android:textSize="40dp"></TextView>
+        android:textSize="20dp"></TextView>
+    </LinearLayout>
     <TextView
         android:id="@+id/list_go"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:background="@drawable/border_background"
         android:clickable="true"
         android:text="게시판"
         android:textAlignment="center"
-        android:textColor="#ffffff"
+
         android:textSize="40dp"></TextView>
 
     <TextView
@@ -73,11 +67,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="450dp"
-        android:layout_marginLeft="38dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="300dp"
         android:text="로그아웃"
-        android:textColor="#ffffff"
-        android:textSize="15dp"></TextView>
+
+
+        android:textSize="20dp"></TextView>
 
 
 </LinearLayout>
