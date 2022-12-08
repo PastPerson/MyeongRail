@@ -323,7 +323,9 @@ public class StationDensity {
         tr=new Thread(new Runnable() {
             @Override
             public void run() {
-                database_ref.child("station").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-DD");
+                String date = simpleDateFormat.format(System.currentTimeMillis());
+                database_ref.child("station").child(date).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
                         int[] path = new int[111];
@@ -387,7 +389,7 @@ public class StationDensity {
                                         }
                                     }
                                 }
-                                database_ref.child("station").child(st_list[i]).setValue(r);
+                                database_ref.child("station").child(date).child(st_list[i]).setValue(r);
                             }
                         }
                     }
