@@ -199,6 +199,7 @@ public class StationDensity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName){
                 System.out.println("density request occurred!");
+                initRecord();
                 Request r = snapshot.getValue(Request.class);
                 ArrayList<String> s = r.getS();
                 if(s.size() == 2){
@@ -396,6 +397,31 @@ public class StationDensity {
                 });
             }
         });
+
+        tr.start();
+    }
+
+    public void initRecord() {
+        tr=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-DD");
+                String date = simpleDateFormat.format(System.currentTimeMillis());
+                database_ref.child("station").child(date).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        Object o = task.getResult().getValue();
+                        if(o == null) {
+                            StationInfo s = new StationInfo();
+                            for (int i = 0; i < 111; i++) {
+                                database_ref.child("station").child(date).child(s.getStationList()[i]).setValue(new ResearchRecord(s.getStationList()[i]));
+                            }
+                        } else return;
+                    }
+                });
+            }
+        });
+
         tr.start();
     }
 }

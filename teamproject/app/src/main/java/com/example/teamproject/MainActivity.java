@@ -149,11 +149,8 @@ public class MainActivity extends AppCompatActivity {
                     String value= dataSnapshot.getValue(String.class);
                     if(value.equals("abc")){
                         StationDensity d = new StationDensity();
-                        System.out.println("ok");
                         d.RequestReceive();
                     }
-                    System.out.println("abc");
-                    System.out.println(value);
                     profile_id.setText(value);
                 }
                 @Override
