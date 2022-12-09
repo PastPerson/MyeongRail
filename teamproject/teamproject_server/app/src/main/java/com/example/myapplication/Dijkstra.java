@@ -1,4 +1,4 @@
-package com.example.teamproject;
+package com.example.myapplication;
 
 import android.content.Context;
 
@@ -28,6 +28,7 @@ class Data{
     List<Integer> between = new ArrayList<>();
     int path_cnt;
     int sum_t; // 환승횟수
+
 
     public int getType() {
         return type;
@@ -90,6 +91,8 @@ class Data{
         this.type = type;
         this.trans = trans;
         this.path = path;
+        DataUtil util = new DataUtil();
+//        this.between = util.between_time(this);
     }
 
     public int getTime(){
@@ -295,7 +298,7 @@ class DataUtil{
             ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        List<Integer> b = d.getBetween();
+        List<Integer> b = between_time(d);
         for(int i = 0; i < sum_t+1; i++){
             long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
             int n = 0;
@@ -307,7 +310,7 @@ class DataUtil{
                 }
             }
             wait[i] = (int) (a[n] - now_sec);
-            now_sec += wait[i] + b.get(i)/10;
+            now_sec += wait[i] + between_time(d).get(i)/10;
         }
 
         return wait;
@@ -333,9 +336,7 @@ class DataUtil{
             ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        List<Integer> b = d.getBetween();
-        System.out.println("between "+b.size());
-        System.out.println("stat "+d.getStart());
+        List<Integer> b = between_time(d);
         for(int i = 0; i < sum_t+1; i++){
             long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
             int n = 0;
@@ -347,7 +348,7 @@ class DataUtil{
                 }
             }
             wait[i] = (int) (a[n] - now_sec);
-            now_sec += wait[i] + b.get(i)/10;
+            now_sec += wait[i] + between_time(d).get(i)/10;
         }
 
         return wait;
@@ -365,7 +366,7 @@ class DataUtil{
             ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        List<Integer> b = d.getBetween();
+        List<Integer> b = between_time(d);
         int[] wait = wait_time(d,now_time);
         now_sec = now_time;
         for(int i = 0; i < sum_t+1; i++){
@@ -381,7 +382,7 @@ class DataUtil{
                 }
             }
             t[i] = n;
-            now_sec += wait[i] + b.get(i)/10;
+            now_sec += wait[i] + between_time(d).get(i)/10;
         }
 
         return t;
@@ -408,7 +409,7 @@ class DataUtil{
             ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        List<Integer> b = d.getBetween();
+        List<Integer> b = between_time(d);
         int[] wait = wait_time(d);
 //        now_sec = 4000;
 //        System.out.println("a name "+ride_st[0]);
@@ -425,13 +426,13 @@ class DataUtil{
                 }
             }
             t[i] = n;
-            now_sec += wait[i] + b.get(i)/10;
+            now_sec += wait[i] + between_time(d).get(i)/10;
         }
 
         return t;
     }
 
-    public int[] between_time(Data d){
+    public List<Integer> between_time(Data d){
         int sum_t = d.getSum_t();
         String start = d.getStart();
         String end = d.getEnd();
@@ -455,7 +456,7 @@ class DataUtil{
             }
             t[i] = dijk.getAtime();
         }
-        return t;
+        return Arrays.asList(Arrays.stream(t).boxed().toArray(Integer[]::new));
     }
 }
 
@@ -620,7 +621,93 @@ public class Dijkstra {
         setSum_t(sum_t);
     }
 
+    void check(String start, String finish, int now_time){
+//        density.densityRequire(start, finish, now_time);
+        no_record_check(start, finish);
+    }
+    void check(String start, String finish){
+//        density.densityRequire(start, finish);
+        no_record_check(start, finish);
+    }
 
+    void no_record_check(String start, String finish){
+        check1(start, finish);
+        check2(start, finish);
+        check3(start, finish);
+    }
+    public void no_record_check(String start, String via, String end){
+        int s = station_index.indexOf(start);
+        int e = station_index.indexOf(end);
+
+        no_record_check(start, via);
+        for(int i=0; this.cc[i]!=null;i++){
+            if(this.cc[i+1]==null){
+                transfer_list[0]=this.cc[i];
+                transfer_list[1]="0";
+            }
+        }
+        Data first_time = getBTime();
+        Data first_dist = getBDist();
+        Data  first_charge = getBCharge();
+        no_record_check(via, end);
+        if(transfer_list[0]==null){
+            transfer_list[0]="0";
+            transfer_list[1]=this.cc[0];
+        }
+        b_time = datasquash(first_time, getBTime(), 0);
+        b_dist = datasquash(first_dist, getBDist(), 1);
+        b_charge = datasquash(first_charge, getBCharge(), 2);
+        for(int i = 0; i < b_time.getSum_t(); i++){
+            System.out.println(b_time.getTrans().get(i));
+        }
+
+    }
+    void check(String start, String via, String end){
+        int s = station_index.indexOf(start);
+        int e = station_index.indexOf(end);
+
+        check(start, via);
+        for(int i=0; this.cc[i]!=null;i++){
+            if(this.cc[i+1]==null){
+                transfer_list[0]=this.cc[i];
+                transfer_list[1]="0";
+            }
+        }
+        Data first_time = getBTime();
+        Data first_dist = getBDist();
+        Data  first_charge = getBCharge();
+        check(via, end);
+        if(transfer_list[0]==null){
+            transfer_list[0]="0";
+            transfer_list[1]=this.cc[0];
+        }
+        b_time = datasquash(first_time, getBTime(), 0);
+        b_dist = datasquash(first_dist, getBDist(), 1);
+        b_charge = datasquash(first_charge, getBCharge(), 2);
+    }
+    void check(String start, String via, String end, int now_time){
+        int s = station_index.indexOf(start);
+        int e = station_index.indexOf(end);
+
+        check(start, via, now_time);
+        for(int i=0; this.cc[i]!=null;i++){
+            if(this.cc[i+1]==null){
+                transfer_list[0]=this.cc[i];
+                transfer_list[1]="0";
+            }
+        }
+        Data first_time = getBTime();
+        Data first_dist = getBDist();
+        Data  first_charge = getBCharge();
+        check(via, end, now_time);
+        if(transfer_list[0]==null){
+            transfer_list[0]="0";
+            transfer_list[1]=this.cc[0];
+        }
+        b_time = datasquash(first_time, getBTime(), 0);
+        b_dist = datasquash(first_dist, getBDist(), 1);
+        b_charge = datasquash(first_charge, getBCharge(), 2);
+    }
     int[] pathappend(List<Integer> al, int alen, List<Integer> bl, int blen){
         int[] a = new int[al.size()];
         int[] b = new int[bl.size()];
@@ -661,7 +748,8 @@ public class Dijkstra {
         for(int n = 0; n < path_cnt; n++){
             trim_path[n] = path[n];
         }
-        return new Data(time, dist, charge, start, end, Arrays.asList(trans), sum_t, Arrays.asList(Arrays.stream(trim_path).boxed().toArray(Integer[]::new)), path_cnt, type);
+        Data d = new Data(time, dist, charge, start, end, Arrays.asList(trans), sum_t, Arrays.asList(Arrays.stream(trim_path).boxed().toArray(Integer[]::new)), path_cnt, type);
+        return d;
     }
 
     void check1(String start, String finish){

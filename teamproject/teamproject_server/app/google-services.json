@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "515636835329",
+    "firebase_url": "https://myongrail-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "myongrail",
+    "storage_bucket": "myongrail.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515636835329:android:ab8ffac4ab1e267ae1fc00",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515636835329-nsojnfp3ht9rf16pss8aqurg1qhoaahs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl00A-DxYvnFL9gonF1VMHBZp0PfEJrFg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515636835329-nsojnfp3ht9rf16pss8aqurg1qhoaahs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515636835329:android:cb3b4e0fc54d2749e1fc00",
+        "android_client_info": {
+          "package_name": "com.example.teamproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515636835329-nsojnfp3ht9rf16pss8aqurg1qhoaahs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl00A-DxYvnFL9gonF1VMHBZp0PfEJrFg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515636835329-nsojnfp3ht9rf16pss8aqurg1qhoaahs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515636835329:android:e62ae0f8d7eb937de1fc00",
+        "android_client_info": {
+          "package_name": "com.example.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515636835329-nsojnfp3ht9rf16pss8aqurg1qhoaahs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl00A-DxYvnFL9gonF1VMHBZp0PfEJrFg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515636835329-nsojnfp3ht9rf16pss8aqurg1qhoaahs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
