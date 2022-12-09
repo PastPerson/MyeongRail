@@ -138,6 +138,7 @@ class Request{
 }
 public class StationDensity {
     private DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("density");
+    private DatabaseReference result_ref = FirebaseDatabase.getInstance().getReference("result");
     private ResearchRecord change_value = null;
     private Thread tr;
     public StationDensity(){
@@ -152,7 +153,17 @@ public class StationDensity {
                 Request r = new Request(start, end);
                 HashMap<String,Object> h = new HashMap<>();
                 h.put(key, r);
-                database_ref.child("request").updateChildren(h);
+//                database_ref.child("request").updateChildren(h);
+                ArrayList<String> s = r.getS();
+                Dijkstra d = new Dijkstra();
+                d.no_record_check(s.get(0), s.get(1));
+                Data time = d.getBTime();
+                Data dist = d.getBDist();
+                Data charge = d.getBCharge();
+                String result = s.get(0)+"-"+s.get(1);
+                result_ref.child(result).child("BTime").setValue(time);
+                result_ref.child(result).child("BDist").setValue(dist);
+                result_ref.child(result).child("BCharge").setValue(charge);
             }
         });
     }
@@ -198,20 +209,43 @@ public class StationDensity {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName){
-                System.out.println("density request occurred!");
+//                System.out.println("density request occurred!");
                 initRecord();
                 Request r = snapshot.getValue(Request.class);
                 ArrayList<String> s = r.getS();
+                Dijkstra d = new Dijkstra();
                 if(s.size() == 2){
-                    Dijkstra d = new Dijkstra();
                     d.no_record_check(s.get(0), s.get(1));
-                    addRecord(d.getBTime(),d.getBDist(),d.getBCharge(),r.getTime());
-                } else{
-                    Dijkstra d = new Dijkstra();
-                    d.no_record_check(s.get(0), s.get(1), s.get(2));
-                    addRecord(d.getBTime(),d.getBDist(),d.getBCharge(),r.getTime());
                 }
-                System.out.println("시간: "+r.getTime());
+                Data time = d.getBTime();
+                Data dist = d.getBDist();
+                Data charge = d.getBCharge();
+//                addRecord(time,dist,charge,r.getTime());
+                if(s.size() == 2) {
+                    String result = s.get(0)+"-"+s.get(1);
+                    result_ref.child(result).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            Object o = task.getResult().getValue(Object.class);
+                        }
+                    });
+                }
+//                else{
+//                    String result = s.get(0)+"-"+s.get(1)+"-"+s.get(2);
+//                    result_ref.child(result).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                            Object o = task.getResult().getValue(Object.class);
+//                            if(o == null){
+//                                result_ref.child(result).child("BTime").setValue(time);
+//                                result_ref.child(result).child("BDist").setValue(dist);
+//                                result_ref.child(result).child("BCharge").setValue(charge);
+//                            } else return;
+//                        }
+//                    });
+//                }
+
+//                System.out.println("시간: "+r.getTime());
                 database_ref.child("request").child(snapshot.getKey()).removeValue();
             }
 
@@ -249,48 +283,49 @@ public class StationDensity {
                         StationInfo s = new StationInfo();
                         station[] st = s.getst();
                         String[] st_list = s.getStationList();
-                        int[][] line_time = a.getLineTime();
-                        int[] index = a.time_index();
+                        DataUtil util = new DataUtil();
+                        int[][] line_time = util.getLineTime(a);
+                        int[] index = util.time_index(a);
                         int n = 0;
                         for(int i = a.getPath_cnt() - 1; i >= 0; i--){
-                            st[a.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
+                            st[a.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
 
-                            if(n < a.getSum_t() && st_list[a.getPath()[i]].equals(a.getTrans()[n])) {
+                            if(n < a.getSum_t() && st_list[a.getPath().get(i)].equals(a.getTrans().get(n))) {
                                 n++;
-                                st[a.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
+                                st[a.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
                             }
                         }
-                        line_time = b.getLineTime();
-                        index = b.time_index();
+                        line_time = util.getLineTime(b);
+                        index = util.time_index(b);
                         n = 0;
                         for(int i = b.getPath_cnt() - 1; i >= 0; i--){
-                            st[b.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
-                            if(n < b.getSum_t() && st_list[b.getPath()[i]].equals(b.getTrans()[n])) {
+                            st[b.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
+                            if(n < b.getSum_t() && st_list[b.getPath().get(i)].equals(b.getTrans().get(n))) {
                                 n++;
-                                st[b.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
+                                st[b.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
                             }
                         }
-                        line_time = c.getLineTime();
-                        index = c.time_index();
+                        line_time = util.getLineTime(c);
+                        index = util.time_index(c);
                         n = 0;
                         for(int i = c.getPath_cnt() - 1; i >= 0; i--){
-                            st[c.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
-                            if( n < c.getSum_t() && st_list[c.getPath()[i]].equals(c.getTrans()[n])) {
+                            st[c.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
+                            if( n < c.getSum_t() && st_list[c.getPath().get(i)].equals(c.getTrans().get(n))) {
                                 n++;
-                                st[c.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
+                                st[c.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
 
                             }
                         }
 
                         for(int i = 0; i < 111; i++){
                             if(i < a.getPath_cnt()){
-                                path[a.getPath()[i]] = 1;
+                                path[a.getPath().get(i)] = 1;
                             }
                             if(i < b.getPath_cnt()){
-                                path[b.getPath()[i]] = 1;
+                                path[b.getPath().get(i)] = 1;
                             }
                             if(i < c.getPath_cnt()){
-                                path[c.getPath()[i]] = 1;
+                                path[c.getPath().get(i)] = 1;
                             }
                         }
 
@@ -333,52 +368,53 @@ public class StationDensity {
                         StationInfo s = new StationInfo();
                         station[] st = s.getst();
                         String[] st_list = s.getStationList();
-                        int[][] line_time = a.getLineTime();
-                        int[] index = a.time_index(now_time);
+                        DataUtil util = new DataUtil();
+                        int[][] line_time = util.getLineTime(a);
+                        int[] index = util.time_index(a,now_time);
                         int n = 0;
                         for(int i = a.getPath_cnt() - 1; i >= 0; i--){
-                            st[a.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
-                            if(n < a.getSum_t() && st_list[a.getPath()[i]].equals(a.getTrans()[n])) {
+                            st[a.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
+                            if(n < a.getSum_t() && st_list[a.getPath().get(i)].equals(a.getTrans().get(n))) {
                                 n++;
-                                st[a.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
+                                st[a.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
                             }
                         }
-                        line_time = b.getLineTime();
-                        index = b.time_index(now_time);
+                        line_time = util.getLineTime(b);
+                        index = util.time_index(b, now_time);
                         n = 0;
                         for(int i = b.getPath_cnt() - 1; i >= 0; i--){
-                            st[b.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
-                            if(n < b.getSum_t() && st_list[b.getPath()[i]].equals(b.getTrans()[n])) {
+                            st[b.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
+                            if(n < b.getSum_t() && st_list[b.getPath().get(i)].equals(b.getTrans().get(n))) {
                                 n++;
-                                st[b.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
+                                st[b.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
                             }
                         }
-                        line_time = c.getLineTime();
-                        index = c.time_index(now_time);
+                        line_time = util.getLineTime(c);
+                        index = util.time_index(c,now_time);
                         n = 0;
                         for(int i = c.getPath_cnt() - 1; i >= 0; i--){
-                            st[c.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
-                            if( n < c.getSum_t() && st_list[c.getPath()[i]].equals(c.getTrans()[n])) {
+                            st[c.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
+                            if( n < c.getSum_t() && st_list[c.getPath().get(i)].equals(c.getTrans().get(n))) {
                                 n++;
-                                st[c.getPath()[i]].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
+                                st[c.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
                             }
                         }
 
                         for(int i = 0; i < 111; i++){
                             if(i < a.getPath_cnt()){
-                                path[a.getPath()[i]] = 1;
+                                path[a.getPath().get(i)] = 1;
                             }
                             if(i < b.getPath_cnt()){
-                                path[b.getPath()[i]] = 1;
+                                path[b.getPath().get(i)] = 1;
                             }
                             if(i < c.getPath_cnt()){
-                                path[c.getPath()[i]] = 1;
+                                path[c.getPath().get(i)] = 1;
                             }
                         }
 
                         for(int i = 0; i < 111; i++){
                             if(path[i] == 1){
-                                ResearchRecord r = task.getResult().child(st_list[i]).getValue(ResearchRecord.class);
+                                ResearchRecord r = task.getResult().child(st_list[i]+"st").getValue(ResearchRecord.class);
                                 if(r == null){
                                     r = new ResearchRecord(st_list[i]);
 
@@ -390,7 +426,7 @@ public class StationDensity {
                                         }
                                     }
                                 }
-                                database_ref.child("station").child(date).child(st_list[i]).setValue(r);
+                                database_ref.child("station").child(date).child(st_list[i]+"st").setValue(r);
                             }
                         }
                     }
@@ -414,7 +450,7 @@ public class StationDensity {
                         if(o == null) {
                             StationInfo s = new StationInfo();
                             for (int i = 0; i < 111; i++) {
-                                database_ref.child("station").child(date).child(s.getStationList()[i]).setValue(new ResearchRecord(s.getStationList()[i]));
+                                database_ref.child("station").child(date).child(s.getStationList()[i]+"st").setValue(new ResearchRecord(s.getStationList()[i]));
                             }
                         } else return;
                     }

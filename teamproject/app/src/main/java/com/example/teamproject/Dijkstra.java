@@ -4,6 +4,8 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
 
 class Data{
     int time; // 출발역부터 도착역까지 시간
@@ -11,12 +13,22 @@ class Data{
     int charge; // 출발역부터 도착역까지 요금
     String start;
     String end; // 출발역, 도착역
-    String[] trans = new String[111]; // 환승역
-    int[] path = new int[111];
+    List<String> trans = new ArrayList<>(); // 환승역
+    List<Integer> path = new ArrayList<>();
 
     int path_cnt;
     int sum_t; // 환승횟수
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     int type; // 0이면 시간 우선, 1이면 거리 우선, 2이면 비용 우선
+//    int[][] line = null;
 
 
     public void setTime(int time) {
@@ -39,11 +51,11 @@ class Data{
         this.end = end;
     }
 
-    public void setTrans(String[] trans) {
+    public void setTrans(List<String> trans){
         this.trans = trans;
     }
 
-    public void setPath(int[] path) {
+    public void setPath(List<Integer> path){
         this.path = path;
     }
 
@@ -56,18 +68,18 @@ class Data{
     }
 
 
-
-    public Data(int time, int dist, int charge, String start, String end, String[] trans, int sum_t, int[] path, int path_cnt, int type){
+    public Data(){}
+    public Data(int time, int dist, int charge, String start, String end, List<String> trans, int sum_t, List<Integer> path, int path_cnt, int type){
         this.time = time;
         this.dist = dist;
         this.charge = charge;
         this.start = start;
         this.end = end;
-        this.trans = trans;
         this.sum_t = sum_t;
-        this.path = path;
         this.path_cnt = path_cnt;
         this.type = type;
+        this.trans = trans;
+        this.path = path;
     }
 
     public int getTime(){
@@ -79,13 +91,13 @@ class Data{
     public int getCharge(){
         return this.charge;
     }
-    public String[] getTrans(){
+    public List<String> getTrans(){
         return trans;
     }
     public int getSum_t(){
         return sum_t;
     }
-    public int[] getPath(){
+    public List<Integer> getPath(){
         return path;
     }
     public int getPath_cnt() {
@@ -98,169 +110,182 @@ class Data{
         return end;
     }
 
-    public int[][] getLineTime(){
-        int[][] linetime = new int[sum_t+1][2]; // 지나는 경로에서 사용할 시간표의 정보를 저장함
-                                                // [n][0] 에는 몇번 노선인지 [n][1]에는 상행인지 하행인지 저장 0이면 상행선이다.
+}
+
+class DataUtil{
+    public int[][] getLineTime(Data d){
+        int sum_t = d.getSum_t();
+        int path_cnt = d.getPath_cnt();
+        String start = d.getStart();
+        List<Integer> path = d.getPath();
+        List<String> trans = d.getTrans();
+
+        int[][] line = new int[sum_t + 1][2]; // 지나는 경로에서 사용할 시간표의 정보를 저장함
+        // [n][0] 에는 몇번 노선인지 [n][1]에는 상행인지 하행인지 저장 0이면 상행선이다.
         int n = 0;
         StationInfo temp = new StationInfo();
         station s1 = temp.getst(temp.getIndexOfStation().indexOf(start));
-        station s2 = temp.getst(path[path_cnt - 2]);
-        if(s1.getLine()[0][0] == s2.getLine()[0][0]){
-            linetime[0][0] = s1.getLine()[0][0];
+        station s2 = temp.getst(path.get(path_cnt - 2));
+        if (s1.getLine()[0][0] == s2.getLine()[0][0]) {
+            line[0][0] = s1.getLine()[0][0];
             int t = s1.getLine()[0][1] - s2.getLine()[0][1];
-            if(t < 0){
-                if(t == -1){
-                    linetime[0][1] = 0;
-                } else{ // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
-                    linetime[0][1] = 1;
+            if (t < 0) {
+                if (t == -1) {
+                    line[0][1] = 0;
+                } else { // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
+                    line[0][1] = 1;
                 }
-            } else{
-                if(t == 1){
-                    linetime[0][1] = 1;
-                } else{
-                    linetime[0][1] = 0;
+            } else {
+                if (t == 1) {
+                    line[0][1] = 1;
+                } else {
+                    line[0][1] = 0;
                 }
             }
-        } else if(s1.getLine()[0][0] == s2.getLine()[1][0]){
-            linetime[0][0] = s1.getLine()[0][0];
+        } else if (s1.getLine()[0][0] == s2.getLine()[1][0]) {
+            line[0][0] = s1.getLine()[0][0];
             int t = s1.getLine()[0][1] - s2.getLine()[1][1];
-            if(t < 0){
-                if(t == -1){
-                    linetime[0][1] = 0;
-                } else{ // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
-                    linetime[0][1] = 1;
+            if (t < 0) {
+                if (t == -1) {
+                    line[0][1] = 0;
+                } else { // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
+                    line[0][1] = 1;
                 }
-            } else{
-                if(t == 1){
-                    linetime[0][1] = 1;
-                } else{
-                    linetime[0][1] = 0;
+            } else {
+                if (t == 1) {
+                    line[0][1] = 1;
+                } else {
+                    line[0][1] = 0;
                 }
             }
-        } else if(s1.getLine()[1][0] == s2.getLine()[0][0]){
-            linetime[0][0] = s1.getLine()[1][0];
+        } else if (s1.getLine()[1][0] == s2.getLine()[0][0]) {
+            line[0][0] = s1.getLine()[1][0];
             int t = s1.getLine()[1][1] - s2.getLine()[0][1];
-            if(t < 0){
-                if(t == -1){
-                    linetime[0][1] = 0;
-                } else{ // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
-                    linetime[0][1] = 1;
+            if (t < 0) {
+                if (t == -1) {
+                    line[0][1] = 0;
+                } else { // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
+                    line[0][1] = 1;
                 }
-            } else{
-                if(t == 1){
-                    linetime[0][1] = 1;
-                } else{
-                    linetime[0][1] = 0;
+            } else {
+                if (t == 1) {
+                    line[0][1] = 1;
+                } else {
+                    line[0][1] = 0;
                 }
             }
-        } else if(s1.getLine()[1][0] == s2.getLine()[1][0]){
-            linetime[0][0] = s1.getLine()[1][0];
+        } else if (s1.getLine()[1][0] == s2.getLine()[1][0]) {
+            line[0][0] = s1.getLine()[1][0];
             int t = s1.getLine()[1][1] - s2.getLine()[1][1];
-            if(t < 0){
-                if(t == -1){
-                    linetime[0][1] = 0;
-                } else{ // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
-                    linetime[0][1] = 1;
+            if (t < 0) {
+                if (t == -1) {
+                    line[0][1] = 0;
+                } else { // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
+                    line[0][1] = 1;
                 }
-            } else{
-                if(t == 1){
-                    linetime[0][1] = 1;
-                } else{
-                    linetime[0][1] = 0;
+            } else {
+                if (t == 1) {
+                    line[0][1] = 1;
+                } else {
+                    line[0][1] = 0;
                 }
             }
         }
-        if(sum_t == 0){
-            return linetime;
+        if (sum_t == 0) {
+            return line;
         }
-        for(int i = path_cnt-1; i >= 0; i--){
-            if(temp.getStationList()[path[i]].equals(trans[n])){
+        for (int i = path_cnt - 1; i >= 0; i--) {
+            if (temp.getStationList()[path.get(i)].equals(trans.get(n))) {
                 n++;
-                s1 = temp.getst(path[i]);
-                s2 = temp.getst(path[i-1]);
-                if(s1.getLine()[0][0] == s2.getLine()[0][0]){
-                    linetime[n][0] = s1.getLine()[0][0];
+                s1 = temp.getst(path.get(i));
+                s2 = temp.getst(path.get(i - 1));
+                if (s1.getLine()[0][0] == s2.getLine()[0][0]) {
+                    line[n][0] = s1.getLine()[0][0];
                     int t = s1.getLine()[0][1] - s2.getLine()[0][1];
-                    if(t < 0){
-                        if(t == -1){
-                            linetime[n][1] = 0;
-                        } else{ // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
-                            linetime[n][1] = 1;
+                    if (t < 0) {
+                        if (t == -1) {
+                            line[n][1] = 0;
+                        } else { // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
+                            line[n][1] = 1;
                         }
-                    } else{
-                        if(t == 1){
-                            linetime[n][1] = 1;
-                        } else{
-                            linetime[n][1] = 0;
+                    } else {
+                        if (t == 1) {
+                            line[n][1] = 1;
+                        } else {
+                            line[n][1] = 0;
                         }
                     }
-                } else if(s1.getLine()[0][0] == s2.getLine()[1][0]){
-                    linetime[n][0] = s1.getLine()[0][0];
+                } else if (s1.getLine()[0][0] == s2.getLine()[1][0]) {
+                    line[n][0] = s1.getLine()[0][0];
                     int t = s1.getLine()[0][1] - s2.getLine()[1][1];
-                    if(t < 0){
-                        if(t == -1){
-                            linetime[n][1] = 0;
-                        } else{ // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
-                            linetime[n][1] = 1;
+                    if (t < 0) {
+                        if (t == -1) {
+                            line[n][1] = 0;
+                        } else { // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
+                            line[n][1] = 1;
                         }
-                    } else{
-                        if(t == 1){
-                            linetime[n][1] = 1;
-                        } else{
-                            linetime[n][1] = 0;
+                    } else {
+                        if (t == 1) {
+                            line[n][1] = 1;
+                        } else {
+                            line[n][1] = 0;
                         }
                     }
-                } else if(s1.getLine()[1][0] == s2.getLine()[0][0]){
-                    linetime[n][0] = s1.getLine()[1][0];
+                } else if (s1.getLine()[1][0] == s2.getLine()[0][0]) {
+                    line[n][0] = s1.getLine()[1][0];
                     int t = s1.getLine()[1][1] - s2.getLine()[0][1];
-                    if(t < 0){
-                        if(t == -1){
-                            linetime[n][1] = 0;
-                        } else{ // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
-                            linetime[n][1] = 1;
+                    if (t < 0) {
+                        if (t == -1) {
+                            line[n][1] = 0;
+                        } else { // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
+                            line[n][1] = 1;
                         }
-                    } else{
-                        if(t == 1){
-                            linetime[n][1] = 1;
-                        } else{
-                            linetime[n][1] = 0;
+                    } else {
+                        if (t == 1) {
+                            line[n][1] = 1;
+                        } else {
+                            line[n][1] = 0;
                         }
                     }
-                } else if(s1.getLine()[1][0] == s2.getLine()[1][0]){
-                    linetime[n][0] = s1.getLine()[1][0];
+                } else if (s1.getLine()[1][0] == s2.getLine()[1][0]) {
+                    line[n][0] = s1.getLine()[1][0];
                     int t = s1.getLine()[1][1] - s2.getLine()[1][1];
-                    if(t < 0){
-                        if(t == -1){
-                            linetime[n][1] = 0;
-                        } else{ // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
-                            linetime[n][1] = 1;
+                    if (t < 0) {
+                        if (t == -1) {
+                            line[n][1] = 0;
+                        } else { // 1호선과 6호선의 경우 순환선이라 마지막역과 처음역 간 이동 가능
+                            line[n][1] = 1;
                         }
-                    } else{
-                        if(t == 1){
-                            linetime[n][1] = 1;
-                        } else{
-                            linetime[n][1] = 0;
+                    } else {
+                        if (t == 1) {
+                            line[n][1] = 1;
+                        } else {
+                            line[n][1] = 0;
                         }
                     }
                 }
-                if(n == sum_t){
+                if (n == sum_t) {
                     break;
                 }
             }
         }
-        return linetime;
+
+        return line;
     }
-    public int[] wait_time(int now_time){
+    public int[] wait_time(Data d, int now_time){
+        int sum_t = d.getSum_t();
+        String start = d.getStart();
+        List<String> trans = d.getTrans();
         int[] wait = new int[sum_t+1];
-        int[][] line_time = getLineTime();
+        int[][] line_time = getLineTime(d);
         int now_sec = now_time;
         String[] ride_st = new String[sum_t+1];
         ride_st[0] = start;
         for(int i = 1; i < sum_t+1; i++){
-            ride_st[i] = trans[i-1];
+            ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        int[] b = between_time();
+        int[] b = between_time(d);
         for(int i = 0; i < sum_t+1; i++){
             long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
             int n = 0;
@@ -272,15 +297,18 @@ class Data{
                 }
             }
             wait[i] = (int) (a[n] - now_sec);
-            now_sec += wait[i] + between_time()[i]/10;
+            now_sec += wait[i] + between_time(d)[i]/10;
         }
 
         return wait;
     }
-    public int[] wait_time(){
+    public int[] wait_time(Data d){
+        int sum_t = d.getSum_t();
+        String start = d.getStart();
+        List<String> trans = d.getTrans();
         LocalTime now = LocalTime.now();
         int[] wait = new int[sum_t+1];
-        int[][] line_time = getLineTime();
+        int[][] line_time = getLineTime(d);
         int now_sec;
         if(now.getHour()+9 > 23){
             now_sec = (now.getHour()+9-24)*360 + now.getMinute()*6;
@@ -290,10 +318,10 @@ class Data{
         String[] ride_st = new String[sum_t+1];
         ride_st[0] = start;
         for(int i = 1; i < sum_t+1; i++){
-            ride_st[i] = trans[i-1];
+            ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        int[] b = between_time();
+        int[] b = between_time(d);
         for(int i = 0; i < sum_t+1; i++){
             long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
             int n = 0;
@@ -305,23 +333,26 @@ class Data{
                 }
             }
             wait[i] = (int) (a[n] - now_sec);
-            now_sec += wait[i] + between_time()[i]/10;
+            now_sec += wait[i] + between_time(d)[i]/10;
         }
 
         return wait;
     }
-    public int[] time_index(int now_time){
+    public int[] time_index(Data d, int now_time){
+        int sum_t = d.getSum_t();
+        String start = d.getStart();
+        List<String> trans = d.getTrans();
         int[] t = new int[sum_t+1];
-        int[][] line_time = getLineTime();
+        int[][] line_time = getLineTime(d);
         int now_sec;
         String[] ride_st = new String[sum_t+1];
         ride_st[0] = start;
         for(int i = 1; i < sum_t+1; i++){
-            ride_st[i] = trans[i-1];
+            ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        int[] b = between_time();
-        int[] wait = wait_time(now_time);
+        int[] b = between_time(d);
+        int[] wait = wait_time(d,now_time);
         now_sec = now_time;
         for(int i = 0; i < sum_t+1; i++){
 //            System.out.println("nowsec: "+ now_sec);
@@ -336,14 +367,17 @@ class Data{
                 }
             }
             t[i] = n;
-            now_sec += wait[i] + between_time()[i]/10;
+            now_sec += wait[i] + between_time(d)[i]/10;
         }
 
         return t;
     }
-    public int[] time_index(){
+    public int[] time_index(Data d){
+        int sum_t = d.getSum_t();
+        String start = d.getStart();
+        List<String> trans = d.getTrans();
         int[] t = new int[sum_t+1];
-        int[][] line_time = getLineTime();
+        int[][] line_time = getLineTime(d);
         LocalTime now = LocalTime.now();
         int now_sec;
         if(now.getHour()+9 > 23){
@@ -355,11 +389,11 @@ class Data{
         String[] ride_st = new String[sum_t+1];
         ride_st[0] = start;
         for(int i = 1; i < sum_t+1; i++){
-            ride_st[i] = trans[i-1];
+            ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        int[] b = between_time();
-        int[] wait = wait_time();
+        int[] b = between_time(d);
+        int[] wait = wait_time(d);
 //        now_sec = 4000;
 //        System.out.println("a name "+ride_st[0]);
         for(int i = 0; i < sum_t+1; i++){
@@ -375,34 +409,38 @@ class Data{
                 }
             }
             t[i] = n;
-            now_sec += wait[i] + between_time()[i]/10;
+            now_sec += wait[i] + between_time(d)[i]/10;
         }
 
         return t;
     }
 
-    public int[] between_time(){
+    public int[] between_time(Data d){
+        int sum_t = d.getSum_t();
+        String start = d.getStart();
+        String end = d.getEnd();
+        int type = d.getType();
+        List<String> trans = d.getTrans();
         int[] t = new int[sum_t+1];
         String[] ride_st = new String[sum_t+2];
         ride_st[0] = start;
         for(int i = 1; i < sum_t+1; i++){
-            ride_st[i] = trans[i-1];
+            ride_st[i] = trans.get(i-1);
         }
         ride_st[sum_t+1] = end;
-        Dijkstra d = new Dijkstra();
+        Dijkstra dijk = new Dijkstra();
         for(int i = 0; i < sum_t + 1; i++) {
             if(type == 0){
-                d.check1(ride_st[i],ride_st[i+1]);
+                dijk.check1(ride_st[i],ride_st[i+1]);
             } else if(type == 1){
-                d.check2(ride_st[i],ride_st[i+1]);
+                dijk.check2(ride_st[i],ride_st[i+1]);
             } else if(type == 2){
-                d.check3(ride_st[i],ride_st[i+1]);
+                dijk.check3(ride_st[i],ride_st[i+1]);
             }
-            t[i] = d.getAtime();
+            t[i] = dijk.getAtime();
         }
         return t;
     }
-
 }
 
 public class Dijkstra {
@@ -567,12 +605,12 @@ public class Dijkstra {
     }
 
     void check(String start, String finish, int now_time){
+//        density.densityRequire(start, finish, now_time);
         no_record_check(start, finish);
-        density.densityRequire(start, finish, now_time);
     }
     void check(String start, String finish){
+//        density.densityRequire(start, finish);
         no_record_check(start, finish);
-        density.densityRequire(start, finish);
     }
 
     void no_record_check(String start, String finish){
@@ -602,9 +640,8 @@ public class Dijkstra {
         b_time = datasquash(first_time, getBTime(), 0);
         b_dist = datasquash(first_dist, getBDist(), 1);
         b_charge = datasquash(first_charge, getBCharge(), 2);
-        System.out.println("환승 몇번: " + b_time.getSum_t());
         for(int i = 0; i < b_time.getSum_t(); i++){
-            System.out.println(b_time.getTrans()[i]);
+            System.out.println(b_time.getTrans().get(i));
         }
 
     }
@@ -630,10 +667,6 @@ public class Dijkstra {
         b_time = datasquash(first_time, getBTime(), 0);
         b_dist = datasquash(first_dist, getBDist(), 1);
         b_charge = datasquash(first_charge, getBCharge(), 2);
-        System.out.println("환승 몇번: " + b_time.getSum_t());
-        for(int i = 0; i < b_time.getSum_t(); i++){
-            System.out.println(b_time.getTrans()[i]);
-        }
     }
     void check(String start, String via, String end, int now_time){
         int s = station_index.indexOf(start);
@@ -657,13 +690,17 @@ public class Dijkstra {
         b_time = datasquash(first_time, getBTime(), 0);
         b_dist = datasquash(first_dist, getBDist(), 1);
         b_charge = datasquash(first_charge, getBCharge(), 2);
-        System.out.println("환승 몇번: " + b_time.getSum_t());
-        for(int i = 0; i < b_time.getSum_t(); i++){
-            System.out.println(b_time.getTrans()[i]);
-        }
     }
-    int[] pathappend(int[] a, int alen, int[] b, int blen){
+    int[] pathappend(List<Integer> al, int alen, List<Integer> bl, int blen){
+        int[] a = new int[al.size()];
+        int[] b = new int[bl.size()];
         int[] c = new int[alen + blen];
+        for(int i = 0; i < al.size(); i++){
+            a[i] = al.get(i);
+        }
+        for(int i = 0; i < bl.size(); i++){
+            b[i] = bl.get(i);
+        }
         System.arraycopy(a, 0, c, 0, alen);
         System.arraycopy(b, 1, c, alen, blen-1);
         return c;
@@ -681,15 +718,20 @@ public class Dijkstra {
         String[] trans = new String[a.getSum_t()+b.getSum_t()+1];
         for(int i = 0; i < a.getSum_t()+b.getSum_t()+1; i++){
             if(i < a.getSum_t()){
-                trans[i] = a.getTrans()[i];
+                trans[i] = a.getTrans().get(i);
             } else if(i == a.getSum_t()){
                 trans[i] = a.getEnd();
             } else{
-              trans[i] = b.getTrans()[i-a.getSum_t()-1];
+              trans[i] = b.getTrans().get(i-a.getSum_t()-1);
             }
         }
         int sum_t = a.getSum_t()+b.getSum_t()+1;
-        return new Data(time, dist, charge, start, end, trans, sum_t, path, path_cnt, type);
+
+        int[] trim_path = new int[path_cnt];
+        for(int n = 0; n < path_cnt; n++){
+            trim_path[n] = path[n];
+        }
+        return new Data(time, dist, charge, start, end, Arrays.asList(trans), sum_t, Arrays.asList(Arrays.stream(trim_path).boxed().toArray(Integer[]::new)), path_cnt, type);
     }
 
     void check1(String start, String finish){
@@ -748,12 +790,16 @@ public class Dijkstra {
             k = via[k];
         }
         // System.out.print(" 경로 :");
-        trans_station(path, path_cnt, s, e);
+        int[] trim_path = new int[path_cnt];
+        for(int n = 0; n < path_cnt; n++){
+            trim_path[n] = path[n];
+        }
+        trans_station(trim_path, path_cnt, s, e);
         String[] t = new String[sum_t];
         for(int n = 0; n < sum_t; n++){
             t[n] = cc[n];
         }
-        b_time = new Data(atime, km, charge, start, finish, t, sum_t, path, path_cnt, 0);
+        b_time = new Data(atime, km, charge, start, finish, Arrays.asList(t), sum_t, Arrays.asList(Arrays.stream(trim_path).boxed().toArray(Integer[]::new)), path_cnt, 0);
     }
 
     void check2(String start, String finish){
@@ -812,13 +858,16 @@ public class Dijkstra {
             k = via[k];
         }
         // System.out.print(" 경로 :");
-
-        trans_station(path, path_cnt, s, e);
+        int[] trim_path = new int[path_cnt];
+        for(int n = 0; n < path_cnt; n++){
+            trim_path[n] = path[n];
+        }
+        trans_station(trim_path, path_cnt, s, e);
         String[] t = new String[sum_t];
         for(int n = 0; n < sum_t; n++){
             t[n] = cc[n];
         }
-        b_dist = new Data(atime, km, charge, start, finish, t, sum_t, path, path_cnt, 1);
+        b_dist = new Data(atime, km, charge, start, finish, Arrays.asList(t), sum_t, Arrays.asList(Arrays.stream(trim_path).boxed().toArray(Integer[]::new)), path_cnt, 1);
     }
     void check3(String start, String finish) {
         int i, j, k = 0, min; /* i, j, k = for문을 위해 생성
@@ -876,11 +925,15 @@ public class Dijkstra {
                 break;
             k = via[k];
         }
-        trans_station(path, path_cnt, s, e);
+        int[] trim_path = new int[path_cnt];
+        for(int n = 0; n < path_cnt; n++){
+            trim_path[n] = path[n];
+        }
+        trans_station(trim_path, path_cnt, s, e);
         String[] t = new String[sum_t];
         for(int n = 0; n < sum_t; n++){
             t[n] = cc[n];
         }
-        b_charge = new Data(atime, km, charge, start, finish, t, sum_t, path, path_cnt, 2);
+        b_charge = new Data(atime, km, charge, start, finish, Arrays.asList(t), sum_t, Arrays.asList(Arrays.stream(trim_path).boxed().toArray(Integer[]::new)), path_cnt, 2);
     }
 }
