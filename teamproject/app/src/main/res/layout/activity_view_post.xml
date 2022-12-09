@@ -19,13 +19,16 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="1dp">
 
                 <TextView
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="제목" />
+                    android:textAlignment="center"
+                    android:background="@drawable/solid"
+                    android:text="제  목" />
 
                 <TextView
                     android:id="@+id/title_tv"
@@ -40,12 +43,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
 
                 <TextView
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
+                    android:background="@drawable/solid"
+                    android:textAlignment="center"
                     android:text="작성일" />
 
                 <TextView
@@ -59,15 +65,17 @@
             </LinearLayout>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="내용" />
+                android:text="내        용"
+                android:background="@drawable/solid"
+                android:textAlignment="center" />
 
             <TextView
                 android:id="@+id/content_tv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="201dp"
                 android:background="#eeeeee"
                 android:padding="16dp"
 
@@ -76,38 +84,42 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
 
                 <Button
                     android:id="@+id/post_report_btn"
                     android:layout_width="74dp"
                     android:layout_height="wrap_content"
-                    android:background="#1E5FBE"
                     android:text="신고"
-                    android:textColor="@color/white" />
+                    android:background="@drawable/button_back"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    />
 
                 <Button
                     android:id="@+id/post_delete_btn"
                     android:layout_width="73dp"
                     android:layout_height="wrap_content"
-                    android:background="#1E5FBE"
                     android:text="삭제"
-                    android:textColor="@color/white"
-                    tools:visibility="invisible" />
+                    tools:visibility="invisible"
+                    android:background="@drawable/button_back"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    />
             </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="댓글" />
+                android:textAlignment="center"
+                android:background="@drawable/solid"
+                android:text="댓   글" />
 
             <LinearLayout
                 android:id="@+id/comment_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
+                android:orientation="vertical">
 
                 <ListView
                     android:id="@+id/comment_ls"
@@ -125,11 +137,12 @@
         <EditText
             android:id="@+id/comment_et"
             android:layout_width="match_parent"
-            android:padding="8dp"
-            android:layout_height="wrap_content"
-            android:background="#eeeeee"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:hint="댓글 내용을 입력하세요"/>
+            android:background="#eeeeee"
+            android:hint="댓글 내용을 입력하세요"
+            android:padding="11dp" />
+
         <Button
             android:id="@+id/reg_button"
             android:layout_width="wrap_content"

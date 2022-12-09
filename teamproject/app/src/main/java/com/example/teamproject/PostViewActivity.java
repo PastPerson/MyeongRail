@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -59,17 +60,19 @@ public class PostViewActivity extends AppCompatActivity {
         title.setText(myItem.getTitle());
         date.setText(myItem.getReg_date());
         content.setText(myItem.getContent());
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         String path = intent.getStringExtra("firebase_path");
         cmt_listView = findViewById(R.id.comment_ls);
         database_ref = FirebaseDatabase.getInstance().getReference(path);
         my_ref = FirebaseDatabase.getInstance().getReference("login");
-        deleteButton.setVisibility(View.GONE);
         my_ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(myItem.getUserid().toString().equals(snapshot.child("UserAccount").child(FirebaseAuth.getInstance()
                         .getCurrentUser().getUid()).child("username").getValue(String.class).toString())){
                     deleteButton.setVisibility(View.VISIBLE);
+                }else{
+                    deleteButton.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -81,8 +84,25 @@ public class PostViewActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PostViewActivity.this, ListActivity.class));
-                database_ref.child(myItem.getReg_date()).removeValue();
+                AlertDialog.Builder builder = new AlertDialog.Builder(PostViewActivity.this);
+                builder.setTitle("").setMessage("신고하시겠습니까?");
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                startActivity(new Intent(PostViewActivity.this, ListActivity.class));
+                                database_ref.child(myItem.getReg_date()).removeValue();
+                            }
+                        });
+                builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
         cmt_reg_button.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +122,8 @@ public class PostViewActivity extends AppCompatActivity {
                         mycomItem.setReg_date(reg_date);
                         //Log.w("test : ", myItem.getUserid()+myItem.getContent()+myItem.getReg_date());
                         database_ref.child(myItem.getReg_date()).child("comments").child(reg_date).setValue(mycomItem);
+                        comment_et.setText("");
+
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -150,7 +172,7 @@ public class PostViewActivity extends AppCompatActivity {
 
                                             }
                                         });
-                                        if (count == 3) {
+                                        if (count >= 3) {
                                             //나가고
                                             startActivity(new Intent(PostViewActivity.this, ListActivity.class));
                                             //삭제

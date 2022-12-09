@@ -2,6 +2,7 @@ package com.example.teamproject;
 
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,12 +38,29 @@ public class ListActivity extends AppCompatActivity {
     String firebase_path;
     boolean first_time = true;
 
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(ListActivity.this,MainActivity.class));
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         write_btn = (Button) findViewById(R.id.reg_button);
         post_spn = findViewById(R.id.post_spn);
+        post_spn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((TextView)parent.getChildAt(2)).setTextColor(Color.WHITE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         ListView post_listView = findViewById(R.id.post_lv);
 
         LayoutInflater layoutInflater = LayoutInflater.from(ListActivity.this);
@@ -143,4 +161,5 @@ public class ListActivity extends AppCompatActivity {
             }
         });
     }
+
 }

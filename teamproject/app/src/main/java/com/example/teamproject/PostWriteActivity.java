@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,8 +58,12 @@ public class PostWriteActivity extends AppCompatActivity {
         reg_button = findViewById(R.id.reg_button);
         lines_spn = findViewById(R.id.lines_select_spn);
 
+        title_et.setText("");
+        content_et.setText("");
         my_ref = FirebaseDatabase.getInstance().getReference("login");
 // 버튼 이벤트 추가
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         reg_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,7 +86,6 @@ public class PostWriteActivity extends AppCompatActivity {
                             myItem.setReg_date(reg_date);
                             database_ref.child(reg_date).setValue(myItem);
                             database_ref.child(reg_date).getDatabase().getReference("Comments");
-                            startActivity(new Intent(PostWriteActivity.this,ListActivity.class));
                         }
                         else{
                             if (select_lines.equals("----게시판을 선택하세요----")) {

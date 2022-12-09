@@ -846,25 +846,28 @@ public class subway_result extends AppCompatActivity {
 //   }
     public void get_density(Data d, String st, int line, LinearLayout lf,int now_time){
 
+        DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("density");
+        LayoutInflater layoutInflater = LayoutInflater.from(subway_result.this);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-DD");
+        String date = simpleDateFormat.format(System.currentTimeMillis());
 
-                DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("density");
-                LayoutInflater layoutInflater = LayoutInflater.from(subway_result.this);
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-DD");
-                String date = simpleDateFormat.format(System.currentTimeMillis());
 
-
-        database_ref.child("station").child(date).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        database_ref.child("station").child(date).child(st+"st").child("timeIndex").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                List<Integer> path = d.getPath();
                 int index = 0;
-                for (int i = d.getPath_cnt() - 1; i >= 0; i--) {
-                    if (index < d.getSum_t() && d.getTrans().get(index).equals(st_list[path.get(i)])) {
-                        index++;
-                    }
-                    if (st_list[path.get(i)].equals(st)) {
+                List<String> trans = d.getTrans();
+                for (int i = 0; i < d.getSum_t(); i++) {
+                    if(st.equals(d.getStart())){
                         break;
                     }
+                    if(st.equals(trans.get(i))){
+                        index = i + 1;
+                        break;
+                    }
+                }
+                if(st.equals(d.getEnd())){
+                    index = d.getSum_t();
                 }
                 DataUtil util = new DataUtil();
                 int[][] lt = util.getLineTime(d);
@@ -881,7 +884,7 @@ public class subway_result extends AppCompatActivity {
                 GenericTypeIndicator<ArrayList<Float>> t = new GenericTypeIndicator<ArrayList<Float>>() {
                 };
                 ArrayList<Float> fl = task.getResult().child(l).child(ud).getValue(t);
-                float f = fl.get(index);
+                float f = fl.get(index);;
 
 
                 View customView = layoutInflater.inflate(R.layout.subway_item, null);

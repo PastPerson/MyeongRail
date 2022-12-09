@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
 
-    android:background="#eeeeee"
+    android:background="#FFFFFF"
     android:orientation="vertical">
 
     <TextView
@@ -12,6 +12,7 @@
         android:layout_width="525dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:textSize="23dp"
         android:text="Title"
         android:textStyle="bold" />
 
@@ -25,6 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textSize="17dp"
                 android:text="userid"
                 />
 
@@ -34,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
+            android:textSize="13dp"
                 android:text="date" />
 
         </LinearLayout>

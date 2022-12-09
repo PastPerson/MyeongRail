@@ -10,7 +10,6 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-
         <Spinner
             android:id="@+id/post_spn"
             android:layout_width="0dp"
@@ -18,7 +17,8 @@
             android:layout_marginRight="100dp"
             android:layout_marginLeft="140dp"
             android:layout_weight="1"
-            android:entries="@array/lines_and_notice"/>
+            android:entries="@array/lines_and_notice"
+            />
 
     </LinearLayout>
 
@@ -32,13 +32,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:fillViewport="true"
-            >
+            android:fillViewport="true">
 
             <ListView
+                android:id="@+id/post_lv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/post_lv"/>
+                android:layout_height="wrap_content" />
         </ScrollView>
 
     </LinearLayout>
@@ -48,8 +47,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#1E5FBE"
-        android:textColor="#FFFFFF"
         android:text="새 글 작성하기"
-        />
-
+        android:textColor="#FFFFFF" />
 </LinearLayout>

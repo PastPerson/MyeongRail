@@ -9,15 +9,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@drawable/border_background">
+        android:background="@drawable/border_background"
+        android:layout_marginBottom="1dp">
 
         <TextView
             android:id="@+id/textView3"
-            android:layout_width="114dp"
+            android:layout_width="116dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/solid"
             android:padding="16dp"
-            android:text="게시판" />
+            android:text="게시판"
+            android:textAlignment="center" />
 
         <Spinner
             android:id="@+id/lines_select_spn"
@@ -31,30 +34,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@drawable/border_background">
+        android:background="@drawable/border_background"
+        android:layout_marginBottom="10dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="79dp"
             android:layout_height="match_parent"
+            android:background="@drawable/solid"
             android:padding="16dp"
-            android:text="제목" />
+            android:text="제  목"
+            android:textAlignment="center" />
 
         <EditText
             android:id="@+id/title_et"
-            android:padding="16dp"
-            android:background="#eeeeee"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="#eeeeee"
             android:hint="제목을 입력하세요."
-            />
+            android:padding="16dp" />
     </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="380dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="내용"/>
+        android:text="내        용"
+        android:textAlignment="center"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/solid"
+        />
 
     <EditText
         android:id="@+id/content_et"

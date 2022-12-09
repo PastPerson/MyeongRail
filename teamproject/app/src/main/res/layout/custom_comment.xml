@@ -41,9 +41,9 @@
     <TextView
         android:id="@+id/cmt_content_tv"
         android:layout_width="match_parent"
-        android:textColor="#333333"
-        android:layout_height="wrap_content"
-        android:text="content" />
+        android:layout_height="40dp"
+        android:text="content"
+        android:textColor="#333333" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
