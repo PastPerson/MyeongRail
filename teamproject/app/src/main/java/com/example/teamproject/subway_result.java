@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,7 +78,6 @@ public class subway_result extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
     private int alltime;
     private int af_hour, af_min;
-
     private String[] st_list;
     private TextView start_time, end_time;
     private TextView s_time, dis, chag, st_tb;
@@ -94,10 +91,10 @@ public class subway_result extends AppCompatActivity {
 
         now = System.currentTimeMillis();
         Date date = new Date(now);
-
         SimpleDateFormat chour = new SimpleDateFormat("HH");
         SimpleDateFormat cmin = new SimpleDateFormat("mm");
         SimpleDateFormat csec = new SimpleDateFormat("ss");
+        sd = new StationDensity();
         si = new StationInfo();
         st_list = si.getStationList();
         sub = new Dijkstra(subway_result.this);
@@ -485,6 +482,10 @@ public class subway_result extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<DataSnapshot> task) {
                                         Data t2 = task.getResult().getValue(Data.class);
                                         Data t3 = sub.datasquash(t1, t2, 0);
+                                        List<Integer> b = new ArrayList<>();
+                                        b.addAll(t1.getBetween());
+                                        b.addAll(t2.getBetween());
+                                        t3.setBetween(b);
                                         get_Time(0, t3);
                                         set_display(layout, t3);
                                     }
@@ -722,12 +723,17 @@ public class subway_result extends AppCompatActivity {
 
     public void type_check() {
         try {
-            if (transfer_point == null)
-                sub.check(start_point, end_point, (allsec / 10));
-            else
-                sub.check(start_point, transfer_point, end_point, (allsec / 10));
+//            if (transfer_point == null)
+//                sub.check(start_point, end_point, (allsec / 10));
+//            else
+//                sub.check(start_point, transfer_point, end_point, (allsec / 10));
 
-            Log.d("allsec: ", "allsec: " + allsec);
+            if(transfer_point == null){
+                sd.densityRequire(start_point, end_point, allsec/10);
+            } else{
+                sd.densityRequire(start_point, transfer_point, end_point, allsec/10);
+            }
+//            Log.d("allsec: ", "allsec: " + allsec);
         } catch (ArrayIndexOutOfBoundsException e) {
         }
     }

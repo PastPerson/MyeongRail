@@ -96,17 +96,7 @@ public class StationDensity {
                 Request r = new Request(start, end);
                 HashMap<String,Object> h = new HashMap<>();
                 h.put(key, r);
-//                database_ref.child("request").updateChildren(h);
-                ArrayList<String> s = r.getS();
-                Dijkstra d = new Dijkstra();
-                d.no_record_check(s.get(0), s.get(1));
-                Data time = d.getBTime();
-                Data dist = d.getBDist();
-                Data charge = d.getBCharge();
-                String result = s.get(0)+"-"+s.get(1);
-                result_ref.child(result).child("BTime").setValue(time);
-                result_ref.child(result).child("BDist").setValue(dist);
-                result_ref.child(result).child("BCharge").setValue(charge);
+                database_ref.child("request").updateChildren(h);
             }
         });
     }
