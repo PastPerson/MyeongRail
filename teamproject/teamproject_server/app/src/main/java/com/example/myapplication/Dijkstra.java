@@ -39,7 +39,6 @@ class Data{
     }
 
     int type; // 0이면 시간 우선, 1이면 거리 우선, 2이면 비용 우선
-//    int[][] line = null;
 
 
     public void setTime(int time) {
@@ -92,7 +91,6 @@ class Data{
         this.trans = trans;
         this.path = path;
         DataUtil util = new DataUtil();
-//        this.between = util.between_time(this);
     }
 
     public int getTime(){
