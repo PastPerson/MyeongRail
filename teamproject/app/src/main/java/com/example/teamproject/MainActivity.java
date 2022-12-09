@@ -275,24 +275,27 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        long tempTime = System.currentTimeMillis();
-        long intervalTime = tempTime - presstime;
+        Intent istate = getIntent();
+        int state = istate.getIntExtra("state", 0);
+        if (state == 0) {
+            long tempTime = System.currentTimeMillis();
+            long intervalTime = tempTime - presstime;
 
-        if (0 <= intervalTime && finishtimeed >= intervalTime)
-        {
-            moveTaskToBack(true);						// 태스크를 백그라운드로 이동
-            finishAndRemoveTask();						// 액티비티 종료 + 태스크 리스트에서 지우기
-            android.os.Process.killProcess(android.os.Process.myPid());
-            Intent intent = new Intent(this, MainActivity.class);
+            if (0 <= intervalTime && finishtimeed >= intervalTime) {
+                moveTaskToBack(true);                        // 태스크를 백그라운드로 이동
+                finishAndRemoveTask();                        // 액티비티 종료 + 태스크 리스트에서 지우기
+                android.os.Process.killProcess(android.os.Process.myPid());
+                Intent intent = new Intent(this, MainActivity.class);
 
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.putExtra("kill", true);
-            startActivity(intent);
-        }
-        else
-        {
-            presstime = tempTime;
-            Toast.makeText(getApplicationContext(), "한번더 누르시면 앱이 종료됩니다", Toast.LENGTH_SHORT).show();
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.putExtra("kill", true);
+                startActivity(intent);
+            } else {
+                presstime = tempTime;
+                Toast.makeText(getApplicationContext(), "한번더 누르시면 앱이 종료됩니다", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            finish();
         }
     }
 }

@@ -132,8 +132,13 @@ public class stationtimetable extends AppCompatActivity {
                                 for (DataSnapshot s : snapshot.getChildren()) {
                                     Log.d("type", s.getValue().toString());
                                     time=Integer.parseInt(s.getValue().toString());
-                                    str = String.valueOf(time*10/3600)+" : ";
+                                    int hour=time*10/3600;
+                                    if(hour>=24){
+                                        hour-=24;
+                                    }
+                                    str = String.valueOf(hour)+" : ";
                                     if((time*10%3600)/60==0){
+
                                         str+="00";
                                     }else{
                                         str+= String.valueOf((time*10%3600)/60);
@@ -160,7 +165,11 @@ public class stationtimetable extends AppCompatActivity {
                                 for (DataSnapshot s : snapshot.getChildren()) {
                                     Log.d("type", s.getValue().toString());
                                     time=Integer.parseInt(s.getValue().toString());
-                                    str = String.valueOf(time*10/3600)+" : ";
+                                    int hour=time*10/3600;
+                                    if(hour>=24){
+                                        hour-=24;
+                                    }
+                                    str = String.valueOf(hour)+" : ";
                                     if((time*10%3600)/60==0){
                                         str+="00";
                                     }else{
@@ -188,7 +197,11 @@ public class stationtimetable extends AppCompatActivity {
                                 for (DataSnapshot s : snapshot.getChildren()) {
                                     Log.d("type", s.getValue().toString());
                                     time=Integer.parseInt(s.getValue().toString());
-                                    str = String.valueOf(time*10/3600)+" : ";
+                                    int hour=time*10/3600;
+                                    if(hour>=24){
+                                        hour-=24;
+                                    }
+                                    str = String.valueOf(hour)+" : ";
                                     if((time*10%3600)/60==0){
                                         str+="00";
                                     }else{
