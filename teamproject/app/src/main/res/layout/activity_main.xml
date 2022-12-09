@@ -26,7 +26,8 @@
 
       <Button
           android:id="@+id/menu_button"
-          android:layout_width="70dp"
+          android:layout_width="0dp"
+          android:layout_weight="1"
           android:layout_height="match_parent"
           android:background="@drawable/radius"
           android:backgroundTint="#1E5FBE"
@@ -39,7 +40,8 @@
 
       <TextView
           android:id="@+id/search_main"
-          android:layout_width="315dp"
+          android:layout_width="0dp"
+          android:layout_weight="5"
           android:layout_height="match_parent"
           android:background="@drawable/radius"
           android:layout_marginLeft="10px"

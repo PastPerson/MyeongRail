@@ -149,10 +149,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String value= dataSnapshot.getValue(String.class);
-                    if(value.equals("abc")){
-                        StationDensity d = new StationDensity();
-                        d.RequestReceive();
-                    }
+//                    if(value.equals("abc")){
+//                        StationDensity d = new StationDensity();
+//                        d.RequestReceive();
+//                    }
                     System.out.println("abc");
                     System.out.println(value);
                     profile_id.setText(value+"님 환영합니다.");
@@ -160,7 +160,22 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {}
             });
+            mFirebaseDatabase.child("UserAccount").child(mFirebase_user.getUid()).child("isManager").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                    if(String.valueOf(snapshot.getValue()).equals("true")){
+                        StationDensity d = new StationDensity();
+                        d.RequestReceive();
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
         else {
             login_btn.setVisibility(View.VISIBLE);
@@ -258,8 +273,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (0 <= intervalTime && finishtimeed >= intervalTime)
         {
-            moveTaskToBack(false);
-            finish();
+            moveTaskToBack(true);						// 태스크를 백그라운드로 이동
+            finishAndRemoveTask();						// 액티비티 종료 + 태스크 리스트에서 지우기
             android.os.Process.killProcess(android.os.Process.myPid());
         }
         else
