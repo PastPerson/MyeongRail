@@ -2,9 +2,10 @@ package com.example.teamproject;
 
 import android.content.Context;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 class Data{
@@ -16,6 +17,15 @@ class Data{
     List<String> trans = new ArrayList<>(); // 환승역
     List<Integer> path = new ArrayList<>();
 
+    public List<Integer> getBetween() {
+        return between;
+    }
+
+    public void setBetween(List<Integer> between) {
+        this.between = between;
+    }
+
+    List<Integer> between = new ArrayList<>();
     int path_cnt;
     int sum_t; // 환승횟수
 
@@ -285,7 +295,7 @@ class DataUtil{
             ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        int[] b = between_time(d);
+        List<Integer> b = d.getBetween();
         for(int i = 0; i < sum_t+1; i++){
             long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
             int n = 0;
@@ -297,7 +307,7 @@ class DataUtil{
                 }
             }
             wait[i] = (int) (a[n] - now_sec);
-            now_sec += wait[i] + between_time(d)[i]/10;
+            now_sec += wait[i] + b.get(i)/10;
         }
 
         return wait;
@@ -306,22 +316,26 @@ class DataUtil{
         int sum_t = d.getSum_t();
         String start = d.getStart();
         List<String> trans = d.getTrans();
-        LocalTime now = LocalTime.now();
+        Long now=System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat chour = new SimpleDateFormat("HH");
+        SimpleDateFormat cmin = new SimpleDateFormat("mm");
+        SimpleDateFormat csec = new SimpleDateFormat("ss");
+        String shour=chour.format(date);
+        String smin=cmin.format(date);
+        String sec=csec.format(date);
+        int now_sec=Integer.parseInt(shour)*360+Integer.parseInt(smin)*6;
         int[] wait = new int[sum_t+1];
         int[][] line_time = getLineTime(d);
-        int now_sec;
-        if(now.getHour()+9 > 23){
-            now_sec = (now.getHour()+9-24)*360 + now.getMinute()*6;
-        }else{
-            now_sec = now.getHour()*360 + now.getMinute()*6;
-        }
         String[] ride_st = new String[sum_t+1];
         ride_st[0] = start;
         for(int i = 1; i < sum_t+1; i++){
             ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        int[] b = between_time(d);
+        List<Integer> b = d.getBetween();
+        System.out.println("between "+b.size());
+        System.out.println("stat "+d.getStart());
         for(int i = 0; i < sum_t+1; i++){
             long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
             int n = 0;
@@ -333,7 +347,7 @@ class DataUtil{
                 }
             }
             wait[i] = (int) (a[n] - now_sec);
-            now_sec += wait[i] + between_time(d)[i]/10;
+            now_sec += wait[i] + b.get(i)/10;
         }
 
         return wait;
@@ -351,7 +365,7 @@ class DataUtil{
             ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        int[] b = between_time(d);
+        List<Integer> b = d.getBetween();
         int[] wait = wait_time(d,now_time);
         now_sec = now_time;
         for(int i = 0; i < sum_t+1; i++){
@@ -367,7 +381,7 @@ class DataUtil{
                 }
             }
             t[i] = n;
-            now_sec += wait[i] + between_time(d)[i]/10;
+            now_sec += wait[i] + b.get(i)/10;
         }
 
         return t;
@@ -378,13 +392,15 @@ class DataUtil{
         List<String> trans = d.getTrans();
         int[] t = new int[sum_t+1];
         int[][] line_time = getLineTime(d);
-        LocalTime now = LocalTime.now();
-        int now_sec;
-        if(now.getHour()+9 > 23){
-            now_sec = (now.getHour()+9-24)*360 + now.getMinute()*6;
-        }else{
-            now_sec = now.getHour()*360 + now.getMinute()*6;
-        }
+        Long now=System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat chour = new SimpleDateFormat("HH");
+        SimpleDateFormat cmin = new SimpleDateFormat("mm");
+        SimpleDateFormat csec = new SimpleDateFormat("ss");
+        String shour=chour.format(date);
+        String smin=cmin.format(date);
+        String sec=csec.format(date);
+        int now_sec=Integer.parseInt(shour)*360+Integer.parseInt(smin)*6;
 //        System.out.println("hour: "+now.getHour()+"  minute: "+now.getMinute());
         String[] ride_st = new String[sum_t+1];
         ride_st[0] = start;
@@ -392,7 +408,7 @@ class DataUtil{
             ride_st[i] = trans.get(i-1);
         }
         StationInfo s = new StationInfo();
-        int[] b = between_time(d);
+        List<Integer> b = d.getBetween();
         int[] wait = wait_time(d);
 //        now_sec = 4000;
 //        System.out.println("a name "+ride_st[0]);
@@ -409,7 +425,7 @@ class DataUtil{
                 }
             }
             t[i] = n;
-            now_sec += wait[i] + between_time(d)[i]/10;
+            now_sec += wait[i] + b.get(i)/10;
         }
 
         return t;
@@ -722,7 +738,7 @@ public class Dijkstra {
             } else if(i == a.getSum_t()){
                 trans[i] = a.getEnd();
             } else{
-              trans[i] = b.getTrans().get(i-a.getSum_t()-1);
+                trans[i] = b.getTrans().get(i-a.getSum_t()-1);
             }
         }
         int sum_t = a.getSum_t()+b.getSum_t()+1;

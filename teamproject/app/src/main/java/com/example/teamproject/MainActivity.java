@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private String start_point=null;
     private String transfer_point=null;
     private String end_point=null;
-    private final long finishtimeed = 1000;
+    private final long finishtimeed = 3000;
     private Long mLastClickTime = 0L;
     private long presstime = 0;
     @Override
@@ -153,8 +153,7 @@ public class MainActivity extends AppCompatActivity {
 //                        StationDensity d = new StationDensity();
 //                        d.RequestReceive();
 //                    }
-                    System.out.println("abc");
-                    System.out.println(value);
+
                     profile_id.setText(value+"님 환영합니다.");
                 }
                 @Override
@@ -166,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if(String.valueOf(snapshot.getValue()).equals("true")){
                         StationDensity d = new StationDensity();
-                        d.RequestReceive();
+
 
                     }
                 }
@@ -195,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, ListActivity.class));
                 }else{
 
-                    Toast.makeText(MainActivity.this, "로그인읗하고 이용해주세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "로그인을 하고 이용해주세요", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(MainActivity.this,login_main.class));
 
                 }
@@ -265,7 +264,15 @@ public class MainActivity extends AppCompatActivity {
         public void onDrawerStateChanged(int newState) {
         }
     };
+    @Override
 
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        boolean k_f = intent.getBooleanExtra("kill", false);
+        if(k_f == true){
+            finish();
+        }
+    }
     @Override
     public void onBackPressed() {
         long tempTime = System.currentTimeMillis();
@@ -276,6 +283,11 @@ public class MainActivity extends AppCompatActivity {
             moveTaskToBack(true);						// 태스크를 백그라운드로 이동
             finishAndRemoveTask();						// 액티비티 종료 + 태스크 리스트에서 지우기
             android.os.Process.killProcess(android.os.Process.myPid());
+            Intent intent = new Intent(this, MainActivity.class);
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra("kill", true);
+            startActivity(intent);
         }
         else
         {

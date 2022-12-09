@@ -80,7 +80,7 @@ public class subway_result extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
     private int alltime;
     private int af_hour, af_min;
-    private ResearchRecord rc;
+
     private String[] st_list;
     private TextView start_time, end_time;
     private TextView s_time, dis, chag, st_tb;
@@ -94,7 +94,7 @@ public class subway_result extends AppCompatActivity {
 
         now = System.currentTimeMillis();
         Date date = new Date(now);
-        rc = new ResearchRecord();
+
         SimpleDateFormat chour = new SimpleDateFormat("HH");
         SimpleDateFormat cmin = new SimpleDateFormat("mm");
         SimpleDateFormat csec = new SimpleDateFormat("ss");
@@ -156,7 +156,7 @@ public class subway_result extends AppCompatActivity {
                         hour = hourOfDay;
                         min = minute;
                         allsec = hour * 3600 + min * 60;
-//                        type_check();
+                        type_check();
                         int i = radioGroup.getCheckedRadioButtonId();
                         if (i == R.id.radio_time) {
                             if (transfer_point == null) {
@@ -181,6 +181,10 @@ public class subway_result extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<DataSnapshot> task) {
                                                 Data t2 = task.getResult().getValue(Data.class);
                                                 Data t3 = sub.datasquash(t1, t2, 0);
+                                                List<Integer> b = new ArrayList<>();
+                                                b.addAll(t1.getBetween());
+                                                b.addAll(t2.getBetween());
+                                                t3.setBetween(b);
                                                 get_Time(0, t3);
                                                 set_display(layout, t3);
                                             }
@@ -213,6 +217,10 @@ public class subway_result extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<DataSnapshot> task) {
                                                 Data t2 = task.getResult().getValue(Data.class);
                                                 Data t3 = sub.datasquash(t1, t2, 1);
+                                                List<Integer> b = new ArrayList<>();
+                                                b.addAll(t1.getBetween());
+                                                b.addAll(t2.getBetween());
+                                                t3.setBetween(b);
                                                 get_Time(1, t3);
                                                 set_display(layout, t3);
                                             }
@@ -245,6 +253,11 @@ public class subway_result extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<DataSnapshot> task) {
                                                 Data t2 = task.getResult().getValue(Data.class);
                                                 Data t3 = sub.datasquash(t1, t2, 0);
+
+                                                List<Integer> b = new ArrayList<>();
+                                                b.addAll(t1.getBetween());
+                                                b.addAll(t2.getBetween());
+                                                t3.setBetween(b);
                                                 get_Time(2, t3);
                                                 set_display(layout, t3);
                                             }
@@ -286,113 +299,127 @@ public class subway_result extends AppCompatActivity {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
+                if(start_point!=null&end_point!=null) {
+                    String temp;
+                    temp = start_point;
+                    start_point = end_point;
+                    end_point = temp;
+                    point_setting(start_point, transfer_point, end_point);
+                    //radioGroup.check(R.id.radio_time);
+                    type_check();
+                    int i = radioGroup.getCheckedRadioButtonId();
+                    if (i == R.id.radio_time) {
+                        if (transfer_point == null) {
+                            String s_e = start_point + "-" + end_point;
+                            databaseReference.child(s_e).child("BTime").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    Data t = task.getResult().getValue(Data.class);
+                                    get_Time(0, t);
+                                    set_display(layout, t);
+                                }
+                            });
+                        } else {
+                            String s_t = start_point + "-" + transfer_point;
+                            databaseReference.child(s_t).child("BTime").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    Data t1 = task.getResult().getValue(Data.class);
+                                    String t_e = transfer_point + "-" + end_point;
+                                    databaseReference.child(t_e).child("BTime").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                            Data t2 = task.getResult().getValue(Data.class);
+                                            Data t3 = sub.datasquash(t1, t2, 0);
 
-                String temp;
-                temp = start_point;
-                start_point = end_point;
-                end_point = temp;
-                point_setting(start_point, transfer_point, end_point);
-                //radioGroup.check(R.id.radio_time);
-                type_check();
-                int i = radioGroup.getCheckedRadioButtonId();
-                if (i == R.id.radio_time) {
-                    if (transfer_point == null) {
-                        String s_e = start_point + "-" + end_point;
-                        databaseReference.child(s_e).child("BTime").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                Data t = task.getResult().getValue(Data.class);
-                                get_Time(0, t);
-                                set_display(layout, t);
-                            }
-                        });
-                    } else {
-                        String s_t = start_point + "-" + transfer_point;
-                        databaseReference.child(s_t).child("BTime").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                Data t1 = task.getResult().getValue(Data.class);
-                                String t_e = transfer_point + "-" + end_point;
-                                databaseReference.child(t_e).child("BTime").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                        Data t2 = task.getResult().getValue(Data.class);
-                                        Data t3 = sub.datasquash(t1, t2, 0);
-                                        get_Time(0, t3);
-                                        set_display(layout, t3);
-                                    }
-                                });
-                            }
-                        });
-                    }
+                                            List<Integer> b = new ArrayList<>();
+                                            b.addAll(t1.getBetween());
+                                            b.addAll(t2.getBetween());
+                                            t3.setBetween(b);
+                                            get_Time(0, t3);
+                                            set_display(layout, t3);
+                                        }
+                                    });
+                                }
+                            });
+                        }
 //                    get_Time(0);
 //                    set_display(layout,sub.getBTime());
-                } else if (i == R.id.radio_distance) {
-                    if (transfer_point == null) {
-                        String s_e = start_point + "-" + end_point;
-                        databaseReference.child(s_e).child("BDist").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                Data t = task.getResult().getValue(Data.class);
-                                get_Time(1, t);
-                                set_display(layout, t);
-                            }
-                        });
-                    } else {
-                        String s_t = start_point + "-" + transfer_point;
-                        databaseReference.child(s_t).child("BDist").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                Data t1 = task.getResult().getValue(Data.class);
-                                String t_e = transfer_point + "-" + end_point;
-                                databaseReference.child(t_e).child("BDist").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                        Data t2 = task.getResult().getValue(Data.class);
-                                        Data t3 = sub.datasquash(t1, t2, 1);
-                                        get_Time(1, t3);
-                                        set_display(layout, t3);
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    } else if (i == R.id.radio_distance) {
+                        if (transfer_point == null) {
+                            String s_e = start_point + "-" + end_point;
+                            databaseReference.child(s_e).child("BDist").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    Data t = task.getResult().getValue(Data.class);
+                                    get_Time(1, t);
+                                    set_display(layout, t);
+                                }
+                            });
+                        } else {
+                            String s_t = start_point + "-" + transfer_point;
+                            databaseReference.child(s_t).child("BDist").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    Data t1 = task.getResult().getValue(Data.class);
+                                    String t_e = transfer_point + "-" + end_point;
+                                    databaseReference.child(t_e).child("BDist").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                            Data t2 = task.getResult().getValue(Data.class);
+                                            Data t3 = sub.datasquash(t1, t2, 1);
+
+                                            List<Integer> b = new ArrayList<>();
+                                            b.addAll(t1.getBetween());
+                                            b.addAll(t2.getBetween());
+                                            t3.setBetween(b);
+                                            get_Time(1, t3);
+                                            set_display(layout, t3);
+                                        }
+                                    });
+                                }
+                            });
+                        }
 //                    get_Time(1);
 //                    set_display(layout,sub.getBDist());
-                } else if (i == R.id.radio_cost) {
-                    if (transfer_point == null) {
-                        String s_e = start_point + "-" + end_point;
-                        databaseReference.child(s_e).child("BCharge").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                Data t = task.getResult().getValue(Data.class);
-                                get_Time(2, t);
-                                set_display(layout, t);
-                            }
-                        });
-                    } else {
-                        String s_t = start_point + "-" + transfer_point;
-                        databaseReference.child(s_t).child("BCharge").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                Data t1 = task.getResult().getValue(Data.class);
-                                String t_e = transfer_point + "-" + end_point;
-                                databaseReference.child(t_e).child("BCharge").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                        Data t2 = task.getResult().getValue(Data.class);
-                                        Data t3 = sub.datasquash(t1, t2, 0);
-                                        get_Time(2, t3);
-                                        set_display(layout, t3);
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    } else if (i == R.id.radio_cost) {
+                        if (transfer_point == null) {
+                            String s_e = start_point + "-" + end_point;
+                            databaseReference.child(s_e).child("BCharge").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    Data t = task.getResult().getValue(Data.class);
+                                    get_Time(2, t);
+                                    set_display(layout, t);
+                                }
+                            });
+                        } else {
+                            String s_t = start_point + "-" + transfer_point;
+                            databaseReference.child(s_t).child("BCharge").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    Data t1 = task.getResult().getValue(Data.class);
+                                    String t_e = transfer_point + "-" + end_point;
+                                    databaseReference.child(t_e).child("BCharge").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                            Data t2 = task.getResult().getValue(Data.class);
+                                            Data t3 = sub.datasquash(t1, t2, 0);
+                                            List<Integer> b = new ArrayList<>();
+                                            b.addAll(t1.getBetween());
+                                            b.addAll(t2.getBetween());
+                                            t3.setBetween(b);
+                                            get_Time(2, t3);
+                                            set_display(layout, t3);
+                                        }
+                                    });
+                                }
+                            });
+                        }
 //                    get_Time(2);
 //                    set_display(layout,sub.getBCharge());
+                    }
                 }
-
             }
         });
         //상단 역들을 클릭할 경우 설정할 수있다.
@@ -502,6 +529,10 @@ public class subway_result extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                                                     Data t2 = task.getResult().getValue(Data.class);
                                                     Data t3 = sub.datasquash(t1, t2, 0);
+                                                    List<Integer> b = new ArrayList<>();
+                                                    b.addAll(t1.getBetween());
+                                                    b.addAll(t2.getBetween());
+                                                    t3.setBetween(b);
                                                     get_Time(0, t3);
                                                     set_display(layout, t3);
                                                 }
@@ -539,6 +570,10 @@ public class subway_result extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                                                     Data t2 = task.getResult().getValue(Data.class);
                                                     Data t3 = sub.datasquash(t1, t2, 1);
+                                                    List<Integer> b = new ArrayList<>();
+                                                    b.addAll(t1.getBetween());
+                                                    b.addAll(t2.getBetween());
+                                                    t3.setBetween(b);
                                                     get_Time(1, t3);
                                                     set_display(layout, t3);
                                                 }
@@ -576,6 +611,10 @@ public class subway_result extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                                                     Data t2 = task.getResult().getValue(Data.class);
                                                     Data t3 = sub.datasquash(t1, t2, 0);
+                                                    List<Integer> b = new ArrayList<>();
+                                                    b.addAll(t1.getBetween());
+                                                    b.addAll(t2.getBetween());
+                                                    t3.setBetween(b);
                                                     get_Time(2, t3);
                                                     set_display(layout, t3);
                                                 }
@@ -602,6 +641,7 @@ public class subway_result extends AppCompatActivity {
     public boolean onKeyDown(int keycode, KeyEvent event) {
         if (keycode == KeyEvent.KEYCODE_BACK) {
             startActivity(new Intent(subway_result.this, MainActivity.class));
+            finish();
             return true;
         }
 
@@ -720,6 +760,7 @@ public class subway_result extends AppCompatActivity {
         tr = new Thread() {
             public void run() {
                 try {
+                    DataUtil util = new DataUtil();
                     StringBuilder sb_t = new StringBuilder();
                     StringBuilder sb_d = new StringBuilder();
                     StringBuilder sb_c = new StringBuilder();
@@ -727,8 +768,10 @@ public class subway_result extends AppCompatActivity {
                     alltime = 0;
                     int distance;
                     int charge;
+                    int wait=util.wait_time(d)[0];
                     int allhour;
                     int allmin;
+                    int start=util.time_index(d,allsec)[0];
                     int test_min;//임시로 먼저 받을 분과 초 분이 60분이 넘는지 체크
                     int test_hour;
                     if (state == 0) {
@@ -740,6 +783,7 @@ public class subway_result extends AppCompatActivity {
                         alltime += d.getTime();
                         distance = d.getDist();
                         charge = d.getCharge();
+
                     } else if (state == 1) {
 //                        for (int i : sub.getBDist().wait_time(allsec / 10)) {
 //                            Log.d("test", String.valueOf(i));
@@ -789,11 +833,14 @@ public class subway_result extends AppCompatActivity {
                     sb_c.append(charge + "원");
                     str_c = sb_c.toString();
 
-                    test_min = min + af_min;
+                    test_min = min + af_min+wait/60;
                     test_hour = hour + af_hour;
                     if (test_min >= 60) {
-                        test_min -= 60;
-                        test_hour += 1;
+                        while(test_min>=60) {
+                            test_min -= 60;
+                            test_hour += 1;
+                        }
+
                     }
                     if (test_hour >= 24) {
                         test_hour -= 24;
@@ -806,6 +853,7 @@ public class subway_result extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
                             //sub_result.setText(str);
                             s_time.setText(str_t);
                             dis.setText(str_d);
@@ -813,6 +861,14 @@ public class subway_result extends AppCompatActivity {
                             //sub_result.setText(str);
                             start_time.setText(hour + "시" + min + "분");
                             end_time.setText(allhour + "시 " + allmin + "분");
+                            int station_time=wait/60;
+                            int st_hour=hour;
+                            int st_min=min+station_time;
+                            if(st_min>=60){
+                                st_min-=60;
+                                st_hour+=1;
+                            }
+                            st_tb.setText(st_hour+"시 "+st_min+"분");
                             // time.setText("출발시간: " + hour + "시 " + min + "분\n"+"도착 시간: "+allhour+"시 "+allmin+"분");
                         }
                     });
@@ -844,106 +900,106 @@ public class subway_result extends AppCompatActivity {
 //        }catch(InterruptedException e){
 //
 //   }
-    public void get_density(Data d, String st, int line, LinearLayout lf,int now_time){
-
-        DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("density");
-        LayoutInflater layoutInflater = LayoutInflater.from(subway_result.this);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-DD");
-        String date = simpleDateFormat.format(System.currentTimeMillis());
-
-
-        database_ref.child("station").child(date).child(st+"st").child("timeIndex").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                int index = 0;
-                List<String> trans = d.getTrans();
-                for (int i = 0; i < d.getSum_t(); i++) {
-                    if(st.equals(d.getStart())){
-                        break;
-                    }
-                    if(st.equals(trans.get(i))){
-                        index = i + 1;
-                        break;
-                    }
-                }
-                if(st.equals(d.getEnd())){
-                    index = d.getSum_t();
-                }
-                DataUtil util = new DataUtil();
-                int[][] lt = util.getLineTime(d);
-                String l = lt[index][0] + "line";
-                System.out.println("st: " + st);
-                System.out.println(l);
-                String ud;
-                if (lt[index][1] == 0) {
-                    ud = "uptime";
-                } else {
-                    ud = "downtime";
-                }
-                index = util.time_index(d, now_time)[index];
-                GenericTypeIndicator<ArrayList<Float>> t = new GenericTypeIndicator<ArrayList<Float>>() {
-                };
-                ArrayList<Float> fl = task.getResult().child(l).child(ud).getValue(t);
-                float f = fl.get(index);;
+public void get_density(Data d, String st, int line, int updown, int index, LinearLayout lf,int now_time){
+    DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference("density");
+    LayoutInflater layoutInflater = LayoutInflater.from(subway_result.this);
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-DD");
+    String date = simpleDateFormat.format(System.currentTimeMillis());
 
 
-                View customView = layoutInflater.inflate(R.layout.subway_item, null);
-                        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT);
-                        ((TextView) customView.findViewById(R.id.station_item_number)).setText(st);
-                        ((TextView) customView.findViewById(R.id.station_item_line)).setText(String.valueOf(line)+"호선");
+    database_ref.child("station").child(date).child(st+"st").child("timeIndex").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                int index = 0;
+//                List<String> trans = d.getTrans();
+//                for (int i = 0; i < d.getSum_t(); i++) {
+//                    if(st.equals(d.getStart())){
+//                        break;
+//                    }
+//                    if(st.equals(trans.get(i))){
+//                        index = i + 1;
+//                        break;
+//                    }
+//                }
+//                if(st.equals(d.getEnd())){
+//                    index = d.getSum_t();
+//                }
+//                DataUtil util = new DataUtil();
+            String l = line + "line";
+            System.out.println("st: " + st);
+            System.out.println(l);
+            String ud;
+            if (updown == 0) {
+                ud = "uptime";
+            } else {
+                ud = "downtime";
+            }
+//                index = util.time_index(d, now_time)[index];
+            GenericTypeIndicator<ArrayList<Float>> t = new GenericTypeIndicator<ArrayList<Float>>() {
+            };
+            ArrayList<Float> fl = task.getResult().child(l).child(ud).getValue(t);
+            float f = fl.get(index);
+            int line1 = line+1;
+            if(st.equals(d.getEnd())){
+                line1 = 0;
+            }
+            View customView = layoutInflater.inflate(R.layout.subway_item, null);
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            ((TextView) customView.findViewById(R.id.station_item_number)).setText(st);
+            ((TextView) customView.findViewById(R.id.station_item_line)).setText(String.valueOf(line1)+"호선");
 
-                        ((TextView) customView.findViewById(R.id.density_status)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
-                        if(f>=3){
-                            ((TextView) customView.findViewById(R.id.density_status)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
-                        }else{
-                            ((TextView) customView.findViewById(R.id.density_status)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00FF7F")));
+            ((TextView) customView.findViewById(R.id.density_status)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
+            if(f>=3){
+                ((TextView) customView.findViewById(R.id.density_status)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#DC143C")));
+            }else{
+                ((TextView) customView.findViewById(R.id.density_status)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#00FF7F")));
 
-                        }
-                        if(line==1){
-                            ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#09B802")));//1호선색상
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#09B802")));//1호선색상
-                        }else if(line==2){
-                            ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#0200c7")));//2호선색상
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#0200c7")));//2호선색상
-                        }else if(line==3){
-                            ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#803901")));//3호선색상
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#803901")));//3호선색상
-                        }else if(line==4){
-                            ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F20303")));//4호선색상
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F20303")));//4호선색상
-                        }else if(line==5){
-                            ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#7C85FF")));//5호선색상
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#7C85FF")));//5호선색상
-                        }else if(line==6){
-                            ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F2EB11")));//6호선색상
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F2EB11")));//6호선색상
-                        }else if(line==7){
-                            ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CFD11")));//7호선색상;
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CFD11")));//7호선색상;
-                        }else if(line==8){
-                            ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03DAF2")));//8호선색상
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03DAF2")));//8호선색상
-                        }else if (line==9){
-                            ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A206F2")));//9호선색상
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A206F2")));//9호선색상
-                        }else if(line==0){
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setText(" ");
-                            ((TextView) customView.findViewById(R.id.station_item_line)).setVisibility(View.GONE);
+            }
+            if(line1==1){
+                ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#09B802")));//1호선색상
+                ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#09B802")));//1호선색상
+            }else if(line1==2){
+                ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#0200c7")));//2호선색상
+                ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#0200c7")));//2호선색상
+            }else if(line1==3){
+                ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#803901")));//3호선색상
+                ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#803901")));//3호선색상
+            }else if(line1==4){
+                ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F20303")));//4호선색상
+                ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F20303")));//4호선색상
+            }else if(line1==5){
+                ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#7C85FF")));//5호선색상
+                ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#7C85FF")));//5호선색상
+            }else if(line1==6){
+                ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F2EB11")));//6호선색상
+                ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F2EB11")));//6호선색상
+            }else if(line1==7){
+                ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CFD11")));//7호선색상;
+                ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CFD11")));//7호선색상;
+            }else if(line1==8){
+                ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03DAF2")));//8호선색상
+                ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03DAF2")));//8호선색상
+            }else if (line1==9){
+                ((ImageView)customView.findViewById(R.id.station_item_color)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A206F2")));//9호선색상
+                ((TextView) customView.findViewById(R.id.station_item_line)).setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#A206F2")));//9호선색상
+            }else if(line1==0){
+                ((TextView) customView.findViewById(R.id.station_item_line)).setText(" ");
+                ((TextView) customView.findViewById(R.id.station_item_line)).setVisibility(View.GONE);
 
-                        }
-                        customView.setLayoutParams(params);
+            }
+            customView.setLayoutParams(params);
 
 //                customView.getLayoutParams().width=100;
 //                customView.getLayoutParams().height=100;
-                        ((FrameLayout)customView.findViewById(R.id.fram_sheet)).setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        lf.addView(customView);
-                        System.out.println("ff: "+ st+line);
+            ((FrameLayout)customView.findViewById(R.id.fram_sheet)).setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            lf.addView(customView);
+            System.out.println("ff: "+ st+line);
 
-                    }
+        }
 
-                });
-    }
+    });
+}
 
 
 
@@ -958,22 +1014,60 @@ public class subway_result extends AppCompatActivity {
         }
 //        f.setGravity(Gravity.CENTER);
 //        f.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        //환승역 또는 경유역이 있을대
+        //환승역 또는 경유역이
+        DataUtil util = new DataUtil();
+        int[][] line_time = util.getLineTime(D);
+        System.out.println("between size "+D.getBetween().size());
+        int[] index = util.time_index(D);
         if(D!=null&&D.getSum_t()!=0){
             int line=0;
             for(int i=0;i<D.getSum_t();i++){
                 if(prev_station.equals(D.getTrans().get(i))==false) {
                     int num1 = 0;
-                    for (int[] j : si.getStation(prev_station).getLine()) {
-                        int num2 = 0;
-                        for (int[] k : si.getStation(D.getTrans().get(i)).getLine()) {
-                            if (j[0] == k[0] && j[0] != -1) {
-                                line = j[0] + 1;
-                                get_density(D, prev_station, line, f,allsec/10);
-                            }
-                        }
-                        num1++;
-                    }
+//                    for (int[] j : si.getStation(prev_station).getLine()) {
+//                        int num2 = 0;
+//                        for (int[] k : si.getStation(D.getTrans().get(i)).getLine()) {
+//                            if (j[0] == k[0] && j[0] != -1) {
+//                                int ud = 0;
+//                                line = j[0];
+//                                if(j[0] == 0){
+//                                    if (k[1] - j[1] < 0) {
+//                                        if(k[i]-j[i] < -14){
+//                                            ud = 0;
+//                                        }
+//                                        ud = 1;
+//                                    } else {
+//                                        if(k[1] - j[1] > 18){
+//                                            ud = 1;
+//                                        }
+//                                        ud = 0;
+//                                    }
+//                                }else if(j[0] == 5){
+//                                    if (k[1] - j[1] < 0) {
+//                                        if(k[i]-j[i] < -14){
+//                                            ud = 0;
+//                                        }
+//                                        ud = 1;
+//                                    } else {
+//                                        if(k[1] - j[1] > 18){
+//                                            ud = 1;
+//                                        }
+//                                        ud = 0;
+//                                    }
+//                                }else{
+//                                    if (k[1] - j[1] < 0) {
+//                                        ud = 1;
+//                                    } else {
+//                                        ud = 0;
+//                                    }
+//                                }
+//
+//                                    get_density(D, prev_station, line, ud, f,allsec/10);
+//                            }
+//                        }
+//                        num1++;
+//                    }
+                    get_density(D, prev_station, line_time[i][0], line_time[i][1], index[i], f,allsec/10);
                     prev_station = D.getTrans().get(i);
                 }
             }
@@ -981,24 +1075,27 @@ public class subway_result extends AppCompatActivity {
         if(true) {
             int num1 = 0;
             int line = 0;
-            for (int[] j : si.getStation(prev_station).getLine()) {
-                int num2 = 0;
-                if (end_point != null) {
-                    for (int[] k : si.getStation(end_point).getLine()) {
-                        Log.d("test", "전역: " + j[num1] + "다음역: " + k[num2]);
-                        if (j[0] == k[0] && j[0] != -1) {
-                            line = j[0] + 1;
-                            get_density(D, prev_station, line, f,allsec/10);
+//            for (int[] j : si.getStation(prev_station).getLine()) {
+//                int num2 = 0;
+//                if (end_point != null) {
+//                    for (int[] k : si.getStation(end_point).getLine()) {
+//                        Log.d("test", "전역: " + j[num1] + "다음역: " + k[num2]);
+//                        if (j[0] == k[0] && j[0] != -1) {
+//                            line = j[0] + 1;
+//                            get_density(D, prev_station, line, f,allsec/10);
+//
+//                        }
+//                        num2++;
+//                    }
+//                }
+//                num1++;
+//            }
+            get_density(D, prev_station, line_time[D.getSum_t()][0], line_time[D.getSum_t()][1], index[D.getSum_t()], f, allsec/10);
 
-                        }
-                        num2++;
-                    }
-                }
-                num1++;
-            }
         }
         if(end_point!=null&&(end_point.equals(prev_station)==false)){
-            get_density(D,end_point,0,f,allsec/10);
+            System.out.println("end: "+line_time[D.getSum_t()][0]);
+            get_density(D,end_point,line_time[D.getSum_t()][0],line_time[D.getSum_t()][1], index[D.getSum_t()], f,allsec/10);
         }
 //        handler.sendMessage(handler.obtainMessage());
 //        get_density(D, "101", 1, f);
