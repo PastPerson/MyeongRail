@@ -145,75 +145,6 @@ public class StationDensity {
     public StationDensity(){
     }
 
-
-    public void densityRequire(String start, String end){
-        database_ref.child("request").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                String key = database_ref.child("request").push().getKey();
-                Request r = new Request(start, end);
-                HashMap<String,Object> h = new HashMap<>();
-                h.put(key, r);
-                database_ref.child("request").updateChildren(h);
-                ArrayList<String> s = r.getS();
-                Dijkstra d = new Dijkstra();
-                d.no_record_check(s.get(0), s.get(1));
-                DataUtil util = new DataUtil();
-                List<Integer> between;
-                Data time = d.getBTime();
-                between = util.between_time(time);
-                time.setBetween(between);
-                Data dist = d.getBDist();
-                between = util.between_time(dist);
-                dist.setBetween(between);
-                Data charge = d.getBCharge();
-                between = util.between_time(charge);
-                charge.setBetween(between);
-                String result = s.get(0)+"-"+s.get(1);
-                result_ref.child(result).child("BTime").setValue(time);
-                result_ref.child(result).child("BDist").setValue(dist);
-                result_ref.child(result).child("BCharge").setValue(charge);
-            }
-        });
-    }
-    public void densityRequire(String start, String end, int now_time){
-        database_ref.child("request").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                String key = database_ref.child("request").push().getKey();
-                Request r = new Request(start, end, now_time);
-                HashMap<String,Object> h = new HashMap<>();
-                h.put(key, r);
-                database_ref.child("request").updateChildren(h);
-            }
-        });
-    };
-
-    public void densityRequire(String start, String via, String end){
-        database_ref.child("request").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                String key = database_ref.child("request").push().getKey();
-                Request r = new Request(start, via, end);
-                HashMap<String,Object> h = new HashMap<>();
-                h.put(key, r);
-                database_ref.child("request").updateChildren(h);
-            }
-        });
-    }
-    public void densityRequire(String start, String via, String end, int now_time){
-        database_ref.child("request").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                String key = database_ref.child("request").push().getKey();
-                Request r = new Request(start, via, end, now_time);
-                HashMap<String,Object> h = new HashMap<>();
-                h.put(key, r);
-                database_ref.child("request").updateChildren(h);
-            }
-        });
-    }
-
     public void RequestReceive(){
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -223,13 +154,21 @@ public class StationDensity {
                 Request r = snapshot.getValue(Request.class);
                 ArrayList<String> s = r.getS();
                 Dijkstra d = new Dijkstra();
-                if(s.size() == 2){
-                    d.no_record_check(s.get(0), s.get(1));
+                if(s.size() == 1){
+                    database_ref.child("request").child(snapshot.getKey()).removeValue();
+                    return;
                 }
-                Data time = d.getBTime();
-                Data dist = d.getBDist();
-                Data charge = d.getBCharge();
-                addRecord(time,dist,charge,r.getTime());
+                if(s.size() == 2){
+                    if(s.get(0) == null){
+                        database_ref.child("request").child(snapshot.getKey()).removeValue();
+                        return;
+                    }
+                    d.no_record_check(s.get(0), s.get(1));
+                    Data time = d.getBTime();
+                    Data dist = d.getBDist();
+                    Data charge = d.getBCharge();
+                    addRecord(time,dist,charge,r.getTime());
+                }
                 database_ref.child("request").child(snapshot.getKey()).removeValue();
             }
 
@@ -256,87 +195,7 @@ public class StationDensity {
         database_ref.child("request").addChildEventListener(childEventListener);
     }
 
-    public void addRecord(Data a, Data b, Data c) {
-        tr=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                database_ref.child("station").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        int[] path = new int[111];
-                        StationInfo s = new StationInfo();
-                        station[] st = s.getst();
-                        String[] st_list = s.getStationList();
-                        DataUtil util = new DataUtil();
-                        int[][] line_time = util.getLineTime(a);
-                        int[] index = util.time_index(a);
-                        int n = 0;
-                        for(int i = a.getPath_cnt() - 1; i >= 0; i--){
-                            st[a.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
 
-                            if(n < a.getSum_t() && st_list[a.getPath().get(i)].equals(a.getTrans().get(n))) {
-                                n++;
-                                st[a.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.7);
-                            }
-                        }
-                        line_time = util.getLineTime(b);
-                        index = util.time_index(b);
-                        n = 0;
-                        for(int i = b.getPath_cnt() - 1; i >= 0; i--){
-                            st[b.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
-                            if(n < b.getSum_t() && st_list[b.getPath().get(i)].equals(b.getTrans().get(n))) {
-                                n++;
-                                st[b.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.2);
-                            }
-                        }
-                        line_time = util.getLineTime(c);
-                        index = util.time_index(c);
-                        n = 0;
-                        for(int i = c.getPath_cnt() - 1; i >= 0; i--){
-                            st[c.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
-                            if( n < c.getSum_t() && st_list[c.getPath().get(i)].equals(c.getTrans().get(n))) {
-                                n++;
-                                st[c.getPath().get(i)].addValue(line_time[n][0], line_time[n][1], index[n], (float) 0.1);
-
-                            }
-                        }
-
-                        for(int i = 0; i < 111; i++){
-                            if(i < a.getPath_cnt()){
-                                path[a.getPath().get(i)] = 1;
-                            }
-                            if(i < b.getPath_cnt()){
-                                path[b.getPath().get(i)] = 1;
-                            }
-                            if(i < c.getPath_cnt()){
-                                path[c.getPath().get(i)] = 1;
-                            }
-                        }
-
-                        for(int i = 0; i < 111; i++){
-                            if(path[i] == 1){
-                                System.out.println("역 이름: "+st_list[i]);
-                                ResearchRecord r = task.getResult().child(st_list[i]).getValue(ResearchRecord.class);
-                                if(r == null){
-                                    r = new ResearchRecord(st_list[i]);
-
-                                }
-                                for(int line : st[i].getValue().keySet()){
-                                    for(int ud : st[i].getValue().get(line).keySet()){
-                                        for(int t_index : st[i].getValue().get(line).get(ud).keySet()){
-                                            r.addDensity(line, ud, t_index, st[i].getValue().get(line).get(ud).get(t_index));
-                                        }
-                                    }
-                                }
-                                database_ref.child("station").child(st_list[i]).setValue(r);
-                            }
-                        }
-                    }
-                });
-            }
-        });
-        tr.start();
-    }
 
 
     public void addRecord(Data a, Data b, Data c, int now_time) {
