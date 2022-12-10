@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
@@ -149,11 +148,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String value= dataSnapshot.getValue(String.class);
-//                    if(value.equals("abc")){
-//                        StationDensity d = new StationDensity();
-//                        d.RequestReceive();
-//                    }
-
                     profile_id.setText(value+"님 환영합니다.");
                 }
                 @Override

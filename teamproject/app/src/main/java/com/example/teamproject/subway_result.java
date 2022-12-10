@@ -758,10 +758,10 @@ public class subway_result extends AppCompatActivity {
                     alltime = 0;
                     int distance;
                     int charge;
-                    int wait=util.wait_time(d)[0];
+                    int wait=util.wait_time(d, allsec/10)[0];
                     int allhour;
                     int allmin;
-                    int start=util.time_index(d,allsec)[0];
+                    int start=util.time_index(d,allsec/10)[0];
                     int test_min;//임시로 먼저 받을 분과 초 분이 60분이 넘는지 체크
                     int test_hour;
                     if (state == 0) {
@@ -811,7 +811,7 @@ public class subway_result extends AppCompatActivity {
                     sb_c.append(charge + "원");
                     str_c = sb_c.toString();
 
-                    test_min = min + af_min+wait/60;
+                    test_min = min + af_min+wait/6;
                     test_hour = hour + af_hour;
                     if (test_min >= 60) {
                         while(test_min>=60) {
@@ -839,7 +839,7 @@ public class subway_result extends AppCompatActivity {
 
                             start_time.setText(hour + "시" + min + "분");
                             end_time.setText(allhour + "시 " + allmin + "분");
-                            int station_time=wait/60;
+                            int station_time=wait/6;
                             int st_hour=hour;
                             int st_min=min+station_time;
                             if(st_min>=60){
