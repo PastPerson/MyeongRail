@@ -123,7 +123,7 @@ public class subway_result extends AppCompatActivity {
         shour = chour.format(date);
         smin = cmin.format(date);
         sec = csec.format(date);
-        allsec = Integer.parseInt(shour) * 3600 + Integer.parseInt(smin) * 60 + Integer.parseInt(sec);
+        allsec = Integer.parseInt(shour) * 3600 + Integer.parseInt(smin) * 60;
         int allhour;
         int allmin;
 

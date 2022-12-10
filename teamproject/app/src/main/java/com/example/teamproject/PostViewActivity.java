@@ -4,15 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,8 +22,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -85,7 +80,7 @@ public class PostViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(PostViewActivity.this);
-                builder.setTitle("").setMessage("신고하시겠습니까?");
+                builder.setTitle("").setMessage("삭제하시겠습니까?");
 
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
@@ -108,28 +103,44 @@ public class PostViewActivity extends AppCompatActivity {
         cmt_reg_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Comment_item mycomItem = new Comment_item();
-                my_ref = FirebaseDatabase.getInstance().getReference("login");
-                my_ref.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
-                        String userid = snapshot.child("UserAccount").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("username").getValue(String.class).toString();
-                        String reg_date = (date.format(new Date()) + "   " + time.format(new Date())).toString();
-                        mycomItem.setContent(comment_et.getText().toString());
-                        mycomItem.setUserid(userid);
-                        mycomItem.setReg_date(reg_date);
-                        //Log.w("test : ", myItem.getUserid()+myItem.getContent()+myItem.getReg_date());
-                        database_ref.child(myItem.getReg_date()).child("comments").child(reg_date).setValue(mycomItem);
-                        comment_et.setText("");
+                if(comment_et.getText().toString().equals("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PostViewActivity.this);
+                    builder.setTitle("").setMessage("댓글 내용을 입력하세요.");
 
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                });
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
+                else {
+                    Comment_item mycomItem = new Comment_item();
+                    my_ref = FirebaseDatabase.getInstance().getReference("login");
+                    my_ref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
+                            String userid = snapshot.child("UserAccount").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("username").getValue(String.class).toString();
+                            String reg_date = (date.format(new Date()) + "   " + time.format(new Date())).toString();
+                            mycomItem.setContent(comment_et.getText().toString());
+                            mycomItem.setUserid(userid);
+                            mycomItem.setReg_date(reg_date);
+                            //Log.w("test : ", myItem.getUserid()+myItem.getContent()+myItem.getReg_date());
+                            database_ref.child(myItem.getReg_date()).child("comments").child(reg_date).setValue(mycomItem);
+                            comment_et.setText("");
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
             }
         });
         reportButton.setOnClickListener(new View.OnClickListener() {
