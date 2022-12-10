@@ -42,6 +42,7 @@ public class ListActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         startActivity(new Intent(ListActivity.this,MainActivity.class));
+        finish();
     }
 
     @Override

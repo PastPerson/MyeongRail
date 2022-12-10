@@ -186,11 +186,12 @@ public class MainActivity extends AppCompatActivity {
                 mLastClickTime = SystemClock.elapsedRealtime();
                 if(firebase_auth.getInstance().getCurrentUser() != null) {
                     startActivity(new Intent(MainActivity.this, ListActivity.class));
+                    finish();
                 }else{
 
                     Toast.makeText(MainActivity.this, "로그인을 하고 이용해주세요", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(MainActivity.this,login_main.class));
-
+                    finish();
                 }
             }
         });
@@ -212,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
                 startActivity(new Intent(MainActivity.this,login_main.class));
+                finish();
             }
         });
         logout_btn.setOnClickListener(new View.OnClickListener() {//로그아웃

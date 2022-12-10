@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -58,14 +59,14 @@ public class subway_result extends AppCompatActivity {
     private Button st_btn;
     private Button tf_btn;
     private Button ed_btn;
-    private Button ch_btn;
+    private ImageView ch_btn;
     private Button time_btn;
     private ArrayAdapter hourAdapter;
     private ArrayAdapter minAdapter;
     private RadioGroup radioGroup;
     private RadioButton default_rad_btn;
     private Intent intent;
-    private Button back_btn;
+    private ImageView back_btn;
     private TextView search;
     private TextView time;
     private LinearLayout layout;
@@ -124,6 +125,13 @@ public class subway_result extends AppCompatActivity {
         smin = cmin.format(date);
         sec = csec.format(date);
         allsec = Integer.parseInt(shour) * 3600 + Integer.parseInt(smin) * 60;
+        ch_btn.setEnabled(false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ch_btn.setEnabled(true);
+            }
+        },2000);
         int allhour;
         int allmin;
 
