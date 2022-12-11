@@ -82,6 +82,8 @@ public class subway_result extends AppCompatActivity {
     private String[] st_list;
     private TextView start_time, end_time;
     private TextView s_time, dis, chag, st_tb;
+    private RadioButton dist_btn;
+    private RadioButton charge_btn;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("result");
 
     @Override
@@ -116,7 +118,8 @@ public class subway_result extends AppCompatActivity {
         dis = findViewById(R.id.distance);
         chag = findViewById(R.id.charge);
         st_tb = findViewById(R.id.start_timetable);
-        default_rad_btn = findViewById(R.id.radio_time);
+        dist_btn=findViewById(R.id.radio_distance);
+        charge_btn=findViewById(R.id.radio_cost);
 
         radioGroup = findViewById(R.id.radio_group);
         back_btn = findViewById(R.id.result_back_button);
@@ -125,11 +128,15 @@ public class subway_result extends AppCompatActivity {
         smin = cmin.format(date);
         sec = csec.format(date);
         allsec = Integer.parseInt(shour) * 3600 + Integer.parseInt(smin) * 60;
+        dist_btn.setEnabled(false);
+        charge_btn.setEnabled(false);
         ch_btn.setEnabled(false);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 ch_btn.setEnabled(true);
+                dist_btn.setEnabled(true);
+                charge_btn.setEnabled(true);
             }
         },2000);
         int allhour;
@@ -307,6 +314,15 @@ public class subway_result extends AppCompatActivity {
                     type_check();
                     int i = radioGroup.getCheckedRadioButtonId();
                     if (i == R.id.radio_time) {
+                        dist_btn.setEnabled(false);
+                        charge_btn.setEnabled(false);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dist_btn.setEnabled(true);
+                                charge_btn.setEnabled(true);
+                            }
+                        },2000);
                         if (transfer_point == null) {
                             String s_e = start_point + "-" + end_point;
                             databaseReference.child(s_e).child("BTime").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -343,6 +359,15 @@ public class subway_result extends AppCompatActivity {
                         }
 
                     } else if (i == R.id.radio_distance) {
+                        default_rad_btn.setEnabled(false);
+                        charge_btn.setEnabled(false);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                default_rad_btn.setEnabled(true);
+                                charge_btn.setEnabled(true);
+                            }
+                        },2000);
                         if (transfer_point == null) {
                             String s_e = start_point + "-" + end_point;
                             databaseReference.child(s_e).child("BDist").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -504,6 +529,15 @@ public class subway_result extends AppCompatActivity {
                 try {
                     switch (checkedId) {
                         case R.id.radio_time:
+                            dist_btn.setEnabled(false);
+                            charge_btn.setEnabled(false);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dist_btn.setEnabled(true);
+                                    charge_btn.setEnabled(true);
+                                }
+                            },2000);
                             if (start_point != null && end_point != null) {
                                 if (transfer_point == null) {
                                     String s_e = start_point + "-" + end_point;
@@ -545,6 +579,15 @@ public class subway_result extends AppCompatActivity {
                             }
                             break;
                         case R.id.radio_distance:
+                            default_rad_btn.setEnabled(false);
+                            charge_btn.setEnabled(false);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    default_rad_btn.setEnabled(true);
+                                    charge_btn.setEnabled(true);
+                                }
+                            },2000);
                             if (start_point != null && end_point != null) {
                                 if (transfer_point == null) {
                                     String s_e = start_point + "-" + end_point;
@@ -579,13 +622,21 @@ public class subway_result extends AppCompatActivity {
                                         }
                                     });
                                 }
-//                                get_Time(1);
-//                                set_display(layout, sub.getBDist());
+
                             } else {
                                 Toast.makeText(subway_result.this, "출발역 또는 도착역이 설정되지 않았습니다", Toast.LENGTH_SHORT).show();
                             }
                             break;
                         case R.id.radio_cost:
+                            default_rad_btn.setEnabled(false);
+                            dist_btn.setEnabled(false);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    default_rad_btn.setEnabled(true);
+                                    dist_btn.setEnabled(true);
+                                }
+                            },2000);
                             if (start_point != null && end_point != null) {
                                 if (transfer_point == null) {
                                     String s_e = start_point + "-" + end_point;
@@ -912,8 +963,7 @@ public void get_density(Data d, String st, int line, int updown, int index, Line
 //                }
 //                DataUtil util = new DataUtil();
             String l = line + "line";
-            System.out.println("st: " + st);
-            System.out.println(l);
+
             String ud;
             if (updown == 0) {
                 ud = "uptime";
@@ -976,11 +1026,10 @@ public void get_density(Data d, String st, int line, int updown, int index, Line
             }
             customView.setLayoutParams(params);
 
-//                customView.getLayoutParams().width=100;
-//                customView.getLayoutParams().height=100;
+
             ((FrameLayout)customView.findViewById(R.id.fram_sheet)).setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             lf.addView(customView);
-            System.out.println("ff: "+ st+line);
+
 
         }
 
@@ -1003,7 +1052,7 @@ public void get_density(Data d, String st, int line, int updown, int index, Line
         //환승역 또는 경유역이
         DataUtil util = new DataUtil();
         int[][] line_time = util.getLineTime(D);
-        System.out.println("between size "+D.getBetween().size());
+
         int[] index = util.time_index(D);
         if(D!=null&&D.getSum_t()!=0){
             int line=0;
@@ -1058,34 +1107,14 @@ public void get_density(Data d, String st, int line, int updown, int index, Line
                 }
             }
         }//중간에 환승이 없는 경우
-        if(true) {
-            int num1 = 0;
-            int line = 0;
-//            for (int[] j : si.getStation(prev_station).getLine()) {
-//                int num2 = 0;
-//                if (end_point != null) {
-//                    for (int[] k : si.getStation(end_point).getLine()) {
-//                        Log.d("test", "전역: " + j[num1] + "다음역: " + k[num2]);
-//                        if (j[0] == k[0] && j[0] != -1) {
-//                            line = j[0] + 1;
-//                            get_density(D, prev_station, line, f,allsec/10);
-//
-//                        }
-//                        num2++;
-//                    }
-//                }
-//                num1++;
-//            }
-            get_density(D, prev_station, line_time[D.getSum_t()][0], line_time[D.getSum_t()][1], index[D.getSum_t()], f, allsec/10);
+        get_density(D, prev_station, line_time[D.getSum_t()][0], line_time[D.getSum_t()][1], index[D.getSum_t()], f, allsec/10);
 
-        }
+
         if(end_point!=null&&(end_point.equals(prev_station)==false)){
-            System.out.println("end: "+line_time[D.getSum_t()][0]);
+
             get_density(D,end_point,line_time[D.getSum_t()][0],line_time[D.getSum_t()][1], index[D.getSum_t()], f,allsec/10);
         }
-//        handler.sendMessage(handler.obtainMessage());
-//        get_density(D, "101", 1, f);
-//        get_density(D, "102", 2, f);
+
 
     }
 

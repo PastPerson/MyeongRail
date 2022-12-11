@@ -6,8 +6,8 @@
 
     <FrameLayout
         android:id="@+id/fram_sheet"
-        android:layout_width="312dp"
-        android:layout_height="297dp"
+        android:layout_width="258dp"
+        android:layout_height="298dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,14 +24,16 @@
 
         <TextView
             android:id="@+id/station_item_line"
-            android:layout_width="190dp"
-            android:layout_height="43dp"
+            android:layout_width="129dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="130dp"
             android:layout_marginTop="110dp"
             android:background="@color/black"
+            android:gravity="center"
             android:paddingVertical="8dp"
-            android:paddingLeft="85dp"
+
             android:text="line"
+            android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="20dp"></TextView>
 
