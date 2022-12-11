@@ -1,17 +1,14 @@
 package com.example.teamproject;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -77,5 +74,11 @@ public class login_main extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+    }
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(login_main.this, MainActivity.class));
+        finish();
     }
 }

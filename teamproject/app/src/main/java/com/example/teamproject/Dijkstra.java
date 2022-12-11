@@ -2,6 +2,9 @@ package com.example.teamproject;
 
 import android.content.Context;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -320,10 +323,8 @@ class DataUtil{
         Date date = new Date(now);
         SimpleDateFormat chour = new SimpleDateFormat("HH");
         SimpleDateFormat cmin = new SimpleDateFormat("mm");
-        SimpleDateFormat csec = new SimpleDateFormat("ss");
         String shour=chour.format(date);
         String smin=cmin.format(date);
-        String sec=csec.format(date);
         int now_sec=Integer.parseInt(shour)*360+Integer.parseInt(smin)*6;
         int[] wait = new int[sum_t+1];
         int[][] line_time = getLineTime(d);
@@ -334,8 +335,6 @@ class DataUtil{
         }
         StationInfo s = new StationInfo();
         List<Integer> b = d.getBetween();
-        System.out.println("between "+b.size());
-        System.out.println("stat "+d.getStart());
         for(int i = 0; i < sum_t+1; i++){
             long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
             int n = 0;
@@ -368,6 +367,40 @@ class DataUtil{
         List<Integer> b = d.getBetween();
         int[] wait = wait_time(d,now_time);
         now_sec = now_time;
+        for(int i = 0; i < sum_t+1; i++){
+//            System.out.println("nowsec: "+ now_sec);
+            long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
+            int n = 0;
+//            System.out.println("a time: "+a[n]);
+            while(a[n] < now_sec){
+                n++;
+                if(n == 36){
+                    n = 0;
+                    break;
+                }
+            }
+            t[i] = n;
+            now_sec += wait[i] + b.get(i)/10;
+        }
+
+        return t;
+    }
+    public int[] time_index(Data d, int[][] line_time, int now_time){
+        int sum_t = d.getSum_t();
+        String start = d.getStart();
+        List<String> trans = d.getTrans();
+        int[] t = new int[sum_t+1];
+        int now_sec;
+        String[] ride_st = new String[sum_t+1];
+        ride_st[0] = start;
+        for(int i = 1; i < sum_t+1; i++){
+            ride_st[i] = trans.get(i-1);
+        }
+        StationInfo s = new StationInfo();
+        List<Integer> b = d.getBetween();
+        int[] wait = wait_time(d,now_time);
+        now_sec = now_time;
+        DatabaseReference databaseRefernce = FirebaseDatabase.getInstance().getReference("time");
         for(int i = 0; i < sum_t+1; i++){
 //            System.out.println("nowsec: "+ now_sec);
             long[] a = s.getTimeTable(s.getIndexOfStation().indexOf(ride_st[i]), line_time[i][0], line_time[i][1]);
