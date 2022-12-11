@@ -726,6 +726,7 @@ public class subway_result extends AppCompatActivity {
         }
         intent.putExtra("state", state);
         startActivity(intent);
+        finish();
     }
 
     //상단바의 역포인트들을 세팅하는 메소드

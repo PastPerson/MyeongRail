@@ -291,6 +291,11 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "한번더 누르시면 앱이 종료됩니다", Toast.LENGTH_SHORT).show();
             }
         }else{
+            Intent intent=new Intent(MainActivity.this,subway_result.class);
+            intent.putExtra("start_point",start_point);
+            intent.putExtra("transfer_point",transfer_point);
+            intent.putExtra("end_point",end_point);
+            startActivity(intent);
             finish();
         }
     }

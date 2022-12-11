@@ -45,6 +45,7 @@ public class PopupActivity extends Activity {
                 intent.putExtra("start_point", station.getText());
                 Log.d("viewTest", "이름"+station.getText() );
                 startActivity(intent);
+                finish();
             }
         });
         transfer_text.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +55,7 @@ public class PopupActivity extends Activity {
                 intent.putExtra("transfer_point", station.getText());
 
                 startActivity(intent);
+                finish();
             }
         });
         end_text.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +65,7 @@ public class PopupActivity extends Activity {
                 intent.putExtra("end_point", station.getText());
 
                 startActivity(intent);
+                finish();
             }
         });
         info.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +74,7 @@ public class PopupActivity extends Activity {
                 Intent intent=new Intent(PopupActivity.this,stationtimetable.class);
                 intent.putExtra("name",station.getText());
                 startActivity(intent);
+                finish();
             }
         });
     }
