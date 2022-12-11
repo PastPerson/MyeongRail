@@ -86,6 +86,7 @@ public class PostWriteActivity extends AppCompatActivity {
                             myItem.setReg_date(reg_date);
                             database_ref.child(reg_date).setValue(myItem);
                             database_ref.child(reg_date).getDatabase().getReference("Comments");
+                            startActivity(new Intent(PostWriteActivity.this, ListActivity.class));
                         }
                         else{
                             if (select_lines.equals("----게시판을 선택하세요----")) {
