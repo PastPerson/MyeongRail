@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
             }});
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public synchronized void onClick(View view) {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
                     return;
                 }
