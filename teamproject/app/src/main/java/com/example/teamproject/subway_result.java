@@ -235,8 +235,9 @@ public class subway_result extends AppCompatActivity {
 
         ch_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            public synchronized void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1500) {
+                    System.out.println("return");
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
@@ -842,6 +843,9 @@ public void get_density(Data d, String st, int line, int updown, int index, Line
             GenericTypeIndicator<ArrayList<Float>> t = new GenericTypeIndicator<ArrayList<Float>>() {
             };
             ArrayList<Float> fl = task.getResult().child(l).child(ud).getValue(t);
+            System.out.println("station: "+st);
+            System.out.println("index : "+index);
+            System.out.println("line : " +line);
             float f = fl.get(index);
             int line1 = line+1;
             if(st.equals(d.getEnd())){

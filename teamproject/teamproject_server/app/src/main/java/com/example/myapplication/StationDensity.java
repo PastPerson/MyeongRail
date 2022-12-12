@@ -168,6 +168,22 @@ public class StationDensity {
                     Data dist = d.getBDist();
                     Data charge = d.getBCharge();
                     addRecord(time,dist,charge,r.getTime());
+                    System.out.println("시간: "+r.getTime());
+                }else if(s.size() == 3){
+                    if (s.get(0) == null) {
+                        database_ref.child("request").child(snapshot.getKey()).removeValue();
+                        return;
+                    }
+                    d.no_record_check(s.get(0), s.get(1));
+                    Data time1 = d.getBTime();
+                    Data dist1 = d.getBDist();
+                    Data charge1 = d.getBCharge();
+                    addRecord(time1,dist1,charge1,r.getTime());
+                    d.no_record_check(s.get(1), s.get(2));
+                    Data time2 = d.getBTime();
+                    Data dist2 = d.getBDist();
+                    Data charge2 = d.getBCharge();
+                    addRecord(time2,dist2,charge2,r.getTime());
                 }
                 database_ref.child("request").child(snapshot.getKey()).removeValue();
             }
